@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Aug 09 2007</span>
+          </div>
+          <h2 class="title">Queueue, a portable Amazon SQS stub in Ruby</h2>
+          <p>
+            <em>
+              Update (Oct 20, 2007):
+              <a href="http://nutrun.com/weblog/queueue-version-004/">Queueue version 0.0.4 is out</a>
+            </em>
+          </p>
+          <p>
+            <em>
+              Update (Oct 1, 2007):
+              <a href="http://nutrun.com/weblog/queueue-turns-003">Queueue version 0.0.3 is out</a>
+            </em>
+          </p>
+          <p>
+            <em>
+              Update:
+              <a href="http://nutrun.com/weblog/queueue-version-002-released">Queueue version 0.0.2 is out</a>
+            </em>
+          </p>
+          <p>
+            <a href="http://nutrun.com/q" title="Queueue">Queueue</a>
+            is a Ruby implementation of the
+            <a href="http://aws.amazon.com/sqs">AWS SQS</a>
+            (Amazon Simple Queue Service) server
+            <a href="http://docs.amazonwebservices.com/AWSSimpleQueueService/2006-04-01/REST_RestOperations.html">REST API</a>.
+          </p>
+          <p>
+            You can download and read about it at the
+            <a href="http://nutrun.com/q" title="Queueue">Queueue page</a>.
+          </p>
+          <p>
+            As it stands, Queueue should support the SQS REST API, bar
+            <strike>authentication and</strike>
+            multi user support. Single user authentication is supported as of version 0.0.2. Error messages would also look slightly different, although validation, error codes and error formats should be identical.
+          </p>
+          <p>
+            At the moment, queues and messages on Queueue are not persisted, only stored in memory and are gone when the service is shut down.
+          </p>
+          <p>
+            Do bare in mind that these are early days in Queueue's development, so everything might not work as expected. I would appreciate any notifications of Queueue acting up.
+          </p>
+          <p>
+            I will be posting updates regarding Queueue's development status here, so feel free to
+            <a href="http://nutrun.com/feed/">subscribe</a>
+            if you'd like to be kept posted on Queueue's development and subsequent releases.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

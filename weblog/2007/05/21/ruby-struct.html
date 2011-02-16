@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">May 21 2007</span>
+          </div>
+          <h2 class="title">Ruby Struct</h2>
+          <p>
+            A
+            <a href="http://www.ruby-doc.org/core/classes/Struct.html" title="Struct">Struct</a>
+            in Ruby is a convenient and elegant way to bundle attributes together without having to write a class with explicit accessor methods.
+          </p>
+          <p>
+            For example, let's look at a DTO used with a Rails ActionMailer class:
+          </p>
+          <pre>&#x000A;class EmailDto &lt; Struct.new(:full_name, :email, :date); end</pre>
+          <p>
+            So in a
+            <code>Model</code>
+            we can have something along the lines of:
+          </p>
+          <pre>&#x000A;class Account &lt; ActiveRecord::Base&#x000A;  def activate&#x000A;    self.active = true; self.save&#x000A;    dto = EmailDto.new(self.full_name, self.email, Time.now)&#x000A;    Notifier.deliver_activation_notification(dto)&#x000A;  end&#x000A;end</pre>
+          <p>
+            ... with a Notifier that looks like:
+          </p>
+          <pre>&#x000A;class Notifier &lt; ActionMailer::Base&#x000A;  def activation_notification(dto)&#x000A;    @recipients = dto.email&#x000A;    @from = "newsletters@example.com"&#x000A;    @subject = "Your account is now active!"&#x000A;    @body[:content] = dto&#x000A;  end&#x000A;end</pre>
+          <p>
+            An interesting, more flexible/dynamic alternative to Struct is
+            <a href="http://www.ruby-doc.org/core/classes/OpenStruct.html" title="OpenStruct">OpenStruct</a>.
+            OpenStruct allows the creation of data objects which accept arbitrary attributes at any time.
+          </p>
+          <pre>&#x000A;require 'ostruct'&#x000A;&#x000A;flexie = OpenStruct.new(:music => 'rock')&#x000A;flexie.bands = ['zep', 'sabbath']&#x000A;&#x000A;flexie.music # => "rock"&#x000A;flexie.bands.first # => "zep"</pre>
+          <p>
+            Of course, attributes can always be assigned blocks:
+          </p>
+          <pre>&#x000A;flexie.hello = Proc.new { puts 'hello world'}&#x000A;flexie.hello.call # => hello world</pre>
+          <p>
+            In many cases, Structs can offer a more meaningful, more concrete alternative to aspects of what Hashes are currently popular for in Ruby.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

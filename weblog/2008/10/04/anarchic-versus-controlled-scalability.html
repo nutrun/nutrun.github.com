@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Oct 04 2008</span>
+          </div>
+          <h2 class="title">Anarchic versus controlled scalability</h2>
+          <p>With the number of websites at the time of this writing in the region of one hundred and sixty million and more than a trillion webpages, the Web is the largest network infrastructure to date. Figures like this are nothing short of enviable and so the web's architecture has been increasingly influencing software authors' design decisions to the extend of emergent trends that place this approach in habitats where it hasn't traditionally been commonplace, such as that of "enterprise" middleware.</p>
+          <p>The Web's possibly most notable triumph is offering its citizens the ability to exist and adapt in a context that is difficult to control or predict. The design has achieved its monumental scalability by following the set of constraints which compose the REST architectural style. Alongside other objectives, these constraints were put together in order for systems to effectively satisfy a need for anarchic scalability but - and this is something we must not forget - the benefits of these constraints come with associated trade-offs.</p>
+          <p>Architectural decisions should involve weighing the costs and benefits they introduce to the specific topic they attempt to address. There is no universal solution to every design problem and, while REST has proven successful in achieving anarchic scalability, not all systems exist in wild, disorderly environments. Introducing REST constraints in a system that doesn't need to be as loosely controlled as the web can incur unnecessary overhead.</p>
+          <p>
+            Section
+            <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm#sec_5_1_3" title="Fielding Dissertation: CHAPTER 5: Representational State Transfer (REST)">5.1.3 Stateless</a>
+            from Roy Fielding's seminal
+            <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">Architectural Styles and the Design of Network-based Software Architectures</a>
+            paper is a good example. Particular interest for this discussion lies in the second paragraph:
+          </p>
+          <p>
+            <cite>Like most architectural choices, the stateless constraint reflects a design trade-off. The disadvantage is that it may decrease network performance by increasing the repetitive data (per-interaction overhead) sent in a series of requests, since that data cannot be left on the server in a shared context.</cite>
+          </p>
+          <p>Let's consider an imaginary example, an auction service which publishes price updates and accepts bids on auctioned items. As a given - this is a private auction - 3000 consumers will interact with the service, each of those subscribing to price updates and placing bids whenever they see fit. These consumers must be authorized to interact with the service.</p>
+          <p>If we were to carry out the above over HTTP, a potential implementation would involve the service publishing an item's current price as a feed, with the consumers subscribing to it and polling for updates. The service enforces a polling frequency of 10 seconds per consumer. For one item, this will result in 6 * 60 * 24 * 3000 = 25,920,000 requests/day. Consumers also need to be authorized to access the resource, so, respecting the statelessness constraint, 25,920,000 handshakes/day will take place. If we assume that an item receives 20,000 bids a day, the system becomes subject to 25,900,000 unnecessary requests and handshakes.</p>
+          <p>The 20,000 bids/day assumption suggests an average bid frequency of 86400/20000 = 4.32 seconds. The 10 second interval polling frequency is suboptimal when it comes to consumers being able to act on price updates in near real time.</p>
+          <p>We can optimize by making the consumers friendlier by respecting ETag, Last-Modified, conditional GET and partial GET instructions as proposed by the service. These manage to reduce some unnecessary network usage, but do not reduce the number of requests, nor do they decrease the number of handshakes. Caching and reverse proxies are also commonly employed for relieving server stress, although, due to the close to real time requirement of this scenario, configuring those effectively can be tricky.</p>
+          <p>In contrast, if we were to implement the example on top of an event driven, stateful transport such as XMPP, the service could publish updates on PubSub nodes, consumers would subscribe to those and receive updates as they happen. By doing so, we're looking at 20,000 messages, equal to the number of bids and 3,000 handshakes, equal to the number of connections, equal to the number of consumers. The number of unnecessary requests/handshakes is reduced to zero.</p>
+          <p>The latter does not make a good candidate for an environment where the number of consumers interacting with the service is outside our control. With each consumer maintaining an open connection, the service never gets the opportunity to release system resources and there is a finite number of persistent connections a physical infrastructure can accommodate.</p>
+          <p>Adopting established, widely understood open standards introduces a plethora of benefits. HTTP, BitTorrent, XMPP, SMTP, FTP all have contributed to internet scale success stories and all come with associated merits and trade-offs. When faced with choice, we should examine the benefits and drawbacks of each, relative to the characteristics of the environment the system exists in. More interestingly, we should investigate combining available options so that one complements the others' strengths while countering potential sacrifices.</p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Aug 20 2008</span>
+          </div>
+          <h2 class="title">Phusion Passenger on Amazon EC2</h2>
+          <p>
+            <a href="http://www.modrails.com/" title="Overview &amp;#x2014; Phusion Passenger&trade; (a.k.a. mod_rails / mod_rack)">Phusion Passenger</a>
+            has come a long way since its first public release, significantly simplifying the deployment of Ruby web applications on Apache servers, especially since the addition of support for
+            <a href="http://rack.rubyforge.org/" title="Rack: a Ruby Webserver Interface">Rack</a>.
+          </p>
+          <p>
+            You can use
+            <a href="http://nutrun.com/passenger-ec2/Capfile" title="ec2 passenger capfile example">this example Capile</a>
+            if you'd like to get started quickly with trying out Passenger deployments on
+            <a href="http://aws.amazon.com/ec2" title="Amazon Web Services @ Amazon.com">Amazon EC2</a>.
+          </p>
+          <p>
+            It is assumed that your environment has been previously configured for launching EC2 AMIs. If not, you might want to read the
+            <a href="http://docs.amazonwebservices.com/AWSEC2/2007-08-29/GettingStartedGuide/" title="Amazon Elastic Compute Cloud">EC2 Getting Started Guide</a>,
+            or refer to the first bits of
+            <a href="http://nutrun.com/weblog/rubyworks-production-stack-on-amazon-ec2/" title="nutrun  &raquo; Blog Archive   &raquo; RubyWorks Production Stack on Amazon EC2">this article</a>.
+          </p>
+          <p>
+            By completing the following steps, we will end up with a running
+            <a href="http://www.debian.org/" title="Debian -- The Universal Operating System">Debian</a>
+            AMI, with Ruby 1.8.7, Rubygems 1.2.0, Apache2 and Passenger installed.
+          </p>
+          <p>
+            First, find the section about AWS credentials in the Capfile and replace the values with yours. These are
+            <code>:keypair</code>,
+            <code>:account_id</code>,
+            <code>:access_key_id</code>,
+            <code>:secret_access_key</code>,
+            <code>:pk</code>
+            and
+            <code>:cert</code>.
+            Once this is done, invoke:
+          </p>
+          <pre>&#x000A;cap instance:start</pre>
+          <p>
+            Copy the instance id from the output of this command and use it as the value for the
+            <code>:instance_id</code>
+            field in the Capfile. Call
+            <code>ec2-describe-instances</code>
+            until the AMI has been started. Use the instance URL that comes for the
+            <code>:instance_url</code>
+            field in the Capfile. Next invoke:
+          </p>
+          <pre>&#x000A;cap instance:bootstrap</pre>
+          <p>This will install Apache2 and Passenger on the instance. Once this step is complete, you can navigate to the instance URL from a browser and see the default page served by the newly installed, Passenger enabled Apache. At this point - optionally and for demonstration purposes - you can invoke:</p>
+          <pre>&#x000A;cap instance:example_app</pre>
+          <p>
+            This will install the
+            <a href="http://merbivore.com/" title="Merb | Looking for a hacker's framework?">Merb</a>
+            gems, create a flat Merb application in the instance's
+            <code>/var/www/example</code>
+            directory, set it up for use with Passenger (create
+            <code>public</code>,
+            <code>log</code>
+            and
+            <code>tmp</code>
+            directories and add a
+            <code>config.ru</code>
+            Rack configuration file as required by Passenger) and setup an Apache virtual host in order for Passenger to serve the application. Once this step is complete, navigate to the instance's URL and you should see a page served by Merb.
+          </p>
+          <p>
+            There's another couple of convenient commands in the Capfile,
+            <code>cap instance:ssh</code>
+            and
+            <code>cap instance:stop</code>.
+          </p>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              Join online
+              <a href="http://www.testkings.com/exam/640-816.htm">testking 640-816</a>
+              training program to become IT expert. Download
+              <a href="http://www.testkings.com/exam/70-647.htm">testking 70-647</a>
+              dumps and
+              <a href="http://www.testkings.com/exam/640-553.htm">testking 640-553</a>
+              practice exam to competently prepare for real exam.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

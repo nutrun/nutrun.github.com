@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Sep 07 2007</span>
+          </div>
+          <h2 class="title">Rails View Adapter</h2>
+          <p>
+            Closely related to the
+            <a href="http://blog.jayfields.com/2007/03/rails-presenter-pattern.html" title="Jay Fields Thoughts: Rails: Presenter Pattern">Presenter Pattern</a>,
+            we have been recently applying a similar approach in order to achieve thinner Controllers responding with name/value pair based data, in order to achieve Views which are decoupled from the rest of our application's layers.
+          </p>
+          <p>
+            The main ViewAdapter module looks something like this:
+          </p>
+          <pre>&#x000A;require "ostruct"&#x000A;&#x000A;module ViewAdapter&#x000A;  module ClassMethods&#x000A;    def prepare(records)&#x000A;      records.map do |record|&#x000A;        view_data = OpenStruct.new&#x000A;        yield view_data, record&#x000A;        view_data&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;&#x000A;  extend ClassMethods&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend(ClassMethods)&#x000A;  end&#x000A;end</pre>
+          <p>
+            Each View Adapter includes the
+            <code>ViewAdapter</code>
+            module which allows for a clean, easily testable, declarative setup of the View Data that will be eventually rendered on the screen.
+          </p>
+          <pre>&#x000A;class ConcertViewAdapter&#x000A;  include ViewAdapter&#x000A;&#x000A;   def concerts&#x000A;     prepare Concert.find(:all) do |view_data, concert|&#x000A;       view_data.artist = concert.artist&#x000A;       view_data.venue = concert.venue&#x000A;       view_data.price = concert.currency + concert.price&#x000A;     end&#x000A;   end&#x000A;end</pre>
+          <p>
+            As a general rule, we maintain a one-to-one relationship between the Controllers and the corresponding View Adapters.
+          </p>
+          <pre>&#x000A;class ConcertsController &lt; ApplicationController&#x000A;  def index&#x000A;    @concerts = ConcertViewAdapter.concerts&#x000A;  end&#x000A;end</pre>
+          <p>
+            These Adapters are mainly used to consolidate and format data, as returned by a Controller's action, for display.
+          </p>
+          <h3>Advantages/Trade-offs</h3>
+          <p>
+            Distinct decoupling of the View from the rest of the application layers which provides a single, well known point of maintenance to accommodate easy code changes or refactorings.
+          </p>
+          <p>
+            Established codebase location for view logic and formatting operations. Particularly useful for internationalization.
+          </p>
+          <p>
+            Easily testable. Tests for the View Adapters can run as part of a
+            <a href="http://nutrun.com/weblog/rails-fast-test-suite/" title="Nutrun  &raquo; Blog Archive   &raquo; Rails fast test suite">Fast Rails Test Suite</a>
+            because they don't require any Rails environment setup.
+          </p>
+          <p>
+            As a possible downside, this approach will break some of the standard Rails view helpers which depend on ActiveRecord objects being exposed in ERB templates. I personally do not consider this a big issue, because I don't find much benefit in most of these HTML helpers, especially considering the way they cross MVC boundaries by exposing Domain Objects to the View, or mask relatively straightforward mark up.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

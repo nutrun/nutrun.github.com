@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Feb 11 2007</span>
+          </div>
+          <h2 class="title">IO Language Event Dispatcher</h2>
+          <p>
+            Callbacks are a great way of keeping different Objects loosely coupled, without having to hard code direct references or calls between collaborators. Languages that support blocks/closures offer an elegant and flexible alternative to approaches of the Java
+            <code>interface</code>
+            style.
+          </p>
+          <pre>&#x000A;EventDispatcher := Object clone do(&#x000A;&#x000A;  listeners := Map clone&#x000A;&#x000A;  subscribe := method(event, callback,&#x000A;    listeners hasKey(event) ifFalse(listeners atPut(event, List clone))&#x000A;    listeners at(event) append(callback)&#x000A;  )&#x000A;&#x000A;  notify := method(event, args,&#x000A;    if(listeners hasKey(event),&#x000A;      listeners at(event) foreach(callback, callback call(args))&#x000A;    )&#x000A;  )&#x000A;)</pre>
+          <p>
+            The above
+            <code>EventDispatcher</code>
+            Object comes with two methods,
+            <code>subscribe</code>
+            and
+            <code>notify</code>.
+            The most interesting bit is how
+            <code>subscribe</code>
+            maps registered callbacks to their respective events. Upon notification (the
+            <code>notify</code>
+            method), every callback registered with the given event will execute.
+          </p>
+          <pre>&#x000A;factory := EventDispatcher clone do(&#x000A;  produceWidget := method(color,&#x000A;    "I am creating a #{color} widget" interpolate println&#x000A;    notify("new_widget", color)&#x000A;  )&#x000A;)</pre>
+          <p>
+            The code above signifies that every time the Factory produces a Widget, it will notify any listener interested in monitoring the production of new widgets. Interestingly, the factory knows nothing about listeners. IO scores some extra, not visible in this example, points by supporting Multiple Inheritance (sounds scary, but it's closer to Ruby's Mixins, rather than C++). Any ol' Object can have the
+            <code>EventDispatcher</code>'s
+            functionality available by adding
+            <code>EventDispatcher</code>
+            to it's list of
+            <code>Protos</code>.
+          </p>
+          <p>
+            Following is an example Listener that registers its intentions of being notified about the creation of new Widgets with the Factory.
+          </p>
+          <pre>&#x000A;widgetCounter :=  Object clone do(&#x000A;&#x000A;  counts := Map clone&#x000A;&#x000A;  factory subscribe("new_widget", block(color,&#x000A;      counts hasKey(color) ifFalse(counts atPut(color, 0))&#x000A;      counts atPut (color, counts at(color) nextInSequence)&#x000A;      "#{counts at (color)} #{color} widget(s)&#x000A;		created since I started listening" interpolate println&#x000A;    )&#x000A;  )&#x000A;)</pre>
+          <p>
+            Now, if the factory produces a few Widgets...
+          </p>
+          <pre>&#x000A;factory produceWidget("blue")&#x000A;factory produceWidget("green")&#x000A;factory produceWidget("blue")&#x000A;factory produceWidget("blue")&#x000A;factory produceWidget("red")</pre>
+          <p>
+            <code>widgetCounter</code>
+            keeps track of the them, in respects to their colors...
+          </p>
+          <pre>&#x000A;~/Desktop $ io EventDispatcher.io&#x000A;I am creating a blue widget&#x000A;1 blue widget(s) created since I started listening&#x000A;I am creating a green widget&#x000A;1 green widget(s) created since I started listening&#x000A;I am creating a blue widget&#x000A;2 blue widget(s) created since I started listening&#x000A;I am creating a blue widget&#x000A;3 blue widget(s) created since I started listening&#x000A;I am creating a red widget&#x000A;1 red widget(s) created since I started listening</pre>
+          <p>
+            The example was inspired and is a port of the recipe described in chapter 7.11
+            <cite>Coupling Systems Loosely with Callbacks</cite>
+            found in
+            <a href="http://www.oreilly.com/catalog/rubyckbk/" title="Ruby Cookbook">O'Reilly's Ruby Cookbook</a>
+            by Lucas Carlson and Leonard Richardson
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">May 29 2008</span>
+          </div>
+          <h2 class="title">DataMapper without a database</h2>
+          <p>
+            <a href="http://datamapper.org/" title="DataMapper - DataMapper">DataMapper</a>
+            is fast becoming a credible contender in the Ruby ORM field. The first - and only at this early stage - thing that temporarily disappointed me was the following scenario.
+          </p>
+          <pre>&#x000A;class Foo&#x000A;  include DataMapper::Resource&#x000A;&#x000A;  property :id, Integer, :serial => true&#x000A;  property :title, String&#x000A;end</pre>
+          <p>
+            Running this produces
+            <code>ArgumentError: Unknown adapter name: default</code>,
+            suggesting that a database connection needs to be setup in order to use any objects that include the
+            <code>DataMapper::Resource</code>
+            module. This is something I would rather not have to do for my dependency neutral test suite, in which all calls to ORM objects are simulated using mocks.
+          </p>
+          <p>
+            I soon realized that DataMapper doesn't require a database connection to be present, but needs to know which adapter to use. If we're not interested in interacting with the database, using
+            <code>DataMapper::Adapters::AbstractAdapter</code>
+            does the trick.
+          </p>
+          <pre>&#x000A;DataMapper.setup(:default, "abstract::")&#x000A;&#x000A;class Foo&#x000A;  include DataMapper::Resource&#x000A;&#x000A;  property :id, Integer, :serial => true&#x000A;  property :title, String&#x000A;end&#x000A;&#x000A;Foo.new(:title => "metal").title # => "metal"</pre>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

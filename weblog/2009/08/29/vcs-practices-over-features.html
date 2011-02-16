@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Aug 29 2009</span>
+          </div>
+          <h2 class="title">VCS practices over features</h2>
+          <p>
+            I've often heard people I know and respect say that
+            <cite>
+              <a href="http://git-scm.com/" title="Git - Fast Version Control System">git</a>
+              is leaps and bounds better than
+              <a href="http://subversion.tigris.org/" title="subversion.tigris.org">Subversion</a>
+            </cite>.
+            I've been a relatively early adopter of git, it's been my VCS of choice for almost two years now. Even though I find it superior to most of the competition I struggle to justify the "leaps and bounds" claim and would rather more modestly call it "a step forward".
+          </p>
+          <p>This is probably due to the practices we find benefit our development process. Git puts great emphasis on branching, something we generally tend to avoid (to clarify, I'm not referring to local branching). We concentrate on feedback based on the usage of our applications. This means that we strive to commit as often as possible and, most importantly, deploy to production at a constant rate. Grossly simplified, the process is: identify a small coherent feature, build it, commit it to the master branch and deploy. No part of the codebase is owned by a subdivision of the team, everyone works on everything.</p>
+          <p>
+            By far the most popular git commands we issue are
+            <code>git pull</code>,
+            <code>git add</code>
+            and
+            <code>git push</code>,
+            not that different to
+            <code>svn update</code>
+            and
+            <code>svn commit</code>.
+          </p>
+          <p>When I first started using git I was wondering if I had developed a fear of branching because of Subversion's inefficiencies in that area. In reality, I think that an environment where every developer constantly has an up to date understanding of the codebase and especially a current grasp of the design and overall vision will always be more efficient than working remotely and having merge checkpoints, no matter how cleverly the VCS handles branching. This is why I think a faster, distributed, superior at merging VCS is not something more dramatic than a desirable step forward.</p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

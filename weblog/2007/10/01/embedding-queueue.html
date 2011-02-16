@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Oct 01 2007</span>
+          </div>
+          <h2 class="title">Embedding Queueue</h2>
+          <p>
+            As of
+            <a href="http://nutrun.com/q/#download" title="Download queueue-0.0.3">version 0.0.3</a>,
+            <a href="http://nutrun.com/q/" title="Queueue: A portable Amazon Simple Queue Service stub in Ruby">Queueue</a>
+            can be embedded in Ruby code through its QueueService interface. In this mode, Queueue could be used as a
+            <em>simple</em>
+            alternative for instrumenting message driven Ruby code.
+          </p>
+          <pre>&#x000A;require "rubygems"&#x000A;require "queueue"&#x000A;&#x000A;QUEUE_NAME = "queue"&#x000A;SERVICE = Queueue::QueueService.new&#x000A;&#x000A;SERVICE.create_queue QUEUE_NAME&#x000A;SERVICE.set_visibility_timeout QUEUE_NAME, 5&#x000A;&#x000A;listener = Thread.new do&#x000A;  loop do&#x000A;    messages = SERVICE.receive_message QUEUE_NAME&#x000A;    messages.each do |msg|&#x000A;      p msg.body&#x000A;      SERVICE.delete_message QUEUE_NAME, msg.message_id&#x000A;    end&#x000A;  end&#x000A;end&#x000A;&#x000A;talker = Thread.new do&#x000A;  %w(We've been dancing with Mr Brownstone).each do |msg|&#x000A;    SERVICE.send_message QUEUE_NAME, msg&#x000A;    sleep 2&#x000A;  end&#x000A;  p "Done. Exiting running threads"&#x000A;  Thread.list.each { |t| t.exit! }&#x000A;end&#x000A;&#x000A;talker.join&#x000A;listener.join</pre>
+          <p>
+            Another interesting scenario can involve
+            <code>QueueService</code>
+            combined with
+            <a href="http://www.ruby-doc.org/stdlib/libdoc/drb/rdoc/index.html" title="drb: Ruby Standard Library Documentation">DRb</a>
+            as a means to instrumenting distributed Ruby processes.
+          </p>
+          <p>
+            An instance of
+            <code>QueueService</code>
+            wrapped inside a DRb server:
+          </p>
+          <pre>&#x000A;require "drb"&#x000A;require "rubygems"&#x000A;require "queueue"&#x000A;&#x000A;DRb.start_service "druby://0.0.0.0:7777", Queueue::QueueService.new&#x000A;DRb.thread.join</pre>
+          <p>
+            And DRb clients posting and consuming messages:
+          </p>
+          <pre>&#x000A;require "drb"&#x000A;require "rubygems"&#x000A;require "queueue"&#x000A;&#x000A;service = DRbObject.new nil, 'druby://0.0.0.0:7777'&#x000A;service.create_queue 'q'&#x000A;service.send_message 'q', "We've been dancing with Mr Brownstone"&#x000A;messages = service.receive_message 'q'&#x000A;messages.first.body # =&gt; "We've been dancing with Mr Brownstone"</pre>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

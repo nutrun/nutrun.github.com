@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Feb 03 2008</span>
+          </div>
+          <h2 class="title">Queueue version 0.0.5</h2>
+          <p>
+            <em>Update: Version 0.0.6 is out, cleaning up after 0.0.5.</em>
+          </p>
+          <p>
+            A new version of
+            <a href="http://nutrun.com/q/" title="Queueue: A portable Amazon Simple Queue Service stub in Ruby">Queueue</a>,
+            <a href="http://nutrun.com/q/releases/queueue-0.0.5.gem" title="">0.0.5</a>,
+            is out.
+          </p>
+          <p>
+            It is different to previous Queueue versions in that it now uses
+            <a href="http://sinatra.rubyforge.org/" title="Sinatra : Classy web-development dressed in a DSL">Sinatra</a>
+            instead of its old, hand crafted dispatcher. There are two reasons behind using Sinatra. One, the dispatch code is now much cleaner. Two, I wanted Queueue to support the
+            <a href="http://rack.rubyforge.org/" title="Rack: a Ruby Webserver Interface">Rack</a>
+            interface and Sinatra is built on top of Rack.
+          </p>
+          <p>
+            Expect everything else to behave the same as the previous release of Queueue.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

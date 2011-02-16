@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jul 07 2007</span>
+          </div>
+          <h2 class="title">Amazon S3 persistent Ruby objects</h2>
+          <p>
+            I have occasionally participated in conversations around the subject of the database as a product with an expiry date, destined to eventually be replaced by highly distributed data storage models. Given the current technological state, this sounds much a like science fiction scenario, but services like
+            <a href="http://aws.amazon.com/s3">AWS S3</a>
+            bring the idea closer to science and further from fiction.
+          </p>
+          <p>
+            Although S3's data storage and retrieval model looks presently better suited for larger units of data (e.g. media content), it would be interesting to investigate how it could be applied as an Object persistence service.
+          </p>
+          <p>
+            In the following example, we will use Ruby's
+            <a href="http://amazon.rubyforge.org/">AWS::S3</a>
+            library to create a class resembling Ruby on Rails' ActiveRecord::Base, allowing Objects to be persisted to and retrieved from an S3 Bucket.
+          </p>
+          <p>
+            Objects need to be somehow serialized and de-serialized in order to be successfully stored and retrieved from S3.
+            <a href="http://www.yaml.org/">YAML</a>
+            is one of the standard means to object serialization in Ruby, so we will be making use of it.
+          </p>
+          <pre>&#x000A;require 'yaml'&#x000A;require 'aws/s3'&#x000A;&#x000A;class S3Record&#x000A;  attr_accessor :id&#x000A;&#x000A;  def initialize(attrs = {})&#x000A;    attrs.each { |k, v| instance_eval "self.#{k} = v" }&#x000A;  end&#x000A;end</pre>
+          <p>
+            Requiring YAML provides
+            <code>S3Record</code>
+            with, among other functionality, a
+            <code>to_yaml</code>
+            instance method.
+          </p>
+          <p>
+            Next, we add the ability to persist an instance of
+            <code>S3Record</code>
+            to S3.
+          </p>
+          <pre>&#x000A;def create&#x000A;  AWS::S3::S3Object.find(@id, self.class.name)&#x000A;  raise "Object with key [] already exists"&#x000A;rescue AWS::S3::NoSuchKey&#x000A;  AWS::S3::S3Object.store(@id, self.to_yaml, self.class.name)&#x000A;end</pre>
+          <p>
+            The first parameter to the
+            <code>AWS::S3::S3Object#find</code>
+            method is the unique identifier by which the Object will be keyed when stored and will be the one used to find the object. The second parameter is the name of the Bucket in which the object will be stored. Here, we use the name of our class as the bucket name. This implies that a bucket with a matching name to this of our class must exist before we can start storing objects.
+          </p>
+          <p>
+            The AWS API will raise a
+            <code>NoSuchKey</code>
+            error in the case where the specified key does not exist in the specified bucket. We make use of this in order to ensure that we will not be overwriting any existing objects. Also, note the call to
+            <code>self.to_yaml</code>.
+            This is the actual data of the Object as it is being stored in S3.
+          </p>
+          <p>Next, we provide the ability to retrieve objects.</p>
+          <pre>&#x000A;def self.find(id)&#x000A;  YAML.load(AWS::S3::S3Object.find(id, self.name).value)&#x000A;end&#x000A;&#x000A;def self.find_all(options = {})&#x000A;  bucket = AWS::S3::Bucket.find(self.name, options)&#x000A;  bucket.objects.map { |s3_obj| YAML.load(s3_obj.value) }&#x000A;end</pre>
+          <p>
+            We retrieve one object by its identifier and the name of its bucket (<code>AWS::S3::S3Object.find(id, self.name)</code>) and return it in its de-serialized form. The same applies to finding many objects from one Bucket. The
+            <code>options</code>
+            Hash accepts the following parameters:
+            <code>:max_keys</code>
+            - the maximum number of keys to retrieve,
+            <code>:prefix</code>
+            - restrict the response to contain results that begin with a specified prefix, and
+            <code>:marker</code>
+            - restrict the response to results that occur alphabetically after this value (see
+            <a href="http://amazon.rubyforge.org/doc/classes/AWS/S3/Bucket.html#M000068">find (AWS::S3::Bucket)</a>).
+          </p>
+          <p>
+            Methods to update, delete and count should be self explanatory.
+          </p>
+          <pre>&#x000A;def update&#x000A;  AWS::S3::S3Object.store(@id, self.to_yaml, self.class.name)&#x000A;end&#x000A;&#x000A;def self.delete(id)&#x000A;  AWS::S3::S3Object.delete(id, self.name)&#x000A;end&#x000A;&#x000A;def self.count&#x000A;  AWS::S3::Bucket.find(self.name).objects.size&#x000A;end</pre>
+          <p>
+            In action, we could operate on objects we would like to persist on S3 in a way similar to the following.
+          </p>
+          <pre>&#x000A;class Genre < S3Record&#x000A;  attr_accessor :name&#x000A;end&#x000A;&#x000A;rock = Genre.new(:id => 1, :name => "rock")&#x000A;rock.create&#x000A;&#x000A;rock = Rock.find(1)&#x000A;rock.name = "heavy rock"&#x000A;rock.update&#x000A;&#x000A;#etc...</pre>
+          <p>
+            What about transactions? Indexing? More elaborate querying? All things databases are well established for? Bandwidth issues?
+          </p>
+          <p>
+            There are probably no definitive answers to any of these questions, although one could suggest that transaction management is not that hard to implement, indexing can happen - often more efficiently - outside the database (see
+            <a href="http://lucene.apache.org/">Lucene</a>,
+            <a href="http://ferret.davebalmain.com/trac">Feret</a>)
+            and bandwidth will not be an issue forever.
+          </p>
+          <p>
+            A reason prohibiting the above example from being realistic is the present S3 billing model ($0.01 per 1,000 PUT or LIST requests, $0.01 per 10,000 GET and all other requests). It does not seem financially preferable for an application that will need to store and retrieve vast numbers of small resources in great frequency.
+          </p>
+          <p>
+            The afore-mentioned costs are not applicable if the application is hosted on Amazon's
+            <a href="http://aws.amazon.com/ec2">EC2 (Elastic Compute Cloud)</a>,
+            as data transferred between Amazon S3 and Amazon EC2 is free of charge.
+          </p>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              Want to become networking expert?  Download the
+              <a href="http://www.testkings.com/exam/642-813.htm">testking 642-813</a>
+              dumps and
+              <a href="http://www.testkings.com/exam/70-680.htm">testking 70-680</a>
+              mock test to hit the real exam on first try. Also check out the latest
+              <a href="http://www.testkings.com/exam/SY0-201.htm">testking SY0-201</a>
+              practice questions for next exam.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

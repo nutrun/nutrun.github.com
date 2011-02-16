@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jan 12 2008</span>
+          </div>
+          <h2 class="title">Synthesized Testing: A primer</h2>
+          <p>
+            <em>... or, reducing the volume and increasing the value of test code by connecting the dots.</em>
+          </p>
+          <p>
+            Beside other objectives, test code aims to provide proof and confidence that the application code under test works as expected and as specified.
+          </p>
+          <p>
+            Tests are often classified under different categories, namely
+            <em>Unit Tests</em>,
+            <em>Functional Tests</em>,
+            <em>Integration Tests</em>,
+            <em>Acceptance Tests</em>,
+            etc, each of which attempts to verify the system components' intended functionality in various degrees of instrumentation.
+          </p>
+          <p>
+            Unit tests, for example, are employed for testing individual system components in isolation from their peers or environment. Unit tests rarely connect to the database, touch the filesystem or access environment resources.
+          </p>
+          <p>
+            A typical test code-base will contain a layer of Functional or Integration tests sitting directly above the Unit Test layer. These still don't test the system in its whole, deployed form. They concentrate on testing the functionality of application components with their system dependencies present and wired.
+          </p>
+          <p>
+            At the functional testing level, testing a Service which accesses a Repository retrieving records from a database will involve opening an actual database connection, setting up and testing against real data.
+          </p>
+          <pre>&#x000A;dependency = DependencyRepositoty.create_dependency('Foo')&#x000A;record = Repository.create_record('Bar', dependency)&#x000A;assert_equal :record, Service.report(record.id)</pre>
+          <p>
+            Functional tests are often deemed necessary in order to achieve a sense of confidence that the pieces still work when put together. At the same time, because of their relative complexity, functional tests tend to become long, slow to run, difficult to write and maintain. In essence, the bulk of Functional Tests violates many of the qualities one might attribute to good test code.
+          </p>
+          <p>
+            The use of Mock Objects is a technique commonly found in Unit Tests aiming to verify interactions between the objects under test. Using Mocks, we concentrate on validating declared expectations of those interactions without relying on every single component to be loaded in order for the test to run.
+          </p>
+          <pre>&#x000A;Repository.expects(:find).with(1).returns(:record)&#x000A;assert_equal :record, Service.report(1)</pre>
+          <p>
+            By examining the two code examples, it is apparent there is overlap between what they logically test. Both verify the Service's behavior in regards to its communication with the Repository and its handling of the data involved between the call to
+            <code>Service.report</code>
+            and this interaction.
+          </p>
+          <p>
+            Behind the scenes, the functional test also ensures that the database connection works, the wiring between the Repository and the database adapter is functional, etc. These verifications are irrelevant under the context of what is being tested here. They also end up duplicated in all Functional tests that involve the Repository.
+          </p>
+          <p>
+            Tests with functional dependencies are brittle and tend to break for the wrong reasons.
+          </p>
+          <p>
+            Furthermore, it is common for test code-bases to involve a layer of Acceptance tests which are executed against the entire system in - or close to - its deployed form. As a result there is more testing overlap, this time between what the Functional and Acceptance tests are targeting.
+          </p>
+          <p>
+            The example unit test proves that a call to
+            <code>Service.report(1)</code>
+            will result to a call to
+            <code>Repository.find(1)</code>.
+            It further asserts that the value returned by the call to
+            <code>Repository.find(1)</code>
+            is the one returned by
+            <code>Service.report(1)</code>.
+          </p>
+          <p>
+            The association of the
+            <code>Service.report</code>
+            method's concrete implementation to a test attests that the actual implementation of this method has been tested.
+          </p>
+          <p>
+            This test doesn't offer enough proof the components under test will work as intended as part of the deployed application. In particular, there is no evidence
+            <code>Repository.find</code>
+            has been tested to work.
+          </p>
+          <p>
+            A code-base with adequate test coverage must contain tests verifying the Repository's concrete implementation's functionality.
+          </p>
+          <p>
+            A programmer observing that Object
+            <em>A</em>
+            expects to receive a call on method
+            <em>B</em>
+            when method
+            <em>C</em>
+            is called on Object
+            <em>D</em>,
+            having proven that Object
+            <em>A</em>'s
+            <em>B</em>
+            method works, mentally processes this information to conclude that the two Object members will work together as expected under the specified interaction.
+          </p>
+          <p>
+            If we could correlate the verified interaction expectations with tests against their concrete counterparts, we should be able to provide enough evidence that the dots will indeed work together once connected.
+          </p>
+          <p>
+            By doing so, we can significantly reduce the volume and complexity of the functional tests, achieving a leaner, more meaningful, more robust test code-base.
+          </p>
+          <p>
+            As proof of concept,
+            <a href="http://synthesis.rubyforge.org">Synthesis</a>
+            is a Ruby implementation of the Synthesized Testing theory. It analyzes test code by collecting Mock Object expectations and verifies that their concrete implementations have been tested.
+          </p>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              We offer best quality
+              <a href="http://www.testkings.com/exam/70-432.htm">testking 70-432</a>
+              study material to help you pass real exam on first try. Download the
+              <a href="http://www.testkings.com/exam/EX0-101.htm">testking EX0-101</a>
+              sample questions and
+              <a href="http://www.testkings.com/exam/642-832.htm">testking 642-832</a>
+              mock test  to practice and pass real exam with highest score guaranteed.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Apr 01 2008</span>
+          </div>
+          <h2 class="title">Nu Language Event Dispatcher</h2>
+          <p>
+            <a href="http://programming.nu/" title="Programming Nu">Nu</a>
+            is an interpreted object oriented language built on top of Objective C, with its syntax and several of its mechanics coming from Lisp, whilst being inspired by Ruby's philosophy.
+          </p>
+          <p>
+            The
+            <em>Event Dispatcher</em>
+            example is one of my favorite when trying out a new language. I choose it because it's representative of a number of programming language core topics such as lists, maps, closures, OO, etc.
+          </p>
+          <p>
+            I recently spent a short while porting the
+            <a href="http://nutrun.com/weblog/io-language-event-dispatcher/" title="nutrun  &raquo; Blog Archive   &raquo; IO Language Event Dispatcher">IO Language Event Dispatcher example</a>
+            in Nu and will be going over my experiment in this article.
+          </p>
+          <p>
+            Bellow is the code for the
+            <code>EventDispatcher</code>
+            class.
+          </p>
+          <pre>&#x000A;(class EventDispatcher is NSObject	&#x000A;  (- (id) initialize is&#x000A;    (set @listeners (dict))&#x000A;      self)&#x000A;&#x000A;  (- (void) subscribe:(id)event callback:(id)callback is&#x000A;    (unless (@listeners objectForKey:event)&#x000A;      (@listeners setObject:(array) forKey:event))&#x000A;      ((@listeners objectForKey:event) &lt;&lt; callback))&#x000A;&#x000A;  (- (void) notify:(id)event withArgs:(id)args is&#x000A;    ((@listeners objectForKey:event) each: (do &#x000A;      (callback) (callback args)))))</pre>
+          <p>
+            There are two prominent methods in this class, namely
+            <code>subscribe</code>
+            and
+            <code>notify</code>.
+          </p>
+          <p>
+            The
+            <code>subscribe</code>
+            method takes two arguments, the event we're subscribing to and a callback to be invoked every time the specified event takes place. The
+            <code>@listeners</code>
+            dictionary is constructed using the
+            <code>dict</code>
+            directive, which is shorthand for creating an
+            <code>NSCFDictionary</code>
+            instance. For each event, we maintain an array of callbacks. Like
+            <code>dict</code>,
+            <code>array</code>
+            is available for conveniently creating
+            <code>NSCFArray</code>
+            instances.
+          </p>
+          <p>
+            Whenever
+            <code>notify</code>
+            is invoked with an event and the relevant arguments, we iterate invoking any callbacks registered for the given event, passing the provided arguments to each.
+          </p>
+          <p>
+            There are two ways that I know of that will allow classes to act as event dispatchers, inheritance being the first.
+          </p>
+          <pre>&#x000A;(class Factory is EventDispatcher&#x000A;  (ivars)&#x000A;&#x000A;  (- (void) produce:(id)color is&#x000A;    (puts "#{color} product produced")&#x000A;    (self notify:"new product" withArgs:color)))</pre>
+          <p>
+            Here, we create a
+            <code>Factory</code>
+            class which extends
+            <code>EventDispatcher</code>
+            and we define a
+            <code>produce</code>
+            method which notifies listeners that have subscribed to the "new product" event.
+          </p>
+          <p>
+            Composition is the second, and my preferred, option.
+          </p>
+          <pre>&#x000A;(class Factory is NSObject&#x000A;  (ivars)&#x000A;&#x000A;  (- (void) produce:(id)color is&#x000A;    (puts "#{color} product produced")&#x000A;    (self notify:"new product" withArgs:color)))&#x000A;&#x000A;(Factory include:EventDispatcher)</pre>
+          <p>
+            Classes in Nu can be used in a manner similar to that of Module mix-ins in Ruby. Every object in Nu has an
+            <code>include</code>
+            method which will make a class's instance methods available in another class. The advantage here is that we didn't have to change
+            <code>Factory</code>'s
+            inheritance tree.
+          </p>
+          <p>
+            Following is a potential event listener that subscribes to the "new product" event and prints out a message every time the event is fired.
+          </p>
+          <pre>&#x000A;(class ProductWatcher is NSObject&#x000A;  (- (id) watch is&#x000A;    (factory subscribe:"new product" callback:(do (color) &#x000A;      (puts "I see a #{color} product")))))</pre>
+          <p>
+            To run the example, we can instantiate a
+            <code>Factory</code>
+            and a
+            <code>ProducWatcher</code>
+            and fire a few events.
+          </p>
+          <pre>&#x000A;(set factory ((Factory new) initialize))&#x000A;((ProductWatcher new) watch)&#x000A;&#x000A;(factory produce:"black")&#x000A;(factory produce:"red")&#x000A;(factory produce:"blue")</pre>
+          <p>
+            The results look like this:
+          </p>
+          <pre>&#x000A;black product produced&#x000A;I see a black product&#x000A;red product produced&#x000A;I see a red product&#x000A;blue product produced&#x000A;I see a blue product</pre>
+          <p>
+            There are a lot of reasons as to why I have time for Nu, its combining 3 of my favorite languages not included, greatly simplifying Cocoa development for native Mac and iPhone applications and Objective C's excellent multi-core support to name but a few.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

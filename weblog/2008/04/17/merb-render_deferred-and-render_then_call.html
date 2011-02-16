@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Apr 17 2008</span>
+          </div>
+          <h2 class="title">Merb: render_deferred and render_then_call</h2>
+          <p>
+            Following the post on
+            <a href="http://nutrun.com/weblog/non-blocking-merb-actions/" title="nutrun  &raquo; Blog Archive   &raquo; Non blocking merb actions">non blocking merb actions</a>,
+            it's worth mentioning the
+            <a href="http://www.merbivore.com/documentation/merb-core/0.9.2/index.html?a=C00000080&amp;name=ControllerMixin" title="Merb | merb-core 0.9.2 API Documentation">Merb::ControllerMixin</a>
+            module, its
+            <code>render_deferred</code>
+            and
+            <code>render_then_call</code>
+            methods in particular.
+          </p>
+          <p>
+            <code>render_deferred</code>
+            accepts a block argument, a
+            <code>proc</code>
+            that will be called outside the dispatch
+            <code>mutex</code>,
+            releasing the merb thread lock.
+          </p>
+          <pre>&#x000A;class MyController &lt; Merb::Controller&#x000A;  def hello&#x000A;    render "hello"&#x000A;  end&#x000A;&#x000A;  def dont_wait_to_hello&#x000A;    render_deferred { VerySlow.hello }&#x000A;  end&#x000A;end</pre>
+          <p>
+            Calls to
+            <code>/my_controller/hello</code>,
+            subsequent to requests to
+            <code>/my_controller/dont_wait_to_hello</code>,
+            will not have to wait for the latter to complete before being served.
+          </p>
+          <p>
+            As an interesting caveat, because execution of the
+            <code>proc</code>
+            is outside merb's control, any exceptions raised in the block passed to
+            <code>render_deferred</code>
+            will not be rescued and redispatched, which suggests that custom error handling needs to be in place.
+          </p>
+          <p>
+            <code>render_then_call</code>
+            accepts two arguments, a string that will be returned immediately as a response to the client and a block to be called after the string has been returned.
+          </p>
+          <pre>&#x000A;class MyController &lt; Merb::Controller&#x000A;  def receive_order&#x000A;    render_then_call("Your pizza is in the oven.") do&#x000A;      bake_pizza&#x000A;      deliver_pizza&#x000A;    end&#x000A;  end&#x000A;end</pre>
+          <p>
+            In this case, the specified message will be immediately returned, while the long running
+            <code>proc</code>
+            will be scheduled and executed by Mongrel, allowing orders to keep coming through a single application instance.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

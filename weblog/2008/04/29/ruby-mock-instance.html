@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Apr 29 2008</span>
+          </div>
+          <h2 class="title">Ruby mock instance</h2>
+          <p>
+            The common pattern for mocking class instances in Ruby involves setting an expectation on the
+            <code>new</code>
+            method of the class to return an object of the specified type. Consider the following
+            <code>User</code>
+            and
+            <code>Account</code>
+            classes.
+          </p>
+          <pre>&#x000A;class User&#x000A;  attr_reader :name, :email&#x000A;&#x000A;  def initialize(name, email)&#x000A;    @name, @email = name, email&#x000A;  end&#x000A;&#x000A;  def contact&#x000A;    send_email(@email)&#x000A;  end&#x000A;end&#x000A;&#x000A;class Account&#x000A;  def self.create(name, email)&#x000A;    user = User.new(name, email)&#x000A;    user.contact&#x000A;  end&#x000A;end</pre>
+          <p>
+            The test for the
+            <code>Account#create</code>
+            method would look like this:
+          </p>
+          <pre>&#x000A;require "rubygems"&#x000A;require "mocha"&#x000A;require "test/unit"&#x000A;	&#x000A;class AccountTest &lt; Test::Unit::TestCase&#x000A;  def test_emails_user_on_account_creation&#x000A;    user = User.new("", "")&#x000A;    user.expects(:contact)&#x000A;    User.expects(:new).with("Kirk", "kirk@metallica.com").returns(user)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+          <p>
+            As an alternative, and this is the version I see most often used, a duck typed mock can be used in the place of the "real"
+            <code>User</code>
+            object.
+          </p>
+          <pre>&#x000A;class AccountTest &lt; Test::Unit::TestCase&#x000A;  def test_emails_user_on_account_creation&#x000A;    user = mock&#x000A;    user.expects(:contact)&#x000A;    User.expects(:new).with("Kirk", "kirk@metallica.com").returns(user)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+          <p>
+            Both implementations have some potentially undesirable issues worth taking into consideration. None of the two is
+            <acronym title="Don't Repeat Yourself">DRY</acronym>,
+            since in both cases we need to set a bespoke expectation for the object's instantiation. In the first example, we are actually instantiating a "real"
+            <code>User</code>.
+            This compromises the dependency neutrality of the test, coupling it with
+            <code>User</code>'s
+            initialization implementation. The second example, despite its relative convenience, doesn't fully respect the contract between
+            <code>Account</code>
+            and
+            <code>User</code>.
+            The interaction specification is inaccurate, because, as far as the application code under test is concerned,
+            <code>User#new</code>
+            doesn't return an object of type
+            <code>Mocha::Mock</code>,
+            it returns an instance of
+            <code>User</code>.
+          </p>
+          <p>The following code can be useful in an effort to DRY up code as the one under discussion, whilst driving such interaction specifications closer to the actual contracts they are meant to express.</p>
+          <pre>&#x000A;class Object&#x000A;  def self.mock_instance(*args)&#x000A;    class_eval do&#x000A;      alias original_initialize initialize&#x000A;      def initialize()end&#x000A;    end&#x000A;&#x000A;    instance = new&#x000A;    expects(:new).with(*args).returns(instance)&#x000A;&#x000A;    class_eval do&#x000A;      alias initialize original_initialize&#x000A;      undef original_initialize&#x000A;    end&#x000A;&#x000A;    return instance&#x000A;  end&#x000A;end</pre>
+          <p>
+            Here is how
+            <code>AccountTest</code>
+            can be written with the above
+            <a href="http://mocha.rubyforge.org/" title="Mocha 0.5.6">Mocha</a>
+            extension in place.
+          </p>
+          <pre>&#x000A;class AccountTest &lt; Test::Unit::TestCase&#x000A;  def test_emails_user_on_account_creation&#x000A;    User.mock_instance("Kirk", "kirk@metallica.com").expects(:contact)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+          <p>
+            If
+            <a href="http://rspec.info/" title="RSpec-1.1.3: Overview">RSpec</a>
+            is your flavor, the same can be achieved with minor modifications in the
+            <code>Spec::Mocks::Methods</code>
+            module.
+          </p>
+          <pre>&#x000A;module Spec::Mocks::Methods&#x000A;  def mock_instance(*args)&#x000A;    class_eval do&#x000A;      alias original_initialize initialize&#x000A;      def initialize()end&#x000A;    end&#x000A;&#x000A;    instance = new&#x000A;    should_receive(:new).with(*args).and_return(instance)&#x000A;&#x000A;    class_eval do&#x000A;      alias initialize original_initialize&#x000A;      undef original_initialize&#x000A;    end&#x000A;&#x000A;    return instance&#x000A;  end&#x000A;end</pre>
+          <p>
+            With the above we can use
+            <code>mock_instance</code>
+            in specs as such.
+          </p>
+          <pre>&#x000A;describe Account do&#x000A;  it "should email user on account creation" do&#x000A;    User.mock_instance("Kirk", "kirk@metallica.com").should_receive(:contact)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

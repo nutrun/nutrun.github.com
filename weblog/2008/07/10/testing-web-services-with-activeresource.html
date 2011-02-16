@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jul 10 2008</span>
+          </div>
+          <h2 class="title">Testing web services with ActiveResource</h2>
+          <p>
+            <a href="http://api.rubyonrails.org/files/vendor/rails/activeresource/README.html" title="File: README">ActiveResource</a>
+            can be a useful tool for abstracting away low level HTTP or data marshaling details when testing web services with an XML schema and URI patterns which respect the Rails protocol for REST.
+          </p>
+          <p>Here's a possible implementation for use in tests that exercise a service from the outside, a sort of black box web service testing approach, if you'd like.</p>
+          <pre>&#x000A;def resource(name)&#x000A;  class_name = name.to_s.camelize&#x000A;  return class_name.constantize if Object.const_defined?(class_name.intern)&#x000A;  rsrc = Class.new(ActiveResource::Base) do&#x000A;    self.site = "http://localhost:4001/api"&#x000A;    self.element_name = name.to_s&#x000A;  end&#x000A;  Object.const_set(class_name.intern, rsrc)&#x000A;end</pre>
+          <p>
+            Let's imagine an API call to
+            <code>http://localhost:4001/api/categories.xml</code>
+            which returns a list of product categories with their respective subcategories. Following is a potential response to a
+            <code>GET</code>
+            request to the afore mentioned URI.
+          </p>
+          <pre>&#x000A;&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#x000A;&lt;categories type="array"&gt;&#x000A;  &lt;category&gt;&#x000A;    &lt;id type="integer"&gt;3&lt;/id&gt;&#x000A;    &lt;name&gt;Music&lt;/name&gt;&#x000A;    &lt;subcategories type="array"&gt;&#x000A;      &lt;subcategory type="Category"&gt;&#x000A;        &lt;id type="integer"&gt;4&lt;/id&gt;&#x000A;        &lt;name&gt;Rock&lt;/name&gt;&#x000A;      &lt;/subcategory&gt;&#x000A;      &lt;subcategory type="Category"&gt;&#x000A;        &lt;id type="integer"&gt;5&lt;/id&gt;&#x000A;        &lt;name&gt;Metal&lt;/name&gt;&#x000A;      &lt;/subcategory&gt;&#x000A;    &lt;/subcategories&gt;&#x000A;  &lt;/category&gt;&#x000A;&lt;/categories&gt;</pre>
+          <p>
+            Invoking
+            <code>resource :category</code>
+            in the test will provide a
+            <code>Category</code>
+            class.
+            <code>Category</code>
+            is an
+            <code>ActiveResource</code>
+            child which can be used to exercise the
+            <code>/categories</code>
+            end point of the API.
+          </p>
+          <pre>&#x000A;class ApiTest &lt; Test::Unit::TestCase&#x000A;  resource :category&#x000A;&#x000A;  def test_categories&#x000A;    categories = Category.find(:all)&#x000A;    assert_equal(1, categories.size)&#x000A;    assert_equal("Music", categories.first.name)&#x000A;  end&#x000A;&#x000A;  def test_subcategories&#x000A;    subcategories = Category.find(:all).first.subcategories&#x000A;    assert_equal(2, subcategories.size)&#x000A;    assert_equal("Metal", subcategories[1].name)&#x000A;  end&#x000A;  &#x000A;  def test_category_creation&#x000A;    Category.create(:name => "Hacking")&#x000A;    assert_equal(3, Category.find(:all).size)&#x000A;  end&#x000A;end</pre>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

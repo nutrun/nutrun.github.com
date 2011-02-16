@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jun 24 2010</span>
+          </div>
+          <h2 class="title">Sinatra reloader</h2>
+          <p>
+            When I first started using it to write web apps a couple of years ago,
+            <a href="http://www.sinatrarb.com/" title="Sinatra">Sinatra</a>
+            supported code reloading in development mode. That feature was dropped from the core of Sinatra at some point and we just got used to restarting the app every time we made a change whilst developing, it's not that huge an overhead, especially considering Sinatra's fast start up.
+          </p>
+          <p>
+            I recently had to work on a Rails codebase for a while, which reminded me that code reloading without restarting in dev mode is functionality I don't mind spoiling myself with. At the time,
+            <a href="http://twitter.com/abhinay" title="">Abs</a>
+            pointed me to
+            <a href="http://github.com/rkh/sinatra-reloader" title="rkh's sinatra-reloader at master - GitHub">sinatra-reloader</a>
+            which I installed and used in a couple of apps and it works well. As I'm writing this, I'm also looking at
+            <a href="http://github.com/rack/rack/blob/master/lib/rack/reloader.rb" title="lib/rack/reloader.rb at master from rack's rack - GitHub">Rack::Reloader</a>,
+            which I've never used and seems somewhat different with its own set of interesting features.
+            <a href="http://rtomayko.github.com/shotgun/" title="shotgun(1) - reloading rack development server">Shotgun</a>
+            is out of the question for me, because it feels like manually restarting the app is faster than the time Shotgun takes to load everything per request.
+          </p>
+          <p>
+            <a href="http://rvm.beginrescueend.com/" title="RVM: Ruby Version Manager -&#x000A;        RVM Ruby Version Manager - Documentation">RVM</a>
+            has prompted me to switch between Ruby versions more often than in the past, resulting in installing gems more frequently than I used to, which in turn brings out an OCD side of me when it comes to gems that download other gems as dependencies. That's the one thing that bugs me about sinatra-reloader and since I found myself with a bit of time on my hands, I wrote my own Sinatra reloader which I've put in
+            <a href="http://gist.github.com/450814" title="gist: 450814 - Code reloading for Sinatra- GitHub">this gist</a>
+            in case someone else finds it useful.
+          </p>
+          <p>
+            It works by reloading all source files and routes when it detects a change. This is less efficient than selectively reloading only code from files that have changed, although I tried it in a few of my projects without noticeable penalties. A thing to watch out for is that once a constant has been loaded, it will still be around after you delete the code that declares it. Restarting is required for such changes to take effect. I've also noticed a similar issue with classes that extend
+            <code>Sequel::Model</code>
+            - if I run a migration and don't restart, database field mappings don't get updated, because Sequel makes those mappings at the time
+            <code>Sequel::Model</code>
+            is subclassed.
+          </p>
+          <p>
+            In summary, if you don't mind installing a bunch of gems you're likely to never use, I recommend
+            <a href="http://github.com/rkh/sinatra-reloader" title="rkh's sinatra-reloader at master - GitHub">sinatra-reloader</a>.
+            If you're after code reloading which you might want to customise with a couple of lines of code on the spot to suit your particular project's needs,
+            <a href="http://gist.github.com/450814" title="gist: 450814 - Code reloading for Sinatra- GitHub">this</a>
+            can be a starting point.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

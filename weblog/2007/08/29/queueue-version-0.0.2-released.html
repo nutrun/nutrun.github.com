@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Aug 29 2007</span>
+          </div>
+          <h2 class="title">Queueue version 0.0.2 released</h2>
+          <p><a href="http://nutrun.com/q" title="queueue-0.0.2">Version 0.0.2 of Queueue</a>, the portable Amazon SQS server stub, is available for
+            <a href="http://nutrun.com/q#download">download</a>.
+          </p>
+          <p>
+            As of this release Queueue supports
+            <em>single user authentication</em>.
+            Authentication credentials can be set up in a configuration file named
+            <code>queueue.yml</code>
+            which must be found in the same location where the
+            <code>queueue</code>
+            start up script is invoked from. The contents of the file should look like this:
+          </p>
+          <pre>&#x000A;host: 127.0.0.1&#x000A;port: 2323&#x000A;access_key_id: iamtheworldthathides&#x000A;secret_access_key: theuniversalsecretofalltime</pre>
+          <p>
+            In the absence of the above configuration file, the default value will be
+            <em>queueue</em>
+            for both the Access Key ID and the Secret Access Key.
+          </p>
+          <p>
+            Note: The
+            <code>access_key_id</code>
+            value is actually ignored, since only a single user is supported. It is there as a placeholder for possible multi-user support in the future.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

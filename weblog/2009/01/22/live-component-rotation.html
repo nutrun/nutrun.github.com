@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jan 22 2009</span>
+          </div>
+          <h2 class="title">Live component rotation</h2>
+          <p>Many applications comprise of a number of components, the majority of which are shared by others in the system. Different parts of the system exercise their collaborators in a variety of ways, think of a website where data is periodically processed by jobs and stored in a database while presentation modules handle rendering the data in ways meaningful to end users. Shared resources can yield the unwanted side effect of performance degradation when a given component is being pushed too hard to perform part of its tasks, affecting each piece of the system that depends on it. In the shared database website example, the website might suffer low response times while potentially heavy on the database processing jobs are running.</p>
+          <p>One way of getting around this problem involves creating more than one instances of the shared resource, one of which is considered "live", the one the system's clients interact with, and perform expensive operations on a copy which will itself become live the moment these operations conclude. This solution does not apply to every situation but can be useful in scenarios where real time is not a concern. In the example website's case, we can create a copy of the database on which we run the processing jobs. The front end components run off the "stale", live database copy whose performance is not affected by the jobs. Once the jobs complete we can switch databases and repeat the live component rotation process as needed. Live component rotation also nicely lends itself to distribution, as component copies can exist on different physical hosts.</p>
+          <p>Virtualization and cloud computing make this method all the more interesting. Imagine hosting a database server on Amazon EC2 with its static data stored on an EBS volume. We can snapshot the EBS volume, fire up a new EC2 instance, attach the snapshot to it, run the job and rotate live database instances once the jobs are complete with most parts of the system never having to worry about the costly operations taking place.</p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

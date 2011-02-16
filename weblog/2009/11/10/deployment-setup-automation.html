@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Nov 10 2009</span>
+          </div>
+          <h2 class="title">Deployment setup automation</h2>
+          <p>Part of my work these days has to do with building and deploying numerous experimental applications with varying life cycles. Many of these applications get built and put on a server in less than a day only to be shut down and never looked at again a couple of days later, others get turned off and revisited after some time, while others graduate to larger, wider scope systems.</p>
+          <p>This means that I get to deploy applications for the first time more frequently than usual. Also, because we deploy to virtualised infrastructures (including an internal cloud, Slicehost and Amazon EC2), slice instances (servers) tend to get rebuilt more often than they would in the absence of virtualisation. First time deployments are generally more involved than subsequent ones because there is setup up to be made and software to be installed in order for the host servers to accommodate the application.</p>
+          <p>One way to treat first time deployment woes is to create and maintain images of the system in the state required to host the application. I find this to work well when dealing with moderate numbers of applications and servers, whereas creating and keeping images up to date has a tendency to become tedious and inflexible as the number of applications and images increases.</p>
+          <p>
+            As an alternative, we can move prerequisite system setup and installations responsibility closer to the application code, in the form of an
+            <code>after</code>
+            hook to the
+            <code>deploy:setup task</code>
+            that we call the first time we deploy an application with Capistrano. Here's some Capistrano code that performs one time setup tasks.
+          </p>
+          <pre>&#x000A;namespace :util do&#x000A;  task :install_libraries do&#x000A;    sudo 'apt-get install libxml2 libxml2-dev libmysqlclient15-dev -y'&#x000A;  end  &#x000A;end&#x000A;&#x000A;after 'deploy:setup', 'util:install_libraries'</pre>
+          <p>With this approach, the application knows how to setup the system the way it needs it to be next time it gets deployed for the first time. As an added benefit, the Capistrano code serves as documentation for the application's system requirements.</p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

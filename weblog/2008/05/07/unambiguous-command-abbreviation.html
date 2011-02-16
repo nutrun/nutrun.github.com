@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">May 07 2008</span>
+          </div>
+          <h2 class="title">Unambiguous command abbreviation</h2>
+          <p>
+            When using
+            <a href="http://www.rubygems.org/" title="RubyGems Manuals">RubyGems</a>
+            from the command line, I almost always type
+            <code>sudo gem i synthesis</code>
+            as opposed to
+            <code>sudo gem install rails</code>,
+            the emphasis targeted at using
+            <em>"i"</em>
+            instead of
+            <em>"install"</em>,
+            of course. The
+            <code>gem</code>
+            executable happily understands what command it is being asked to execute when provided with the first few letters of the command, as long as those letters are not ambiguous, i.e. don't clash with the names of other commands. So even though
+            <code>sudo gem u foo</code>
+            complains that
+            <code>Ambiguous command u matches [uninstall, unpack, update]</code>,
+            <code>sudo gem uni foo</code>
+            will uninstall the specified gem.
+          </p>
+          <p>Here's how this is implemented in RubyGems.</p>
+          <pre>&#x000A;def find_command(cmd_name)&#x000A;  possibilities = find_command_possibilities(cmd_name)&#x000A;  if possibilities.size &gt; 1&#x000A;    raise "Ambiguous command #{cmd_name} matches [#{possibilities.join(', ')}]"&#x000A;  end&#x000A;  if possibilities.size &lt; 1&#x000A;    raise "Unknown command #{cmd_name}"&#x000A;  end&#x000A;&#x000A;  self[possibilities.first]&#x000A;end&#x000A;&#x000A;def find_command_possibilities(cmd_name)&#x000A;  len = cmd_name.length&#x000A;  self.command_names.select { |n| cmd_name == n[0,len] }&#x000A;end</pre>
+          <p>
+            In the same vein, although not strictly a command abbreviation,
+            <a href="http://www.dtsato.com/blog" title="Danilo Sato">Danilo</a>
+            pointed out
+            <a href="http://git.or.cz/" title="Git - Fast Version Control System">git</a>
+            understands abbreviated revision hashes, so it's possible to use something like
+            <code>git diff d0a..HEAD</code>
+            even with the hash's complete representation being
+            <code>d0aa7dd4aa9a95090df1e0b9d0f426d5a5bd56ae</code>.
+          </p>
+          <p>
+            Less typing is almost always a good option to have. The easy to implement
+            <em>Unambiguous command abbreviation</em>
+            trick adds a subtle usability improvement to command line interfaces and holds a nice treat to the utility's power users.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

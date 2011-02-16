@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Nov 08 2008</span>
+          </div>
+          <h2 class="title">Rack cache headers</h2>
+          <p>
+            <a href="http://rack.rubyforge.org/" title="Rack: a Ruby Webserver Interface">Rack</a>
+            is an interface between web servers and Ruby web frameworks. The
+            <a href="http://www.w3.org/Protocols/" title="HTTP - Hypertext Transfer Protocol Overview">HTTP</a>
+            protocol, amongst other things, defines requirements on
+            <a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p6-cache-04.txt" title="">HTTP caches</a>
+            in terms of header fields that control cache behavior. The purpose of this article is to demonstrate a possible implementation of a piece of Rack Middleware which enables web application developers to configure a web application's resource cache related headers in a non obtrusive, centralized manner.
+          </p>
+          <p>Rack supports the notion of Middleware, pieces of code that sit between the HTTP request and response life cycle. Rack::Lint, for example, validates an application's requests and responses according to the Rack specification.</p>
+          <pre>&#x000A;Rack::Handler::Mongrel.run(&#x000A;  Rack::Lint.new(app), :Host => "0.0.0.0", :Port => 9999&#x000A;)</pre>
+          <p>Similarly, if we were to implement a cache header producing layer on top of Rack we'd end up with a construct similar to the following.</p>
+          <pre>&#x000A;Rack::Handler::Mongrel.run(&#x000A;  Rack::Lint.new(&#x000A;    Rack::CacheHeaders.new(app)&#x000A;  ), :Host => "0.0.0.0", :Port => 9999&#x000A;)</pre>
+          <p>Here's a possible way of configuring how an application provides HTTP caching headers based on URL path patterns.</p>
+          <pre>&#x000A;Rack::CacheHeaders.configure do |cache|&#x000A;  cache.max_age("/rock", 3600)&#x000A;  cache.expires("/metal", "16:00")&#x000A;end</pre>
+          <p>Following is a potential implementation for the above.</p>
+          <pre>&#x000A;module Rack&#x000A;  class CacheHeaders&#x000A;    def initialize(app)&#x000A;      @app = app&#x000A;    end&#x000A;&#x000A;    def call(env)&#x000A;      result = @app.call(env)&#x000A;      header = Configuration[env['PATH_INFO']].to_header&#x000A;      result[1][header.key] = header.value&#x000A;      result&#x000A;    end&#x000A;&#x000A;    def self.configure(&amp;block)&#x000A;      yield Configuration&#x000A;    end&#x000A;&#x000A;    class Configuration&#x000A;      def self.max_age(path, duration)&#x000A;        paths[path] = MaxAge.new(duration)&#x000A;      end&#x000A;&#x000A;      def self.expires(path, date)&#x000A;        paths[path] = Expires.new(date)&#x000A;      end&#x000A;&#x000A;      def self.[](key)&#x000A;        paths[key]&#x000A;      end&#x000A;&#x000A;      def self.paths&#x000A;        @paths ||= {}&#x000A;      end&#x000A;    end&#x000A;    &#x000A;    class MaxAge&#x000A;      def initialize(duration)&#x000A;        @duration = duration&#x000A;      end&#x000A;      &#x000A;      def to_header&#x000A;        Header.new("Cache-Control", "max-age=, must-revalidate")&#x000A;      end&#x000A;    end&#x000A;    &#x000A;    class Expires&#x000A;      def initialize(date)&#x000A;        @date = date&#x000A;      end&#x000A;      &#x000A;      def to_header&#x000A;        Header.new("Expires", Time.parse(@date).httpdate)&#x000A;      end&#x000A;    end&#x000A;    &#x000A;    class Header &lt; Struct.new(:key, :value);end&#x000A;  end&#x000A;end</pre>
+          <p>The code below is a minimal Rack based application.</p>
+          <pre>&#x000A;require "rubygems"&#x000A;require "rack"&#x000A;&#x000A;app = proc {|env| [200, {"Content-Type" => "text/plain"}, "hello"]}&#x000A;&#x000A;Rack::Handler::Mongrel.run(&#x000A;  Rack::Lint.new(&#x000A;    Rack::CacheHeaders.new(app)&#x000A;  ), :Host => "0.0.0.0", :Port => 9999&#x000A;)</pre>
+          <p>
+            In order to observe the caching related headers the application's responses are decorated with we can use
+            <code>curl</code>
+            or something similar, i.e
+            <code>curl -I http://0.0.0.0:9999/rock</code>
+            or
+            <code>curl -I http://0.0.0.0:9999/metal</code>.
+            Output should look something like the following.
+          </p>
+          <pre>&#x000A;air:~ gmalamid$ curl -I http://0.0.0.0:9999/rock&#x000A;HTTP/1.1 200 OK&#x000A;Connection: close&#x000A;Date: Sat, 08 Nov 2008 00:51:23 GMT&#x000A;Cache-Control: max-age=3600, must-revalidate&#x000A;Content-Type: text/plain&#x000A;Content-Length: 5&#x000A;&#x000A;air:~ gmalamid$ curl -I http://0.0.0.0:9999/metal&#x000A;HTTP/1.1 200 OK&#x000A;Connection: close&#x000A;Date: Sat, 08 Nov 2008 00:51:16 GMT&#x000A;Content-Type: text/plain&#x000A;Expires: Sat, 08 Nov 2008 16:00:00 GMT&#x000A;Content-Length: 5</pre>
+          <p>
+            Understanding and employing HTTP cache configuration not only enables harnessing the power of tools like
+            <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>
+            or
+            <a href="http://www.squid-cache.org/" title="squid : Optimising Web Delivery">Squid</a>,
+            it also makes good citizens in a diverse ecosystem of HTTP aware browsers and caches outside an application's knowledge or control.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Nov 02 2008</span>
+          </div>
+          <h2 class="title">HTTP accelerator cache purging</h2>
+          <p>
+            The use of an HTTP accelerator such as
+            <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>
+            or
+            <a href="http://www.squid-cache.org/" title="squid : Optimising Web Delivery">Squid</a>
+            in reverse proxy/accelerator mode can drastically improve a web application's content delivery capabilities. Successfully implementing caching comes with numerous challenges but the fundamental goal is straightforward: A stack's dynamic content generating layer should ideally not have to generate the same content more than once.
+          </p>
+          <pre>&#x000A;require "rubygems"&#x000A;require "sinatra"&#x000A;&#x000A;def guitars&#x000A;  @@guitars ||= ['Les Paul', 'SG']&#x000A;end&#x000A;&#x000A;get "/guitars" do&#x000A;  guitars * ', '&#x000A;end</pre>
+          <p>
+            This application exposes a
+            <code>/guitars</code>
+            resource, a request for which will always hit the application server if no caching has been in place. This can prove suboptimal had this been a high traffic website, especially if the operation of generating the content is system resource intensive. Luckily this problem has been solved before. A running instance of Varnish, for example, will only require the following configuration to enable caching of all resources the application serves.
+          </p>
+          <pre>&#x000A;backend default {&#x000A;  .host = "127.0.0.1";&#x000A;  .port = "4567";&#x000A;}</pre>
+          <p>
+            One of the challenges associated with caching has to do with the cached content's freshness. We want to relieve server stress as much as possible, but we also need our application's consumers to receive correct data at all times. Let's assume that the application contacts guitar manufacturers' websites once a day to refresh its inventory and we have scheduled this operation to complete at 16:00 every day. This suggests that the cached resource should be refreshed every day at four o'clock in the afternoon to reflect the latest list of available guitar models. One of the ways of achieving this in HTTP is by making use of the
+            <code>Expires</code>
+            header, whose semantics are understood by (hopefully) any caching aware HTTP component.
+          </p>
+          <pre>&#x000A;require "time"&#x000A;&#x000A;get "/guitars" do&#x000A;  headers "Expires" => Time.parse("16:00").httpdate&#x000A;  guitars * ', '&#x000A;end</pre>
+          <p>Things aren't always as straightforward. In many cases we cannot fully control the exact time or frequency a resource's content changes. The example application also comes with an admin interface, allowing the guitar list administrators to manually enter new guitar models.</p>
+          <pre>&#x000A;post "/guitars" do&#x000A;  guitars &lt;&lt; params["guitar"]&#x000A;  redirect("/guitars")&#x000A;end</pre>
+          <p>
+            It is clear that a means for arbitrary expiration of cached content needs to be available in order to maintain content freshness. With Varnish, this capability comes in two flavors, one of which involves the use of a
+            <code>PURGE</code>
+            HTTP call. The following configuration enables this functionality.
+          </p>
+          <pre>&#x000A;acl purge {&#x000A;  "localhost";&#x000A;}&#x000A;&#x000A;sub vcl_recv {&#x000A;  if (req.request == "PURGE") {&#x000A;    if (!client.ip ~ purge) {&#x000A;      error 405 "Not allowed.";&#x000A;    }&#x000A;    lookup;&#x000A;  }&#x000A;}&#x000A;&#x000A;sub vcl_hit {&#x000A;  if (req.request == "PURGE") {&#x000A;    set obj.ttl = 0s;&#x000A;    error 200 "Purged.";&#x000A;  }&#x000A;}&#x000A;&#x000A;sub vcl_miss {&#x000A;  if (req.request == "PURGE") {&#x000A;    error 404 "Not in cache.";&#x000A;  }&#x000A;}</pre>
+          <p>
+            To natively make use of this in Ruby, we need to extend the
+            <code>Net::HTTP</code>
+            library to support the
+            <code>PURGE</code>
+            method.
+          </p>
+          <pre>&#x000A;require "net/http"&#x000A;require "uri"&#x000A;&#x000A;module Net&#x000A;  class HTTP&#x000A;    class Purge &lt; HTTPRequest&#x000A;      METHOD = "PURGE"&#x000A;      REQUEST_HAS_BODY = false&#x000A;      RESPONSE_HAS_BODY = false&#x000A;    end&#x000A;  &#x000A;    def purge(path, initheader=nil)&#x000A;      request(Purge.new(path, initheader))&#x000A;    end&#x000A;  end&#x000A;end&#x000A;&#x000A;def purge_cache(u)&#x000A;  uri = URI.parse(u)&#x000A;  query = "?#{uri.query}" if uri.query&#x000A;  Net::HTTP.new(uri.host, uri.port).start {|h| h.purge("#{uri.path}#{query}")}&#x000A;end</pre>
+          <p>
+            Now we can expire the cached
+            <code>/guitars</code>
+            resource every time the list is amended.
+          </p>
+          <pre>&#x000A;post "/guitars" do&#x000A;  guitars &lt;&lt; params["guitar"]&#x000A;  purge_cache("http://localhost/guitars")&#x000A;  redirect("/guitars")&#x000A;end</pre>
+          <p>
+            Although this method is effective, there can be cases where the bidirectional coupling between the application and caching layers might be undesirable. With the fundamental functional pieces in place, however, it is not hard to implement a more elaborate strategy such as the one described in
+            <a href="http://www.mnot.net/cache_channels/" title="HTTP Cache Channels">Cache Channels</a>
+            in order to reduce the application layer's knowledge of the caching infrastructure.
+          </p>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              Our
+              <a href="http://www.testkings.com/exam/640-863.htm">testking 640-863</a>
+              training material includes everything to help you prepare for real exam. Boost up your expert knowledge using
+              <a href="http://www.testkings.com/exam/642-436.htm">testking 642-436</a>
+              tutorials and
+              <a href="http://www.testkings.com/exam/220-702.htm">testking 220-702</a>
+              study guide.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

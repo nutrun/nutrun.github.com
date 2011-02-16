@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Sep 09 2008</span>
+          </div>
+          <h2 class="title">EventMachine MapReduce</h2>
+          <p>
+            <a href="http://labs.google.com/papers/mapreduce.html" title="Google Research Publication: MapReduce">MapReduce</a>
+            is a parallel computation strategy useful for scaling large data set processing by distributing workload over multiple worker nodes. The distributed nature of MapReduce suggests network communication and, with that in mind, I thought I'd put together a demonstration employing
+            <a href="http://rubyeventmachine.com/" title="Ruby / EventMachine - Trac">EventMachine</a>,
+            a library which makes efficient network programming relatively simple in Ruby.
+          </p>
+          <p>
+            Before going any further, I should mention that the code examples have not been optimized for production use, they only illustrate what's possible. Also, it's worth bringing up two established Ruby libraries for tackling similar problems,
+            <a href="http://rufy.com/starfish/doc/" title="Starfish - ridiculously easy distributed programming with Ruby">Starfish</a>
+            and
+            <a href="http://skynet.rubyforge.org/" title="space">Skynet</a>.
+            It's advisable that these existing options are investigated before delving into custom alternatives.
+          </p>
+          <p>
+            MapReduce essentially consists of two steps (although intermediate phases usually need be present for real world implementations),
+            <em>map</em>
+            and
+            <em>reduce</em>.
+            <em>map</em>
+            refers to the higher order function also known as
+            <em>transform</em>
+            or
+            <em>collect</em>
+            and is the operation that is typically distributed and involves a number of nodes performing the transformation of a data set into another set of data.
+            <em>reduce</em>
+            refers to the higher order function, sometimes called
+            <em>fold</em>,
+            <em>inject</em>
+            or other, which is in this case used for collecting the results of map to build a return value.
+          </p>
+          <p>Counting the number of word occurrences in a large number of documents is one of the examples most commonly used for describing MapReduce. A number of distributed jobs is spawned, splitting document contents into words. The results of these operations are passed to a reduce process whose job is to sum its input.</p>
+          <p>Map processes can be EventMachine servers. We can have an arbitrary number of those running on a number of physical nodes.</p>
+          <pre>&#x000A;module Map&#x000A;  def receive_data(path)&#x000A;    document = File.read(path)&#x000A;    word_counts = document.split(' ').map { |word| [word, 1] }&#x000A;    send_data(Marshal.dump(word_counts))&#x000A;    close_connection_after_writing&#x000A;  end&#x000A;end&#x000A;&#x000A;EM.run {EM.start_server("localhost", 5555, Map)}</pre>
+          <p>A reduce process can send job requests to those servers, receive and process the results.</p>
+          <pre>&#x000A;class Reduce &lt; EM::Connection&#x000A;  @@all = []&#x000A;  &#x000A;  def initialize(*args)&#x000A;    super&#x000A;    @doc, @data = args[0], ''&#x000A;  end&#x000A;  &#x000A;  def post_init&#x000A;    send_data(@doc)&#x000A;  end&#x000A;  &#x000A;  def receive_data(data)&#x000A;    @data &lt;&lt; data&#x000A;  end&#x000A;  &#x000A;  def unbind&#x000A;    Reduce.job_completed&#x000A;    @@all += Marshal.load(@data)&#x000A;    unless Reduce.pending_jobs?&#x000A;      groups = @@all.group_by {|word| word[0] }&#x000A;      groups.each { |g| p "#{g[0]} : #{g[1].size}" }&#x000A;      EM.stop&#x000A;    end&#x000A;  end&#x000A;  &#x000A;  def self.send_map_job(port, doc)&#x000A;    @job_count ||= 0&#x000A;    increment_job_count&#x000A;    EM.connect("localhost", port, Reduce, doc)&#x000A;  end&#x000A;  &#x000A;  def self.increment_job_count&#x000A;    @job_count += 1&#x000A;  end&#x000A;  &#x000A;  def self.pending_jobs?&#x000A;    @job_count != 0&#x000A;  end&#x000A;  &#x000A;  def self.job_completed&#x000A;    @job_count -= 1&#x000A;  end&#x000A;end&#x000A;&#x000A;EM.run do&#x000A;  {&#x000A;    5555 => 'docs/america.txt', &#x000A;    6666 => 'docs/da-vinci.txt'&#x000A;  }.each { |port, doc| Reduce.send_map_job(port, doc) }&#x000A;end</pre>
+          <p>The example lacks plumbing code which would make things flexible enough and, as you might have noticed, works on a single node (localhost), but hopefully illustrates a mechanism for distributing workload over a networked farm.</p>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              The
+              <a href="http://www.testkings.com/exam/350-030.htm">testking 350-030</a>
+              online preparation course is guaranteed way to pass real exam on time. Sign up for
+              <a href="http://www.testkings.com/exam/642-642.htm">testking 642-642</a>
+              training and pass real exam on first try using
+              <a href="http://www.testkings.com/exam/PMI-001.htm">testking PMI-001</a>
+              study pack.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

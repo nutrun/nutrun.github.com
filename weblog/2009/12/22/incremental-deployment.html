@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Dec 22 2009</span>
+          </div>
+          <h2 class="title">Incremental deployment</h2>
+          <p>
+            I've recently had a chance to look at a high availability system designed and built by
+            <a href="http://www.forward.co.uk/" title="Forward: Connecting business with customers and people with products online">Forward</a>
+            colleagues
+            <a href="http://adkent.com/" title="adkent.com">Andy Kent</a>
+            and
+            <a href="http://oobaloo.co.uk/" title="Paul Ingles - Articles">Paul Ingles</a>.
+            It is a critical web service with a very high impact of failure. Essentially, it
+            <b>must</b>
+            stay up at all times.
+          </p>
+          <p>
+            The service is hosted on
+            <a href="http://aws.amazon.com/ec2/" title="Amazon Elastic Compute Cloud (Amazon EC2)">Amazon EC2</a>.
+            It makes use of EC2's geographically distributed regions and different availability zones within each region, fronted by
+            <a href="http://aws.amazon.com/elasticloadbalancing/" title="Elastic Load Balancing">AWS Elastic Load Balancing</a>
+            and additional global DNS fail over outside of EC2/AWS.
+          </p>
+          <p>
+            <a href="http://www.flickr.com/photos/nutrun/4206247218/" title="high-availability-arch by nutrunflickr, on Flickr">
+              <img alt="high-availability-arch" height="309" src="http://farm5.static.flickr.com/4008/4206247218_4b8f165e0b_o.png" width="497" />
+            </a>
+          </p>
+          <p>A part of the project that struck me as particularly interesting is the deployment strategy Paul and Andy settled on. Regardless of how much trust we have in our builds and QA process, deployments become a whole different, much more stressful activity when critical systems like the one under discussion are involved. Andy mentioned it is important to find the balance between what to automate and bits that should require manual input.</p>
+          <pre>&#x000A;# deploy.rb&#x000A;&#x000A;task :us_1b do&#x000A;  set :region, 'us-east-1'&#x000A;  set :servers, us_1b&#x000A;  # More US 1b specific setup...&#x000A;end&#x000A;&#x000A;task :eu_1a do&#x000A;  set :region, 'eu-west-1'&#x000A;  set :servers, eu_1a&#x000A;  # More EU 1a specific setup...&#x000A;end</pre>
+          <p>
+            This service is
+            <em>incrementally deployed one availability zone at a time</em>,
+            e.g.
+            <code>cap us_1b deploy</code>.
+            Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

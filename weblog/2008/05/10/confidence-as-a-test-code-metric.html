@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">May 10 2008</span>
+          </div>
+          <h2 class="title">Confidence as a test code metric</h2>
+          <p>
+            With testing occupying a major part of our development process, we have often attempted to quantify test code quality. Like many things, it is worth considering how test code ultimately manifests itself in terms of added value. This is why
+            <a href="http://no-new-ideas.blogspot.com/" title="No New Ideas">Stuart</a>
+            and I recently tend to conclude that, stripped from technically granular details, test code must fundamentally contribute in building confidence that the system under test is complete, a proof that what we've built is and will continue working as intended.
+          </p>
+          <p>A working system fulfilling its business objectives can be considered complete enough, but, if not easily extensible and maintainable, will not grant itself to the conclusion of being as good as it can be. Advancements in software development methodologies that assist in delivering working software that is easy to extend and maintain - higher level abstractions, modeling and design - have been driven by the need to reduce technical debt. Technical debt can be viewed as the cost of change.</p>
+          <p>Test code is code, too. As code bases grow more elaborate, test code also suffers from technical debt, demanding methods to eliminate the factors that hinder its maintainability and extensibility. Present procedures geared towards extensible and maintainable test code are habitually counter-proportional to the amount of confidence they achieve.</p>
+          <p class="centered">
+            <img alt="The confidence scale" class="boxed" src="http://farm4.static.flickr.com/3143/2479820537_9f597a7c42.jpg" />
+          </p>
+          <p>
+            The different categories on the scale are not mutually exclusive, in fact they are commonly combined as members of a suite that exercises the system in various degrees of instrumentation. Walking the scale from left (empty) to right (full), we move from tests that are generally easier to write, understand, run and maintain but at the same time are less representative of the
+            <em>real</em>
+            system with all its components integrated.
+          </p>
+          <p>Dependency neutral tests with all of the tested component's dependencies stubbed are disconnected, vaguely describe how the component interacts with its environment and offer minimal proof that the component will work as specified once a member of the application ecosystem.</p>
+          <p>The fundamental difference between interaction based dependency neutral tests and their stubbed counterparts is the accurate interaction specification of collaborating components through the use of mock objects instead of stubs. Here, we concentrate on specifying the contract of communication between two components. Although much closer to how the actual system operates, these tests are still disconnected. Despite the accurate specification of the interaction, we have don't have complete proof that the pieces fit. In particular, interaction based dependency neutral tests do not offer proof that the mocked collaborators have been tested to work.</p>
+          <p>It becomes apparent that the major flaw of interaction based dependency neutral tests is their disconnect from their peers.</p>
+          <p>As we move towards the "full" side of the confidence scale, tests tend to become larger and more complicated. Wired tests draw a picture much closer to that of the system in its entire form but suffer from poor defect localization (test failures are not always directly related to the intent of the specific test) and disrespect encapsulation (setup code often exposes the behavior of components irrelevant to the context of the current test). The dependency wired tests' contribution to technical debt is much more significant.</p>
+          <p>
+            Understanding the importance of confidence in our system and aiming to reduce technical debt,
+            <a href="http://synthesis.rubyforge.org/" title="synthesis">Synthesized Testing</a>
+            suggests a solution that attempts to rectify the disconnect of lightweight, interaction based dependency neutral tests and reduce the need of overarching, prone to technical debt dependency wired tests.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">May 03 2007</span>
+          </div>
+          <h2 class="title">Illiterate programming</h2>
+          <cite>Programs must be written for people to read, and only incidentally for machines to execute.</cite>
+          <p>
+            The above citation from Harold Abelson and Gerald Jay Sussman's
+            <em>Structure and Interpretation of Computer Programs</em>
+            encapsulates the growing trend of what has for some time now been coined as
+            <a href="http://en.wikipedia.org/wiki/Literate_programming" title="Literate Programming">Literate Programming</a>.
+            Programming has come a long way since the days of Assembler in terms of human-friendliness, but, as with many other programming best practices making it into the mainstream, code literacy is often misunderstood and misused.
+          </p>
+          <p>
+            I have to say at this point that I do not one hundred percent agree with the
+            <em>"programs are meant to be read by people"</em>
+            notion. That is because programs are written by and meant to be understood by a very narrow subset of People:
+            <em>Programmers</em>.
+          </p>
+          <p>
+            Naively making code
+            <em>read like English</em>
+            hides many dangers that could result in reducing productivity, making software less efficient or introducing bugs. That is, of course, not meant to be interpreted as
+            <em>
+              name your methods
+              <code>chk_str_ptr()</code>
+            </em>,
+            more like
+            <em>approach with caution</em>
+            and
+            <em>make your code meaningful to your peers (the other programmers) instead of someone who has never seen and is unlikely to ever see anything resembling code</em>.
+          </p>
+          <p>
+            It is safe to assume that all developers are competent in their native tongue. Because writing code that reads like a spoken language is easier than writing
+            <em>good</em>
+            code, many developers tend to get carried away, shifting their main focus to that aspect of their work.
+          </p>
+          <p>
+            Syntactic sugar (not the
+            <a href="http://feeds.feedburner.com/~r/raganwald/~3/112871213/writing-programs-for-people-to-read.html">good kind</a>)
+            often boils down to wrapping code that does the actual work. This, if not performed with great attention, usually results to adding a few extra layers of complexity for anyone trying to figure out what the code does. The moment something like
+            <code>submit_the_payment_and_send_a_message_to_the_customer</code>
+            <small>(spot the anti-pattern here?)</small>
+            somehow doesn't send messages to the customer, while making a couple of redundant roundtrips to the database, we're in trouble.
+          </p>
+          <p>
+            Expressive code does not necessarily share
+            <em>that</em>
+            many traits with what is considered to be expressive in a spoken language. Take Ruby, arguably one of the most expressive programming languages, for instance. What makes Ruby expressive is how it will enable a programmer to write code like
+            <code>conditions ||= parameters.delete_if { |p| Customer.respond_to?(p) }</code>.
+            This will probably not mean a lot to the average English speaker, it is however one of the reasons Ruby programmers are so passionate about the language.
+          </p>
+          <p>
+            On the flip-side, Rails, one of the most semantically challenging APIs, suffers some performance issues, largely due to the efforts to make the API read and behave the way it does.
+          </p>
+          <p>
+            Decorating code with the sole intention of making it resemble a spoken language violates the principle of
+            <strong>Simplicity</strong>.
+            Paul Graham describes this symptom very well in
+            <a href="http://www.paulgraham.com/taste.html" title="Taste for Makers">Taste for Makers</a>:
+          </p>
+          <p>
+            <cite>It seems strange to have to emphasize simplicity. You'd think simple would be the default. Ornate is more work. But something seems to come over people when they try to be creative. [...] When you're forced to be simple, you're forced to face the real problem. When you can't deliver ornament, you have to deliver substance.</cite>
+          </p>
+          <p>
+            When coding, it pays to remember that good code primarily means
+            <em>code that is as bug free, efficient, scalable and maintainable as possible</em>.
+            Any other improvement must be sought after, but not if it compromises any of these core values.
+          </p>
+          <p>
+            Elegant is the code that presents a simple solution to a complex problem, not the one that hides complexity behind a simplistic fa&ccedil;ade.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

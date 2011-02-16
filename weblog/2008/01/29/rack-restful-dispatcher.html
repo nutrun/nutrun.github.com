@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jan 29 2008</span>
+          </div>
+          <h2 class="title">Rack RESTful Dispatcher</h2>
+          <p>
+            Quoting the authors,
+            <q>
+              <a href="http://rack.rubyforge.org/doc/" title="Rack Documentation">Rack</a>
+              provides a minimal, modular and adaptable interface for developing web applications in Ruby. By wrapping HTTP requests and responses in the simplest way possible, it unifies and distills the API for web servers, web frameworks, and software in between (the so-called middleware) into a single method call
+            </q>.
+          </p>
+          <p>
+            To test the theory in practice, I put together a superficial interface for writing RESTful HTTP services by implementing any of the
+            <em>DELETE</em>,
+            <em>GET</em>,
+            <em>POST</em>,
+            <em>PUT</em>,
+            etc HTTP verbs in Ruby classes.
+          </p>
+          <pre>&#x000A;require "rubygems"&#x000A;require "rack"&#x000A;&#x000A;module RestfulDispatcher&#x000A;  def call(env)&#x000A;    request = Rack::Request.new(env)&#x000A;    dispatcher = dispatcher_class.new(request)&#x000A;    body = dispatcher.send(request.request_method.downcase)&#x000A;    [200, {'Content-Type' => dispatcher.content_type}, body]&#x000A;  end&#x000A;&#x000A;  def dispatcher_class&#x000A;    @dispatcher ||= Class.new(self.class) do&#x000A;      attr_accessor :content_type&#x000A;&#x000A;      def initialize(request)&#x000A;        @request, @content_type = request, 'text/xml'&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;&#x000A;  module SingletonMethods&#x000A;    def start(handler, host, port)&#x000A;      handler.run Rack::Lint.new(self.new), :Host => host, :Port => port&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend SingletonMethods&#x000A;  end&#x000A;end</pre>
+          <p>
+            Let's examine the example one method at a time.
+          </p>
+          <p>
+            All Rack applications must implement one method -
+            <code>call</code>
+            - which accepts one argument, the
+            <em>environment</em>,
+            which encapsulates data relevant to the HTTP roundtrip. The
+            <code>call</code>
+            method must return an array of 3 items: a greater than 100 integer representation of the response status, a hash holding name/value pairs representing the response's header entries and an array of strings - the body of the response.
+          </p>
+          <p>
+            In the case of the
+            <code>RestfulDispatcher</code>
+            module,
+            <code>call</code>
+            first wraps
+            <code>env</code>
+            in
+            <code>Rack::Request</code>,
+            a convenient and stateless interface to the Rack environment. We then create a new instance of a dispatcher class passing it the Rack Request. We will revisit this in more detail when talking about the
+            <code>dispatcher_class</code>
+            method. Instantiating a new dispatcher to handle the request should keep things thread safe. We then call a method on the dispatcher instance corresponding to the HTTP verb included in the request. This call should return the response body. Finally, adhering to the Rack standard, we return an array containing the response status code, headers and body.
+          </p>
+          <p>
+            <code>dispatcher_class</code>
+            creates a new class by subclassing the service we will be defining and giving it a constructor that accepts a request object. We also expose the content_type field, in case we want to override it anywhere in our service's implementation.
+          </p>
+          <p>
+            Finally, we provide a
+            <code>start</code>
+            singleton method which we can call to start the service.
+          </p>
+          <p>
+            Mixing the
+            <code>RestfulDispatcher</code>
+            module in a class will effectively enable the class to act as a standalone RESTful service. All we need to do is implement instance methods that correspond to the HTTP verbs we want the service to respond to.
+          </p>
+          <pre>&#x000A;class FooService&#x000A;  include RestfulDispatcher&#x000A;&#x000A;  def get&#x000A;    "&lt;test&gt;&lt;/test&gt;"&#x000A;  end&#x000A;end&#x000A;&#x000A;require "thin"&#x000A;FooService.start Rack::Handler::Thin, '127.0.0.1', 2323</pre>
+          <p>
+            Rack::Request#GET conveniently returns the data received in the request query string (e.g
+            <code>http://127.0.0.1/?key=hello</code>)
+            as a hash.
+          </p>
+          <p>
+            Thanks to Rack's modular nature, switching from
+            <a href="http://code.macournoyer.com/thin/" title="Thin - yet another web server">Thin</a>
+            to Mongrel is as easy as replacing the last two lines of the code above with:
+          </p>
+          <pre>&#x000A;require "mongrel"&#x000A;FooService.start Rack::Handler::Mongrel, '127.0.0.1', 2323</pre>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              Join
+              <a href="http://www.testkings.com/exam/CISSP.htm">testking CISSP</a>
+              training program to prepare for real exam and get guaranteed success using
+              <a href="http://www.testkings.com/exam/70-649.htm">testking 70-649</a>
+              practice questions and
+              <a href="http://www.testkings.com/exam/220-701.htm">testking 220-701</a>
+              practice test.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

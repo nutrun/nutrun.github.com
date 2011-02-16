@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Sep 13 2007</span>
+          </div>
+          <h2 class="title">Rails Inline Fixtures</h2>
+          <p>
+            Rails
+            <a href="http://rails.rubyonrails.com/classes/Fixtures.html" title="Class: Fixtures">Fixures</a>
+            provide a way of organizing sample data to be used in tests. Traditionally, they reside under the
+            <code>test/fixtures</code>
+            directory of a Rails application.
+          </p>
+          <p>
+            One of the nice things about fixtures is the declarative nature of their authoring and the simple syntax of their platform (<a href="http://www.yaml.org/" title="YAML Ain't Markup Language">YAML</a>). They are clear, easy to read, short and concise.
+          </p>
+          <p>
+            One implication that results from using fixtures in accordance to the above strategy is that the data under test is not directly visible in the test itself, i.e. one needs to navigate to a different file to verify parts of the test's setup.
+          </p>
+          <p>
+            At the same time, the more these fixtures start being shared by more and more tests, the more difficult it becomes to keep them organized in a way that makes one fixture's data directly appropriate for each of the tests that are using it. For example, a fixture,
+            <code>songs.yml</code>,
+            is being used by a unit test that requires two song entries, whereas the acceptance test for the songs page's pagination logic requires 25 songs to be created. The
+            <code>fixtures :songs</code>
+            directive in the song unit test will happily create 25 fixtures each time, 23 of which are never used.
+          </p>
+          <p>
+            It might be useful to be able to declare fixtures inline on a per test or test case basis, while maintaining the effective, elegant syntax. The code bellow is an attempt to this direction.
+          </p>
+          [ruby]
+          module InlineFixtures
+          def delete_fixtures(table_name)
+          ActiveRecord::Base.connection.delete "DELETE FROM #{table_name}", 'Fixture Delete'
+          end
+          def load_inline_fixtures(table_name_sym, inline_fixture)
+          table_name = table_name_sym.to_s
+          delete_fixtures table_name
+          yaml_fixture = YAML.load inline_fixture
+          yaml_fixture.values.map do |f|
+          fixture = Fixture.new f, table_name
+          ActiveRecord::Base.connection.execute "INSERT INTO `#{table_name}` (#{fixture.key_list}) VALUES (#{fixture.value_list})", 'Fixture Insert'
+          end
+          end
+          alias :___ :load_inline_fixtures
+          end
+          [/ruby]
+          <p>
+            Including the
+            <code>InlineFixtures</code>
+            module allows for code that can be used anywhere inside a ruby script and looks like this:
+          </p>
+          [ruby]
+          class SongTest < Test::Unit::TestCase
+          include InlineFixtures
+          def test_can_count
+          ___ :songs, %(
+          one:
+          title: orion
+          band: metallica
+          two:
+          title: legs
+          band: zztop
+          )
+          assert_equal 2, Song.count
+          end
+          end
+          [/ruby]
+          <p>
+            This technique has proven to be particularly useful in our
+            <a href="http://www.openqa.org/selenium-on-rails/" title="Selenium on Rails:">Selenium On Rails</a>
+            tests (written in
+            <a href="http://svn.openqa.org/fisheye/browse/~raw,r=1000/selenium-on-rails/selenium-on-rails/doc/classes/SeleniumOnRails/RSelenese.html" title="Class: SeleniumOnRails::RSelenese">rselenese</a>),
+            as these tests commonly require the most elaborate database setup.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

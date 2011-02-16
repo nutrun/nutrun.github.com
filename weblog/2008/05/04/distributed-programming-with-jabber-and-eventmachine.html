@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">May 04 2008</span>
+          </div>
+          <h2 class="title">Distributed programming with Jabber and EventMachine</h2>
+          <p>
+            <a href="http://www.jabber.org/" title="Jabber.org | open instant messaging and presence">Jabber</a>
+            and its underlying protocol
+            <a href="http://www.xmpp.org/" title="XMPP Standards Foundation">XMPP</a>
+            are typically associated with instant messaging applications, although the breadth and flexibility of the technology allows for implementations that can span further from traditional online chatting.
+          </p>
+          <p>
+            <a href="http://www.ejabberd.im/" title="ejabberd Community Site | the Erlang Jabber/XMPP daemon">ejabberd</a>
+            is a fault tolerant and clusterable Jabber/XMPP server written in
+            <a href="http://www.erlang.org/" title="Erlang">Erlang</a>
+            and presents an interesting option as a simple, lightweight and scalable message transport for distributed applications.
+          </p>
+          <p>
+            <a href="http://rubyforge.org/projects/eventmachine/" title="RubyForge: Ruby/EventMachine: Project Info">EventMachine</a>
+            is a simple and fast library for lightweight concurrency in Ruby. Its use mainly involves, but is not limited to, spawning lightweight processes whose execution can be programatically scheduled, easy and fast socket abstractions and an implementation of the Deferrable pattern as introduced by the
+            <a href="http://twistedmatrix.com/trac/" title="Twisted">Twisted</a>
+            event-driven Python networking engine.
+          </p>
+          <p>
+            When a Ruby class includes the
+            <code>EventMachine::Deferrable</code>
+            module, it is provided with the ability to accept arbitrary callbacks and errbacks that will get executed when its deferred status changes, in particular when it is set to either
+            <code>:succeeded</code>
+            or
+            <code>:failed</code>.
+            Let's look at a deferrable
+            <code>Worker</code>
+            class which performs a potentially long running operation.
+          </p>
+          <pre>&#x000A;class Worker&#x000A;  include EM::Deferrable&#x000A;&#x000A;  def heavy_lifting&#x000A;    30.times do |i|&#x000A;      puts "Lifted #{i}"&#x000A;      sleep 0.1&#x000A;    end&#x000A;    set_deferred_status :succeeded&#x000A;  end&#x000A;end</pre>
+          <p>
+            Inside an EventMachine loop, we can add callbacks to a
+            <code>Worker</code>
+            instance and dispatch the expensive operation to a separate thread, or an evented process. The program's execution will continue, with any callbacks attached to
+            <code>Worker</code>
+            executed once its deferred status is set.
+          </p>
+          <pre>&#x000A;EM.run do&#x000A;  worker = Worker.new&#x000A;  worker.callback {p "done!"}&#x000A;  Thread.new {worker.heavy_lifting; EM.stop}&#x000A;  puts "resuming remaining program operations"&#x000A;end</pre>
+          <p>
+            Now, let's look at combining
+            <code>Worker</code>
+            with Jabber to trigger long running jobs. For Jabber server duties, I am using ejabberd on an old laptop running Debian, but there's no reason why a mass online Jabber service like
+            <a href="http://www.google.com/talk/" title="Google Talk">Google Talk</a>
+            could not be used for playing around with the example. Also, I'm using the
+            <a href="http://xmpp4r-simple.rubyforge.org/" title="Jabber::Simple">xmpp4r-simple</a>
+            Ruby library, which is a wrapper around
+            <a href="http://home.gna.org/xmpp4r/" title="XMPP4R: XMPP/Jabber Library for Ruby">xmpp4r</a>.
+          </p>
+          <pre>&#x000A;jabber = Jabber::Simple.new("bot@thrash", "password")&#x000A;at_exit{jabber.status(:away, "jabot down")}&#x000A;&#x000A;EM.run do&#x000A;  EM::PeriodicTimer.new(1) do&#x000A;    jabber.received_messages do |message|&#x000A;      case message.body&#x000A;      when "exit" : EM.stop&#x000A;      when "lift" : &#x000A;        EM.spawn do&#x000A;          worker = Worker.new&#x000A;          worker.callback {jabber.deliver(message.from, "Done lifting")}&#x000A;          worker.heavy_lifting&#x000A;        end.notify&#x000A;        jabber.deliver(message.from, "Scheduled heavy job...")&#x000A;      else jabber.deliver(message.from, "Dunno how to #{message.body}")&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</pre>
+          <p>
+            Inside an EventMachine loop, we check for new messages every second. The program understands two commands,
+            <code>exit</code>
+            and
+            <code>lift</code>.
+            The first quits the EventMachine loop and ultimately terminates the program's execution. When
+            <code>lift</code>
+            is received, we instantiate a new
+            <code>Worker</code>
+            inside a spawned process and add a callback so that the
+            <code>Worker</code>
+            will notify the command issuer when the job has completed. Worth noting is the use of
+            <code>notify</code>
+            to schedule the spawned process.
+            <code>notify</code>
+            returns immediately making work dispatch non-blocking - upon issuing a
+            <code>lift</code>
+            command twice, a "Scheduled heavy job..." message will be sent to the job issuer twice before the first job completes.
+          </p>
+          <p>
+            I use
+            <a href="http://www.adiumx.com/" title="Adium - Download">Adium</a>
+            to send commands to the program - an interesting way of remote controlling or interacting with applications. Of course, the real interest lies in using the setup under discussion for inter-app communication. With multicast options, presence discovery, node status updates and more, there is lot to explore in terms of distributed application development, if
+            <em>simple</em>
+            and
+            <em>lightweight</em>
+            are two keywords to be found on the highest ranks of your list.
+          </p>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              Guaranteed pass you real exam with
+              <a href="http://www.testkings.com/exam/VCP-410.htm">testking VCP-410</a>
+              course. Sign up for
+              <a href="http://www.testkings.com/exam/350-001.htm">testking 350-001</a>
+              online training program and get guaranteed success using self study
+              <a href="http://www.testkings.com/exam/640-802.htm">testking 640-802</a>
+              preparation material.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

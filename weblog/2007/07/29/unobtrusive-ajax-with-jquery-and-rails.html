@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jul 29 2007</span>
+          </div>
+          <h2 class="title">Unobtrusive AJAX with jQuery and Rails</h2>
+          <p>
+            Whilst having become one of the de facto practices for rich web based user experience, AJAX presents a valuable method for web application performance optimization. In this article, I will be discussing using
+            <a href="http://jquery.com" title="jQuery">jQuery</a>
+            alongside Rails in an effort to create fast, responsive AJAX operations, while keeping the javascript as unobtrusive to the application's mark up as possible.
+          </p>
+          <p>
+            Let's start by creating a new Rails project with one Model,
+            <code>Bookmark</code>
+            that has one property,
+            <code>link</code>.
+          </p>
+          <pre>&#x000A;rails -d sqlite3 bookmarks&#x000A;cd bookmarks&#x000A;script/generate model Bookmark link:string&#x000A;script/generate controller Bookmarks&#x000A;rake db:migrate</pre>
+          <p>
+            We create
+            <code>app/views/layouts/bookmarks.rhtml</code>,
+            the layout for the Bookmarks Controller where we can include the javascript libraries needed by the application. These are jQuery, the
+            <a href="http://www.malsup.com/jquery/form/" title="jQuery Form Plugin">jQuery Form Plugin</a>
+            and
+            <code>application.js</code>
+            which will contain any custom javascript we will be writing.
+          </p>
+          <pre>&#x000A;&lt;html&gt;&#x000A;&lt;head&gt;&#x000A;  &lt;meta http-equiv="Content-type" content="text/html; charset=utf-8"&gt;&#x000A;  &lt;title&gt;index&lt;/title&gt;&#x000A;  &lt;script type="text/javascript" src="/javascripts/jquery-1.1.3.1.pack.js"&gt;&lt;/script&gt;&#x000A;  &lt;script type="text/javascript" src="/javascripts/jquery.form.js"&gt;&lt;/script&gt;&#x000A;  &lt;script type="text/javascript" src="/javascripts/application.js"&gt;&lt;/script&gt;&#x000A;&lt;/head&gt;&#x000A;&lt;body&gt;&#x000A;&lt;%=yield%&gt;&#x000A;&lt;/body&gt;&#x000A;&lt;/html&gt;</pre>
+          <p>
+            Next, we add
+            <code>app/views/bookmarks/index.rhtml</code>
+            and one partial,
+            <code>app/views/bookmarks/_bookmarks_list.rhtml</code>
+            which will contain the list of bookmarks that will be updated with AJAX calls to the controller's methods.
+          </p>
+          <pre>&#x000A;&lt;form method="post" action="/bookmarks/add" id="add-bookmark"&gt;&#x000A;  &lt;label for="bookmark-link"&gt;Bookmark:&lt;/label&gt;&#x000A;  &lt;input type="text" name="bookmark[link]" id="bookmark-link"/&gt;&#x000A;  &lt;input type="submit" value="Add"&gt;&#x000A;&lt;/form&gt;&#x000A;&lt;div id="bookmarks-list"&gt;&#x000A;  &lt;%= render :partial =&gt; 'bookmarks_list'%&gt;&#x000A;&lt;/div&gt;</pre>
+          <pre>&#x000A;&lt;% unless @bookmarks.empty? %&gt;&#x000A;&lt;ul&gt;&#x000A;  &lt;% for b in @bookmarks %&gt;&#x000A;  &lt;li&gt;&#x000A;    &lt;a href="&lt;%= b.link %&gt;"&gt;&lt;%= b.link %&gt;&lt;/a&gt;&#x000A;    &lt;a href="/bookmarks/delete/&lt;%= b.id %&gt;" class="delete"&gt;delete&lt;/a&gt;&#x000A;  &lt;/li&gt;&#x000A;  &lt;%end%&gt;&#x000A;&lt;/ul&gt;&#x000A;&lt;% end %&gt;</pre>
+          <p>
+            Below is a simplified version of the Controller that handles server side support for
+            <code>add</code>
+            and
+            <code>delete</code>
+            operations.
+          </p>
+          <pre>&#x000A;class BookmarksController &lt; ApplicationController&#x000A;  def index&#x000A;    @bookmarks = Bookmark.find(:all)&#x000A;  end&#x000A;&#x000A;  def add&#x000A;    if Bookmark.create(params[:bookmark]).valid?&#x000A;      @bookmarks = Bookmark.find(:all)&#x000A;      render :partial => "bookmarks_list"&#x000A;    else&#x000A;      render :text => "Oops...", :status => "500"&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def delete&#x000A;    Bookmark.destroy(params[:id])&#x000A;    @bookmarks = Bookmark.find(:all)&#x000A;    render :text => ""&#x000A;  end&#x000A;end</pre>
+          <p>
+            By rendering partials we are only updating a desired target sub-section of the mark up, cutting down the response content to a bare minimum and by doing so we should achieve a performance boost. Specifying a 500 HTTP error status code when things go wrong will allow our javascript to interpret a response as problematic.
+          </p>
+          <p>
+            Finally, here's the javascript for adding and deleting bookmarks and displaying error messages.
+          </p>
+          <pre>&#x000A;function hijackDeleteBookmarkLinks() {&#x000A;  $('#bookmarks-list a.delete').bind('click', function() {&#x000A;    var deleteLink = $(this)&#x000A;    $.ajax({&#x000A;      type: 'POST',&#x000A;      url: deleteLink.attr('href'),&#x000A;      success: function(){deleteLink.parent().remove()}&#x000A;    })&#x000A;    return false&#x000A;  })&#x000A;}&#x000A;&#x000A;function hijackAddBookmarkForm() {&#x000A;  $('#add-bookmark').submit(function() {&#x000A;    $(this).ajaxSubmit({&#x000A;      target: '#bookmarks-list',&#x000A;      clearForm: true,&#x000A;      success: hijackDeleteBookmarkLinks,&#x000A;      error: displayError&#x000A;    })&#x000A;    return false&#x000A;  })&#x000A;}&#x000A;&#x000A;function displayError(request, errorType) {&#x000A;  var msg = '&lt;div class="error"&gt;'+request.responseText+'(click to close)&lt;/div&gt;'&#x000A;  $('#bookmarks-list').append(msg)&#x000A;  $('.error').click(function(){$(this).hide()})&#x000A;}&#x000A;&#x000A;$(function() {&#x000A;  hijackAddBookmarkForm()&#x000A;  hijackDeleteBookmarkLinks()&#x000A;})</pre>
+          <p>
+            The
+            <code>hijackDeleteBookmarkLinks</code>
+            function intercepts click events on any link with class
+            <code>delete</code>
+            inside the
+            <code>bookmarks-list</code>
+            div and makes an asynchronous call to the link's original URL. Subsequent to a successful response, we dynamically remove the link list entry from the mark up.
+          </p>
+          <p>
+            It is worth noting the value of the
+            <code>url</code>
+            option to any of our AJAX calls. This should allow us to modify the request URL to anything  we like, meaning that we can have different actions corresponding to AJAX or non AJAX calls, making the application work as expected even if javascript is not available on the client. I have omitted this step for the sake of simplicity.
+          </p>
+          <p>
+            The
+            <code>target</code>
+            option in
+            <code>hijackAddBookmarkForm</code>
+            specifies the element to be updated with the contents of the response to the AJAX call. Also, we need to call
+            <code>hijackDeleteBookmarkLinks</code>
+            on the success of the AJAX call to ensure that any newly created links are bound by the function.
+          </p>
+          <h4>Issues to consider</h4>
+          <p>
+            The example has been simplified for demonstration purposes.
+          </p>
+          <p>
+            The proposed architecture tightly couples the client-side with the server-side implementation of the application. We are writing actions intended to be used solely by javascript and the javascript itself expects partial HTML to be returned by the responses. The API is nowhere near being RESTful.
+          </p>
+          <p>
+            We could have separate actions responsible for deleting, creating and listing bookmarks. Those actions could also return something more flexible, like JSON. The reason I chose to have
+            <code>create</code>
+            returning the updated list of bookmarks as part of the
+            <code>create</code>
+            response is to avoid the second request-response roundtrip that would incur if creation and listing were separated. I favored partials over JSON to avoid having to operate on the response. This allows for simpler javascript.
+          </p>
+          <p>
+            It pays to consider the purpose of the API and based on that decide to compromise some core values in favor of others. When writing the piece of code that inspired this article my goal was not to create a public RESTful API. This code was UI driven and the intention was to create a rich, fast user interface that would work as expected both with javascript turned on or off.
+          </p>
+          <p>
+            As a side-note, I chose not to use Rails'
+            <a href="http://api.rubyonrails.com/classes/ActionController/MimeResponds/InstanceMethods.html#M000080" title="Module: ActionController::MimeResponds::InstanceMethods">respond_to</a>
+            method because I prefer actions (methods in general) that are responsible for doing one thing. This might introduce some duplication and any maintenance issues that come along with it, but in my case the actions had enough differences to justify breaking them up. This is a personal preference and not meant to discourage anyone from using
+            <code>respond_to</code>.
+          </p>
+          <div class="sponsored">
+            <p class="heading">Message from Testkings</p>
+            <p>
+              If planning to get IT certification then join online
+              <a href="http://www.testkings.com/exam/350-029.htm">testking 350-029</a>
+              training program and get guaranteed success in real exam using
+              <a href="http://www.testkings.com/exam/70-662.htm">testking 70-662</a>
+              study material and
+              <a href="http://www.testkings.com/exam/70-290.htm">testking 70-290</a>
+              tutorials.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

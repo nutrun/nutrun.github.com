@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jun 30 2008</span>
+          </div>
+          <h2 class="title">Abstract resource</h2>
+          <p>A large portion of the internet is governed by HTTP and the World Wide Web in particular is designed based on the REST architectural style. It makes sense to design web applications or web based services in a way that respects and harnesses the web's underlying architecture.</p>
+          <p>When it comes to developing web applications, Model-View-Controller (MVC) is one of the dominant architectural patterns current web frameworks are based on. MVC is not restricted to building web apps, on the contrary, its history can be traced back to 1979 and Smalltalk and has been originally applied to the development of applications which involved user interfaces.</p>
+          <p>The majority of Ruby web frameworks, especially the ones inspired by Rails, employ MVC and offer some sort of support for REST style application development, typically by defining resources which can be accessed through a URI and manipulated by making use of standard HTTP methods such as GET, PUT, POST, DELETE.</p>
+          <p>The above unveils an obvious similarity between the way HTTP resources can be manipulated - the four verbs can fundamentally constitute CRUD operations - and another common tier in web applications nowadays, databases.</p>
+          <p>
+            <a href="http://www.flickr.com/photos/nutrun/2625655482/" title="web-db by nutrunflickr, on Flickr">
+              <img alt="web-db" class="boxed" height="324" src="http://farm4.static.flickr.com/3266/2625655482_0a36c0b375.jpg" width="500" />
+            </a>
+          </p>
+          <p>
+            Controllers in
+            <a href="http://www.merbivore.com/" title="Merb | Looking for a hacker's framework?">Merb</a>,
+            Rails or other similar Ruby, or not, web frameworks are a busy abstraction. A controller typically needs to dispatch to relevant actions, consolidate HTTP payloads, deal with sessions, sometimes caching, etc. These controllers are usually REST aware, meaning that they will by default map routed URI HTTP operations to a standard set of actions, namely
+            <code>index</code>,
+            <code>show</code>,
+            <code>create</code>,
+            <code>edit</code>,
+            <code>update</code>,
+            <code>destroy</code>.
+          </p>
+          <p>If we focus on our application exposing strictly REST resource based interfaces, and assume that these resources directly map to the application's database schema, we can relieve controllers from some of the associated strain by abstracting away the discussed common functionality.</p>
+          <pre>&#x000A;module CrudTemplate&#x000A;  def resource&#x000A;    raise "You must define a resource"&#x000A;  end&#x000A;&#x000A;  def index&#x000A;    instance_variable_set(resource_sym_plural, resource.find(:all))&#x000A;    render&#x000A;  end&#x000A;&#x000A;  def show&#x000A;    assign_resource(resource.find(params[:id]))&#x000A;    render&#x000A;  end&#x000A;&#x000A;  alias edit show&#x000A;  alias delete show&#x000A;&#x000A;  def new&#x000A;    assign_resource(resource.new(resource_attrs))&#x000A;    render&#x000A;  end&#x000A;&#x000A;  def create&#x000A;    r = resource.new(resource_attrs)&#x000A;    assign_resource(r)&#x000A;    if r.save&#x000A;      on_create_success(r)&#x000A;    else&#x000A;      on_create_failure(r)&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def on_create_success(r)&#x000A;    redirect(resource_sym)&#x000A;  end&#x000A;&#x000A;  alias on_update_success on_create_success&#x000A;&#x000A;  def on_create_failure(r)&#x000A;    assign_resource(r)&#x000A;    render(:new, :status => 400)&#x000A;  end&#x000A;&#x000A;  def update&#x000A;    r = resource.find(params[:id])&#x000A;    if r.update_attributes(resource_attrs)&#x000A;      on_update_success(r)&#x000A;    else&#x000A;      on_update_failure(r)&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def on_update_failure(r)&#x000A;    assign_resource(r)&#x000A;    render(:edit)&#x000A;  end&#x000A;&#x000A;  def destroy&#x000A;    if resource.destroy(params[:id])&#x000A;      on_destroy_success(r)&#x000A;    else&#x000A;      on_destroy_failure(r)&#x000A;    end&#x000A;    redirect(resource_sym)&#x000A;  end&#x000A;&#x000A;  def self.included(controller)&#x000A;    controller.show_action(*shown_actions)&#x000A;  end&#x000A;&#x000A;  protected&#x000A;&#x000A;  def resource_attrs&#x000A;    {}&#x000A;  end&#x000A;&#x000A;  def self.shown_actions&#x000A;    [:index, :show, :create, :new, :edit, :update]&#x000A;  end&#x000A;&#x000A;  private&#x000A;&#x000A;  def assign_resource(r)&#x000A;    instance_variable_set(resource_sym, r)&#x000A;  end&#x000A;&#x000A;  def resource_sym&#x000A;    @resource_sym ||= :"@#{resource.name.underscore.split("/").last}"&#x000A;  end&#x000A;&#x000A;  def resource_sym_plural&#x000A;    @resource_sym_plural ||= :"@#{resource.name.underscore.split("/").last.pluralize}"&#x000A;  end&#x000A;end</pre>
+          <p>By doing so, we can write controllers that look something like the following.</p>
+          <pre>&#x000A;class Reservations &lt; Application&#x000A;  include CrudTemplate&#x000A;&#x000A;  def resource&#x000A;    Reservation&#x000A;  end&#x000A;&#x000A;  def on_create_success&#x000A;    flash[:notice] = "Thank you"&#x000A;    redirect("/")&#x000A;  end&#x000A;&#x000A;  protected&#x000A;&#x000A;  def self.shown_actions&#x000A;    [:new, :create]&#x000A;  end&#x000A;&#x000A;  def resource_attrs&#x000A;    params[:reservation].merge(session[:member])&#x000A;  end&#x000A;end</pre>
+          <p>Things are usually more complicated. The above model falls short for the majority of web applications I've worked on. Resources rarely are direct matches to database tables and there is usually good reason for them not to be. Applications involve complex business logic, spanning further from what a set CRUD operations is appropriate for. One might argue that business logic can be incorporated into Models (as in ORM classes), but I generally prefer to avoid keeping business logic near the persistence layer and opt for a database agnostic, rich domain tier.</p>
+          <p>This however doesn't imply that controllers shouldn't think in terms of resources. Controllers are close to the web, and the web works well with resources. It suffices for domain layer endpoints that intend to communicate with a controller to expose an interface the controller understands. If we define that interface so that it matches its database specific counterpart, we can achieve the best of both worlds.</p>
+          <p>
+            <a href="http://www.flickr.com/photos/nutrun/2624979159/" title="web-domain-db by nutrunflickr, on Flickr">
+              <img alt="web-domain-db" class="boxed" height="324" src="http://farm4.static.flickr.com/3269/2624979159_84c22a413f.jpg" width="500" />
+            </a>
+          </p>
+          <p>
+            Controllers can transparently operate on plain ruby components which include an
+            <code>AbstractResource</code>
+            module (interface) and choose to implement any of its methods, or directly on ORM models, such as
+            <code>ActiveRecord</code>
+            classes, where appropriate.
+          </p>
+          <pre>&#x000A;module AbstractResource&#x000A;  attr_reader :params&#x000A;&#x000A;  def initialize(params = {})&#x000A;    @params = params&#x000A;  end&#x000A;&#x000A;  def save&#x000A;    raise "Implement me"&#x000A;  end&#x000A;&#x000A;  def update_attributes(attrs = {})&#x000A;    raise "Implement me"&#x000A;  end&#x000A;&#x000A;  def valid?&#x000A;    raise "Implement me"&#x000A;  end&#x000A;&#x000A;  def errors&#x000A;    raise "Implement me"&#x000A;  end&#x000A;&#x000A;  module ClassMethods&#x000A;    def delete(id)&#x000A;      raise "Implement me"&#x000A;    end&#x000A;&#x000A;    def find(id)&#x000A;      raise "Implement me"&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def self.included(target)&#x000A;    target.extend(ClassMethods)&#x000A;  end&#x000A;end</pre>
+          <p>
+            P.S. Credit due to
+            <a href="http://www.lixo.org/" title="lixo.org">Carlos Villela</a>
+            whose observations have been the core and inspiration behind the ideas in this article.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

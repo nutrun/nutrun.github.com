@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Sep 23 2008</span>
+          </div>
+          <h2 class="title">Efficient data imports</h2>
+          <p>An application's performance is affected, among other things, by the performance of its parts. A large number of current applications contain a database layer which I've noticed become neglected more often than it deserves. This is unfortunate because there are a lot of quick performance victories that can be achieved by harnessing a database's strong points.</p>
+          <p>Let's think of an application which periodically collects large amounts of data, adapts it from a foreign structure into its native domain and stores the results in a database for further use. Data units must be unique, something we need to enforce each time a new import takes place.</p>
+          <p>
+            One way of achieving this would be to construct domain native objects or structures by parsing the external data feeds and check against the existence of duplicates in the database, using a custom hashcode identity mechanism. We can store the hashcode values in a
+            <code>UNIQUE</code>
+            database column to ensure data integrity.
+          </p>
+          <pre>&#x000A;DATA.each {|e| DB[:entries] &lt;&lt; e rescue nil}</pre>
+          <p>This code iterates over the adapted object enumeration and attempts a database insert for each entry, ignoring any exceptions due to uniqueness violations. It also introduces the significant overhead of performing a number of database queries equal to the number of entries included in the imported collection.</p>
+          <p>
+            Bulk inserts are nothing new and most, if not all, modern databases offer this functionality, which is also supported by the majority of database access application libraries. Ruby's
+            <a href="http://sequel.rubyforge.org/" title="Sequel: The Database Toolkit for Ruby">Sequel</a>,
+            for instance, allows bulk insert operations with the
+            <code>    <a href="http://sequel.rubyforge.org/rdoc/classes/Sequel/Dataset.html#M000675" title="Class: Sequel::Dataset">multi_insert</a></code>
+            method.
+          </p>
+          <pre>&#x000A;DB[:entries].multi_insert(DATA)</pre>
+          <p>
+            There's a caveat here, as this operation will terminate the moment a duplicate entry violation error occurs. MySQL offers the
+            <code>INSERT IGNORE</code>
+            construct which is particularly useful in this scenario. Using the
+            <code>IGNORE</code>
+            keyword will cause errors that occur while executing the
+            <code>INSERT</code>
+            statement to be treated as warnings.
+          </p>
+          <p>
+            Looking to investigate the performance boost associated with the above technique, I've put together a small extension for Sequel, enabling the toolkit to make use of
+            <code>INSERT IGNORE</code>.
+          </p>
+          <pre>&#x000A;module InsertIgnore  &#x000A;  def ignore_duplicates!&#x000A;    @ignore = true&#x000A;    self&#x000A;  end&#x000A;  &#x000A;  def multi_insert_sql(columns, values)&#x000A;    columns = column_list(columns)&#x000A;    values = values.map {|r| literal(Array(r))}.join(Sequel::MySQL::Dataset::COMMA_SEPARATOR)&#x000A;    ignore = @ignore ? " IGNORE " : ' '&#x000A;    ["INSERT#{ignore}INTO #{source_list(@opts[:from])} (#{columns}) VALUES #{values}"]&#x000A;  end&#x000A;end</pre>
+          <p>This can be used like this:</p>
+          <pre>&#x000A;Sequel::MySQL::Dataset.send(:include, InsertIgnore)&#x000A;DB[:entries].ignore_duplicates!.multi_insert(DATA)</pre>
+          <p>
+            Inserting 100,000 records, some of them duplicates, using the application loop approach which issues an insert query for each entry took about 49 seconds on my laptop. Its
+            <code>INSERT IGNORE</code>
+            counterpart took about 4 seconds.
+          </p>
+          <p>
+            There are things to watch out for when using the latter approach. We can potentially construct very large queries, depending on the number of records we intend to insert. MySQL sets the maximum length of packets with the
+            <code>max_allowed_packet</code>
+            system variable which defaults to 1 kilobyte and can be increased up to 1 gigabyte. Loading such large datasets in memory can prove problematic, so slicing the import in chunks is probably a good idea.
+          </p>
+          <p>
+            In like manner, it's worth mentioning MySQL's
+            <code>ON DUPLICATE KEY UPDATE</code>,
+            which updates an existing column subsequent to a failed insert due to a duplicate value violation.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

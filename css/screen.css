@@ -1,0 +1,109 @@
+body {
+  background-color: #242b33;
+  font-size: 15px; }
+
+a {
+  color: #376973;
+  text-decoration: underline; }
+
+a:hover {
+  color: #f7931d; }
+
+code {
+  font-family: courier;
+  font-size: 0.9em;
+  color: #491e42; }
+
+pre, code {
+  font-family: monospace, courier; }
+
+pre {
+  padding: 0 3em;
+  font-size: 0.8em; }
+
+#site {
+  font-family: Palatino, Georgia, Times, "Times New Roman", serif;
+  color: #0a0c0d;
+  margin: 2% 15%;
+  min-width: 800px; }
+
+#header {
+  -moz-border-radius-topleft: 0.8em;
+  -webkit-border-top-left-radius: 0.8em;
+  -moz-border-radius-topright: 0.8em;
+  -webkit-border-top-right-radius: 0.8em;
+  border-top-left-radius: 0.8em;
+  border-top-right-radius: 0.8em;
+  background-color: #376973;
+  font-family: helvetica, sans-serif; }
+
+#menu {
+  text-align: right;
+  font-weight: bold;
+  padding: 0.6em 0.8em;
+  background-color: #0a0c0d; }
+  #menu ul li {
+    padding: 0 0.3em;
+    display: inline; }
+  #menu a {
+    color: #c1ffef;
+    text-decoration: none; }
+  #menu a:hover {
+    color: #f7931d; }
+
+#content {
+  background-color: white;
+  padding: 1.5em 1.5em; }
+
+#footer {
+  text-align: right;
+  background-color: #0a0c0d;
+  color: #c1ffef;
+  font-size: 0.8em;
+  padding: 0.5em 1.5em;
+  -moz-border-radius-bottomleft: 0.8em;
+  -webkit-border-bottom-left-radius: 0.8em;
+  -moz-border-radius-bottomright: 0.8em;
+  -webkit-border-bottom-right-radius: 0.8em;
+  border-bottom-left-radius: 0.8em;
+  border-bottom-right-radius: 0.8em; }
+
+h1 {
+  font-size: 6em;
+  font-weight: bold; }
+  h1 a, h1 a:hover, h1 a:active, h1 a:visited {
+    color: white;
+    text-decoration: none; }
+
+.date {
+  background-color: #c1ffef;
+  padding: 0 0.2em;
+  color: #376973;
+  font-style: italic;
+  margin-bottom: 0.4em; }
+
+#index {
+  text-align: center; }
+  #index li {
+    margin-bottom: 0.9em; }
+  #index .articlelink {
+    font-weight: bold;
+    font-size: 1.2em; }
+
+.article h2 {
+  margin-top: 0.5em;
+  font-size: 1.8em;
+  font-weight: bold; }
+.article p {
+  font-size: 1.1em;
+  padding: 0.8em 1.8em 0.8em 0; }
+.article li {
+  padding: 0.5em 0; }
+
+.sponsored {
+  color: #999999;
+  font-size: 0.8em; }
+  .sponsored .heading {
+    font-weight: bold; }
+  .sponsored p {
+    padding: 0.2em; }

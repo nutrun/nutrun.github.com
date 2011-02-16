@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jan 13 2008</span>
+          </div>
+          <h2 class="title">Using Synthesis with Test::Unit and Mocha</h2>
+          <p>
+            <a href="http://synthesis.rubyforge.org">Synthesis</a>
+            is a Ruby library that applies a
+            <a href="http://nutrun.com/weblog/synthesized-testing-a-primer">Synthesized Testing</a>
+            strategy, aiming to reduce the number of large, slow and brittle functional tests.
+          </p>
+          <p>Imagine an example project with the following contents:</p>
+          <pre>&#x000A;Macintosh-4:synthesis_example gm$ ls -R&#x000A;Rakefile	lib		test&#x000A;&#x000A;./lib:&#x000A;synthesis_example	synthesis_example.rb&#x000A;&#x000A;./lib/synthesis_example:&#x000A;data_brander.rb	storage.rb&#x000A;&#x000A;./test:&#x000A;data_brander_test.rb	storage_test.rb</pre>
+          <p>
+            <em>synthesis_example.rb:</em>
+          </p>
+          <pre>&#x000A;$: &lt;&lt; File.dirname(__FILE__) + '/'&#x000A;require "synthesis_example/data_brander"&#x000A;require "synthesis_example/storage"</pre>
+          <p>
+            <em>data_brander.rb:</em>
+          </p>
+          <pre>&#x000A;class DataBrander&#x000A;  BRAND = "METAL"&#x000A;&#x000A;  def initialize(storage)&#x000A;    @storage = storage&#x000A;  end&#x000A;&#x000A;  def save_branded(data)&#x000A;    @storage.save "#{BRAND} - #{data}"&#x000A;  end&#x000A;end</pre>
+          <p>
+            <em>storage.rb:</em>
+          </p>
+          <pre>&#x000A;class Storage&#x000A;  def initialize(filename)&#x000A;    @filename = filename&#x000A;  end&#x000A;&#x000A;  def save(val)&#x000A;    File.open(@filename, 'w') {|f| f &lt;&lt; val}&#x000A;  end&#x000A;end</pre>
+          <p>
+            <em>Rakefile:</em>
+          </p>
+          <pre>&#x000A;require "rubygems"&#x000A;require "synthesis/task"&#x000A;&#x000A;task :default => 'synthesis:test'&#x000A;Synthesis::Task.new</pre>
+          <p>
+            <em>data_brander_test.rb:</em>
+          </p>
+          <pre>&#x000A;%w(test/unit rubygems mocha).each { |l| require l }&#x000A;require File.dirname(__FILE__) + "/../lib/synthesis_example"&#x000A;&#x000A;class DataBranderTest &lt; Test::Unit::TestCase&#x000A;  def test_saves_branded_to_storage&#x000A;    storage = Storage.new 'whatever'&#x000A;    storage.expects(:save).with('METAL - rock')&#x000A;    DataBrander.new(storage).save_branded 'rock'&#x000A;  end&#x000A;end</pre>
+          <p>
+            Running
+            <em>data_brander_test.rb</em>
+            produces:
+          </p>
+          <pre>&#x000A;Macintosh-4:synthesis_example gm$ ruby test/data_brander_test.rb&#x000A;Loaded suite test/data_brander_test&#x000A;Started&#x000A;.&#x000A;Finished in 0.000487 seconds.&#x000A;&#x000A;1 tests, 1 assertions, 0 failures, 0 errors</pre>
+          <p>
+            Supposing we haven't written any tests for
+            <code>Storage</code>
+            yet, the outcome of the
+            <code>synthesis:test</code>
+            task is:
+          </p>
+          <pre>&#x000A;Macintosh-4:synthesis_example gm$ rake synthesis:test&#x000A;(in /Users/gm/devel/ruby/whatever_code/synthesis_example)&#x000A;[Synthesis] Collecting expectations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;.&#x000A;Finished in 0.00063 seconds.&#x000A;&#x000A;1 tests, 1 assertions, 0 failures, 0 errors&#x000A;[Synthesis] Verifying expectation invocations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;.&#x000A;Finished in 0.000575 seconds.&#x000A;&#x000A;1 tests, 1 assertions, 0 failures, 0 errors&#x000A;[Synthesis]&#x000A;[Synthesis] Tested Expectations:&#x000A;[Synthesis]&#x000A;[Synthesis] Untested Expectations:&#x000A;[Synthesis] Storage.new.save&#x000A;[Synthesis]&#x000A;[Synthesis] Ignoring:&#x000A;[Synthesis]&#x000A;[Synthesis] FAILED.</pre>
+          <p>
+            Synthesis will make a first pass at running the project's tests collecting all simulated object interaction expectations. Then, it will run the tests again, verifying that the concrete implementations of the simulated expectation members have been covered in the tests.
+          </p>
+          <p>
+            In this example, the Synthesis task fails, reporting that the concrete implementation of the
+            <code>save</code>
+            instance method of
+            <code>Storage</code>
+            has not been tested. Let's fix that.
+          </p>
+          <p>
+            <em>storage_test.rb:</em>
+          </p>
+          <pre>&#x000A;require "test/unit"&#x000A;require "fileutils"&#x000A;require File.dirname(__FILE__) + "/../lib/synthesis_example"&#x000A;&#x000A;class StorageTest &lt; Test::Unit::TestCase&#x000A;  def test_saves_to_file&#x000A;    Storage.new('test.txt').save('rock')&#x000A;    assert_equal 'rock', File.read('test.txt')&#x000A;  ensure&#x000A;    FileUtils.rm_f('test.txt')&#x000A;  end&#x000A;end</pre>
+          <p>
+            Running
+            <code>rake</code>
+            again:
+          </p>
+          <pre>&#x000A;Macintosh-4:synthesis_example gm$ rake&#x000A;(in /Users/gm/devel/ruby/whatever_code/synthesis_example)&#x000A;[Synthesis] Collecting expectations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;..&#x000A;Finished in 0.002721 seconds.&#x000A;&#x000A;2 tests, 2 assertions, 0 failures, 0 errors&#x000A;[Synthesis] Verifying expectation invocations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;..&#x000A;Finished in 0.002342 seconds.&#x000A;&#x000A;2 tests, 2 assertions, 0 failures, 0 errors&#x000A;[Synthesis]&#x000A;[Synthesis] SUCCESS.</pre>
+          <p>
+            Traditionally, and on a project of a more realistic size than the example one, we would have to perform some sort of functional testing around the integration of
+            <code>BrandingService</code>
+            and
+            <code>Storage</code>.
+            Synthesis aims to provide enough confidence in order to eliminate the need for tedious functional tests.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

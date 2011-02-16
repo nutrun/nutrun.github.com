@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jul 31 2007</span>
+          </div>
+          <h2 class="title">Rails fast test suite</h2>
+          <p>
+            Rails convention suggests Model classes that traditionally extend ActiveRecord::Base with the corresponding unit tests depending on the database. I prefer to separate the business from the data access layers by having a few ActiveRecord children handling persistence (not unlike
+            <a href="http://www.martinfowler.com/eaaCatalog/repository.html" title="P of EAA: Repository">repositories</a>)
+            with the bulk of the application logic residing in classes that are unaware of the database.
+          </p>
+          <p>
+            I find it useful to add a separate test suite for handling the tests for those classes by creating a new directory, e.g.
+            <code>test/fastunit</code>
+            and a Rake test task (<code>lib/tasks/fastunit.rake</code>) that runs the tests in it.
+          </p>
+          <pre>&#x000A;namespace :test do&#x000A;  Rake::TestTask.new('fastunit') do |t|&#x000A;    t.pattern = 'test/fastunit/*_test.rb'&#x000A;  end&#x000A;end&#x000A;&#x000A;Rake::Task[:test].prerequisites << 'test:fastunit'</pre>
+          <p>
+            Adding
+            <code>test:fastunit</code>
+            to the prerequisites of the main
+            <code>test</code>
+            task ensures the suite will be ran as part of the full test build.
+          </p>
+          <p>
+            One of the advantages to this approach is the instant feedback of running
+            <code>rake test:fastunit</code>
+            - these tests are inherently faster. I run these tests often whilst developing to ensure things are going smoothly and only run the full build before checkins.
+          </p>
+          <p>
+            This technique renders the built-in
+            <code>test:units</code>
+            task slightly ambiguous as ActiveRecord tests are now presented more like functional tests, which is not entirely incorrect, because they do, after all, hit the database.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

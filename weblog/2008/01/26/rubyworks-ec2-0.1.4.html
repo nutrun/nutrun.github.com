@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Jan 26 2008</span>
+          </div>
+          <h2 class="title">rubyworks-ec2 0.1.4</h2>
+          <p>
+            The
+            <a href="http://rubyworks-ec2.rubyforge.org/" title="rubyworks-ec2 : RubyWorks Production Stack on EC2">rubyworks-ec2</a>
+            project is now hosted on
+            <a href="http://rubyforge.org/" title="RubyForge: Welcome">RubyForge</a>.
+            The gem can be installed by invoking
+            <code>gem i rubyworks-ec2</code>
+            or can be downloaded from the project's
+            <a href="http://rubyforge.org/projects/rubyworks-ec2/" title="RubyForge: rubyworks-ec2: Project Info">RubyForge page</a>.
+          </p>
+          <p>
+            Thanks to Markus Bengts's input, version 0.1.4 adds a list of new features to the mix.
+          </p>
+          <p>
+            A
+            <code>capify-for-ec2</code>
+            executable that will create or update the existing
+            <code>Capfile</code>
+            and
+            <code>config/deploy.rb</code>
+            files to include the EC2 Capistrano recipes. It will also copy server configuration files (e.g. config files for apache2, monit, mysql, etc) to your local working copy's
+            <code>config/server</code>
+            directory.
+          </p>
+          <p>
+            Think of
+            <code>config/server</code>
+            as a local copy of the EC2 server instance's filesystem. The files in
+            <code>config/server</code>
+            can be edited before bootstrapping the instance. They will be copied to the EC2 instance when
+            <code>cap instance:bootstrap</code>
+            is invoked.
+          </p>
+          <p>
+            The default configuration has been changed so that Monit manages MySQL, and MySQL is allowed to use more RAM (up to about 600MB if needed). MySQL and Monit are configured so that slow queries are written to a log file (default slow query limit is 2 seconds). Monit alerts if that file has been changed.
+          </p>
+          <p>
+            This release also allows specifying additional apt packages and gems to install on
+            <code>cap instance:bootstrap</code>.
+            To do so, add packages and gems to the lists that were copied to
+            <code>config/deploy.rb</code>
+            by
+            <code>capify-for-ec2</code>.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

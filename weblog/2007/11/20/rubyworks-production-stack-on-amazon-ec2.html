@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Nov 20 2007</span>
+          </div>
+          <h2 class="title">RubyWorks Production Stack on Amazon EC2</h2>
+          <p>
+            <a href="http://nutrun.com/rwec2">rubyworks-ec2</a>
+            automates deploying Ruby On Rails applications to an
+            <a href="http://aws.amazon.com/ec2">Amazon Elastic Compute Cloud (EC2)</a>
+            instance using the
+            <a href="http://rubyworks.rubyforge.org/" title="RubyWorks Production Stack">RubyWorks Production Stack</a>.
+            It is a collection of
+            <a href="http://www.capify.org/" title="Capistrano:  Home">Capistrano 2.0</a>
+            recipes and utilities, not an
+            <acronym title="Amazon Machine Image">AMI</acronym>.
+          </p>
+          <p>
+            Using rubyworks-ec2 will effectively bootstrap a clean Debian Etch AMI, installing the RubyWorks Production Stack, Apache 2, MySQL, utilities and cron jobs for backing up and restoring the database from Amazon S3.
+          </p>
+          <p>
+            The running stack comprises of Apache 2 serving static content,
+            <a href="http://haproxy.1wt.eu/" title="HAProxy - The Reliable, High Performance TCP/HTTP Load Balancer">HAProxy</a>
+            load balancing Mongrels, 4
+            <a href="http://mongrel.rubyforge.org/" title="Mongrel: Home">Mongrel</a>
+            instances,
+            <a href="http://www.tildeslash.com/monit/" title="monit">monit</a>
+            monitoring HAProxy, Mongrel and the OS and MySQL with its
+            <code>datadir</code>
+            pointing to the
+            <code>/mnt</code>
+            partition of the AMI.
+          </p>
+          <p>
+            Deploying to a new AMI instance post first time setup is achieved with 3 commands -
+            <code>cap instance:start</code>,
+            <code>cap instance:bootstrap</code>
+            and
+            <code>cap deploy</code>
+            - or 4, in case there's a need to migrate the database.
+          </p>
+          <h2>Prerequisites</h2>
+          <p>
+            A working Amazon EC2 account, based on the instructions described in the
+            <a href="http://docs.amazonwebservices.com/AWSEC2/2007-08-29/GettingStartedGuide/" title="Amazon Elastic Compute Cloud">EC2 Getting Started Guide</a>
+            and a working Rails application that's setup to use MySQL in Production mode, has Rails and any required gems unpacked in its
+            <code>vendor</code>
+            directory and is versioned in a Subversion repository.
+          </p>
+          <h2>Getting started</h2>
+          <p>
+            Following the
+            <a href="http://docs.amazonwebservices.com/AWSEC2/2007-08-29/GettingStartedGuide/" title="Amazon Elastic Compute Cloud">EC2 Getting Started Guide</a>,
+            you should have a directory named
+            <code>.ec2</code>
+            in your home directory containing a PEM encoded signed X.509 certificate and an unencrypted, PEM encoded RSA private key that corresponds to the X.509 certificate.
+          </p>
+          <p>
+            You should also have an RSA keypair named something similar to
+            <code>id_rsa-gsg-keypair</code>.
+            <strong>Copy this file to the</strong>
+            <code>$HOME/.ec2/</code>
+            <strong>directory</strong>.
+            If you have the public counterpart to this key - in this case
+            <code>id_rsa-gsg-keypair.pub</code>
+            - copy it to
+            <code>$HOME/.ec2</code>
+            as well. If you don't, we'll get it once we start the AMI.
+            <em>This step is crucial in order for Capistrano to be able to connect to the instance</em>.
+          </p>
+          <p>
+            <a href="http://nutrun.com/rwec2/releases/rubyworks-ec2-0.1.0.gem">Download</a>
+            the rubyworks-ec2 gem and install it:
+          </p>
+          <pre>&#x000A;sudo gem i rubyworks-ec2-&lt;version&gt;.gem</pre>
+          <p>
+            Invoke
+            <code>capify .</code>
+            from the top directory of the Rails application. This will create two files,
+            <code>Capfile</code>
+            and
+            <code>config/deploy.rb</code>.
+          </p>
+          <p>
+            Require rubyworks-ec2 in
+            <code>Capfile</code>:
+          </p>
+          <pre>&#x000A;require "rubyworks-ec2"</pre>
+          <p>
+            Next, configure the required deployment properties in
+            <code>config/deploy.rb</code>:
+          </p>
+          <pre>&#x000A;set :instance_id, ""&#x000A;set :instance_url, ""&#x000A;&#x000A;set :application, "shotgun_blues"&#x000A;set :repository, "http://svn.shotgun.com/blues/trunk"&#x000A;&#x000A;role :app, instance_url&#x000A;role :web, instance_url&#x000A;role :db,  instance_url, :primary => true&#x000A;&#x000A;set :keypair, "gsp-keypair"&#x000A;set :account_id, "123456789098"&#x000A;set :access_key_id, "ABCDE123456789"&#x000A;set :secret_access_key, "323848492AHSBCYEBDNCSCUENCCKS"&#x000A;set :pk, "pk-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :cert, "cert-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :packages, %w(apache2 subversion mysql-server libmysql-ruby less) # plus any additional packages you'd like to install on the image&#x000A;set :gems, %w(aws-s3 ezcrypto) #plus any additional gems you'd like to install on the instance</pre>
+          <p>
+            We'll set the
+            <code>instance_id</code>
+            and
+            <code>instance_url</code>
+            properties after we start an instance. The value for the
+            <code>keypair</code>
+            property must be the name of the RSA keypair in
+            <code>$HOME/.ec2</code>.
+            So, if your keypair file is named
+            <code>id_rsa-gsp-keypair</code>,
+            the
+            <code>keypair</code>
+            property value should be
+            <code>gsp-keypair</code>.
+            The
+            <code>account_id</code>,
+            <code>access_key_id</code>
+            and
+            <code>secret_access_key</code>
+            are your AWS ACCOUNT ID, ACCESS KEY ID and SECRET ACCESS KEY.
+            <code>pk</code>
+            and
+            <code>cert</code>
+            are the filenames of the PEM certificate and key in
+            <code>$HOME/.ec2</code>.
+          </p>
+          <p>
+            If your Subversion repository is using HTTP Basic authentication, add the following two lines in
+            <code>config/deploy.rb</code>:
+          </p>
+          <pre>&#x000A;set :scm_username, 'svnusername'&#x000A;set :scm_password, 'svnpassword'</pre>
+          <h2>Deploy the application</h2>
+          <p>
+            Start a Debian Etch AMI:
+          </p>
+          <pre>&#x000A;cap instance:start</pre>
+          <p>
+            Wait a few moments and invoke
+            <code>ec2-describe-instances</code>.
+            Once your instance has been started, the output of the
+            <code>ec2-describe-instances</code>
+            command will provide the instance id and instance url. Set these values in
+            <code>config/deploy.rb</code>:
+          </p>
+          <pre>&#x000A;set :instance_id, "i-sd92adsd"&#x000A;set :instance_url, "ec2-67-202-1-72.z-2.compute-1.amazonaws.com"</pre>
+          <p>
+            If you don't have a copy of your public RSA key, invoke:
+          </p>
+          <pre>&#x000A;cap instance:cp_public_key</pre>
+          <p>
+            This will copy you public RSA key from the instance to your
+            <code>$HOME/.ec2</code>
+            directory.
+          </p>
+          <pre>&#x000A;cap instance:bootstrap</pre>
+          <p>
+            This command will take a while to complete. It effectively installs RubyWorks, the
+            <a href="http://amazon.rubyforge.org">AWS::S3</a>
+            library, copies your amazon keys, database backup and restore utitilies, installs Apache 2, sets up an Apache virtual host, installs Subversion and MySQL on the instance. It sets up a cron job for backing up the Database on Amazon S3 every 40 minutes and  restores the database to the latest version found on S3, if any exist, otherwise creates a database named
+            <code>&lt;application&gt;_production</code>
+            where
+            <code>application</code>
+            is the value of the
+            <code>application</code>
+            property in
+            <code>config/deploy.rb</code>.
+          </p>
+          <p>
+            After the command completes, you should be able to navigate to the instance's URL from a browser and see the Rails welcome page.
+          </p>
+          <p>
+            Proceed by invoking
+            <code>cap deploy</code>
+            and, if this is the first time you're deploying your application, you might want to do a
+            <code>cap deploy:migrate</code>.
+          </p>
+          <p>
+            To perform a remote login to the instance, invoke:
+          </p>
+          <pre>&#x000A;cap instance:ssh</pre>
+          <p>
+            To back up the database to S3:
+          </p>
+          <pre>&#x000A;cap db:backup</pre>
+          <p>
+            To backup the image to S3 (bundle, upload and register), invoke:
+          </p>
+          <pre>&#x000A;cap image:backup</pre>
+          <p>
+            To monitor services running on the instance:
+          </p>
+          <pre>&#x000A;cap monit:status</pre>
+          <p>
+            To stop the instance:
+          </p>
+          <pre>&#x000A;cap instance:stop</pre>
+          <h2>Acknowledgments</h2>
+          <p>
+            rubyworks-ec2 uses Paul Morris's public Debian Etch AMI (<em>ami-30f11459</em>).
+          </p>
+          <h2>License</h2>
+          <p>
+            rubyworks-ec2 is copyright © 2007
+            <a href="http://nutrun.com" title="nutrun.com">nutrun.com</a>.
+            rubyworks-ec2 is Open Source Software -
+            <a href="http://nutrun.com/rwec2/license.txt">LICENSE</a>
+          </p>
+          <p>
+            RubyWorks and the RubyWorks Production Stack are &copy;
+            <a href="http://thoughtworks.com">ThoughtWorks</a>
+            inc.
+          </p>
+          <p>
+            <a href="http://www.amazon.com/AWS-License-home-page-Money/b/ref=sc_fe_c_0_201590011_8/102-2357457-4703359?ie=UTF8&amp;node=3440661&amp;no=201590011&amp;me=A36L942TSJ2AJA">
+              Amazon Web Services
+              <small>
+                <sup>TM</sup>
+              </small>
+              Customer Agreement
+            </a>
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

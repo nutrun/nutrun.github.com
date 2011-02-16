@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Oct 28 2007</span>
+          </div>
+          <h2 class="title">TextMate: On the fly JavaScript evaluation with Rhino</h2>
+          <p>
+            For those interested in developing JavaScript outside the browser,
+            <a href="http://www.mozilla.org/rhino/" title="Rhino - JavaScript for Java">Rhino</a>
+            is one of the natural choices. It seems to combine the best of both the dynamicaly and statically typed worlds. Rhino offers a Shell for dynamic script evaluation, along with the option to compile the scripts into Java classes and reap any advantages compiled software has on display. It's a mature platform, built with performance in mind, leveraging a robust VM.
+          </p>
+          <p>
+            In order to evaluate scripts using Rhino in
+            <a href="http://macromates.com/" title="TextMate">TextMate</a>
+            in a similar fashion to that of the Run command (<code>"cmd R"</code>) from the Ruby Bundle:
+          </p>
+          <p>
+            Provided that Java is installed on the system and the
+            <code>$JAVA_HOME</code>
+            environment variable has been set,
+            <a href="http://www.mozilla.org/rhino/download.html" title="Rhino Downloads">download Rhino</a>,
+            unpack it somewhere and set an environment variable (<code>$RHINO_HOME</code>) to point to the unpacked Rhino distribution directory. I keep these environment variables in
+            <code>~/.profile</code>.
+            Open the Bundle Editor in TextMate, navigate to
+            <em>JavaScript</em>
+            and add a new Command. From the
+            <em>Save</em>
+            drop-down, pick
+            <em>Current File</em>,
+            set
+            <em>Input</em>
+            to
+            <em>Entire Document</em>,
+            <em>Output</em>
+            to
+            <em>Show as Tool Tip</em>
+            and
+            <em>Activation</em>
+            to
+            <em>Key Equivalent</em>.
+            I chose
+            <code>"cmd E"</code>
+            as the hot-key for invoking the Command.
+          </p>
+          <p>
+            Here's the script for the
+            <em>Command(s)</em>
+            input:
+          </p>
+          <pre>&#x000A;echo Evaluating : "$TM_FILEPATH"&#x000A;echo&#x000A;echo&#x000A;$JAVA_HOME/bin/java -classpath $RHINO_HOME/js.jar \&#x000A;org.mozilla.javascript.tools.shell.Main -f $1 "$TM_FILEPATH"</pre>
+          <p>
+            Sample output:
+          </p>
+          <p>
+            <a href="http://www.flickr.com/photos/nutrun/1775217917/" title="Photo Sharing">
+              <img alt="textmate-rhino-js" height="241" src="http://farm3.static.flickr.com/2330/1775217917_1050b14ade_o.png" style="border: 1px solid black; padding: 3px;" width="512" />
+            </a>
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>

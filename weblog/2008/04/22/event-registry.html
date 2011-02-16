@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>nutrun</title>
+    <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
+    <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
+    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="site">
+      <div id="header">
+        <h1>
+          <a href="/" rel="home">nutrun</a>
+        </h1>
+      </div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="/" rel="home">Home</a>
+          </li>
+          <li>
+            <a href="http://twitter.com/nutrun">Twitter</a>
+          </li>
+          <li>
+            <a href="/feed.rss">RSS</a>
+          </li>
+          <li>
+            <a href="/feed.atom">Atom</a>
+          </li>
+        </ul>
+      </div>
+      <div id="content">
+        <div class="article">
+          <div>
+            <span class="date">Apr 22 2008</span>
+          </div>
+          <h2 class="title">Event registry</h2>
+          <p>During projects I've worked on which involved coding JavaScript, I've had positive experiences enjoying the event driven nature of the language and some bad, especially after code bases grew larger with events firing left and right, producing side effects which were difficult to manage or track down. During the bad days, a centralized way of managing events was often brought up in conversations with colleagues as a means of managing the issue.</p>
+          <p>I've long been a fan of the event driven style of programming as a particularly useful alternative promoting loose coupling of system components. Below is the code for a Ruby module which, when included, enables classes to act as event dispatchers. Other classes can subscribe to the events and be notified when an event occurs.</p>
+          <pre>&#x000A;module EventDispatcher&#x000A;  module ClassMethods&#x000A;    attr_reader :listeners&#x000A;&#x000A;    def subscribe(event, &amp;callback)&#x000A;      @listeners ||= {}&#x000A;      (@listeners[event] || @listeners[event] = []) &lt;&lt; callback&#x000A;    end&#x000A;&#x000A;    private&#x000A;&#x000A;    def clear_listeners!&#x000A;      @listeners = {}&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend(ClassMethods)&#x000A;  end&#x000A;&#x000A;  def notify(event, *args)&#x000A;    self.class.listeners[event].each {|callback| callback[*args]}&#x000A;  end&#x000A;end</pre>
+          <p>Let's consider an example application where the resource management department of an organization hires recruits and upon admission notifies interested services to take relevant action.</p>
+          <pre>&#x000A;class RM&#x000A;  include EventDispatcher&#x000A;&#x000A;  def hire(name)&#x000A;    notify(:new_recruit, name)&#x000A;  end&#x000A;end</pre>
+          <p>
+            What is especially interesting here is how the
+            <code>RM</code>
+            class doesn't need to know anything about any interested listeners. In order to test
+            <code>RM</code>,
+            it suffices to ensure that a notification is sent upon calling the
+            <code>hire</code>
+            method.
+          </p>
+          <pre>&#x000A;def test_rm_notifies_on_new_hire&#x000A;  service = mock&#x000A;  service.expects(:new_recruit).with("name")&#x000A;  RM.subscribe(:new_recruit) {|name| service.new_recruit(name)}&#x000A;  RM.new.hire("name")&#x000A;end</pre>
+          <p>Typically, listeners would directly register their interest to the event by subscribing to it. Let's imagine a welcoming letter is issued to new recruits the moment they join the organization.</p>
+          <pre>&#x000A;class WelcomeLetterService&#x000A;  RM.subscribe(:new_recruit) {|name| greet(name)}&#x000A;&#x000A;  def self.greet(name)&#x000A;    "Welcome, #{name}!"&#x000A;  end&#x000A;end</pre>
+          <p>
+            The first thing to notice is
+            <code>WelcomeLetterService</code>'s
+            direct coupling to
+            <code>RM</code>.
+            Additionally, a code base heavily employing this strategy might suffer ill effects similar to the ones described in the JavaScript inspired first paragraph of this article. Allowing a centralized option for event registration and management could serve as possible remedy to the issue.
+          </p>
+          <pre>&#x000A;module EventRegistry&#x000A;  def register_event_listeners&#x000A;    RM.subscribe(:new_recruit) {|name| WelcomeLetterService.greet(name)}&#x000A;  end&#x000A;&#x000A;  extend self&#x000A;end</pre>
+          <p>
+            The
+            <code>EventRegistry</code>
+            module acts as a centralized mechanism for declaring which listeners subscribe to which events. On top of that, the
+            <code>WelcomeLetterService</code>
+            is now completely oblivious to the
+            <code>RM</code>
+            class.
+          </p>
+          <pre>&#x000A;class WelcomeLetterService&#x000A;  def self.greet(name)&#x000A;    "Welcome, #{name}!"&#x000A;  end&#x000A;end</pre>
+          <p>Due to the level of decoupling achieved, testing these two components becomes particularly easy.</p>
+          <pre>&#x000A;def test_welcome_letter_service_greets_by_name&#x000A;  assert_equal(WelcomeLetterService.greet("Name"), "Welcome, Name!")&#x000A;end&#x000A; &#x000A;def test_event_subscription_wiring&#x000A;  WelcomeLetterService.expects(:greet).with("name")&#x000A;  RM.expects(:subscribe).with(:new_recruit).yields("name")&#x000A;  EventRegistry.register_event_listeners&#x000A;end</pre>
+          <p>
+            All this ties well with the philosophy behind
+            <a href="http://synthesis.rubyforge.org/" title="synthesis">Synthesized Testing</a>,
+            where a coherent collection of lightweight tests becomes a major factor of confidence that the system under test is complete, reducing the need for complex overarching tests.
+          </p>
+        </div>
+      </div>
+      <div id="footer">
+        All content &copy; 2006-2011 George Malamidis, nutrun
+      </div>
+    </div>
+  </body>
+</html>
