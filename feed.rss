@@ -3,467 +3,467 @@
   <channel>
     <title>nutrun</title>
     <description>nutrun RSS feed</description>
-    <link />http://nutrun.com/
+    <link>http://nutrun.com/</link>
     <lastbuilddate>2010-11-17T00:00:00+00:00</lastbuilddate>
     <item>
       <title>Supercharged ruby console output</title>
-      <link />http://nutrun.com/weblog/2010/11/17/supercharged-ruby-console-output.html
+      <link>http://nutrun.com/weblog/2010/11/17/supercharged-ruby-console-output.html</link>
       <guid>http://nutrun.com/weblog/2010/11/17/supercharged-ruby-console-output.html</guid>
       <pubdate>2010-11-17T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Sinatra reloader</title>
-      <link />http://nutrun.com/weblog/2010/06/24/sinatra-reloader.html
+      <link>http://nutrun.com/weblog/2010/06/24/sinatra-reloader.html</link>
       <guid>http://nutrun.com/weblog/2010/06/24/sinatra-reloader.html</guid>
       <pubdate>2010-06-24T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Incremental deployment</title>
-      <link />http://nutrun.com/weblog/2009/12/22/incremental-deployment.html
+      <link>http://nutrun.com/weblog/2009/12/22/incremental-deployment.html</link>
       <guid>http://nutrun.com/weblog/2009/12/22/incremental-deployment.html</guid>
       <pubdate>2009-12-22T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Deployment setup automation</title>
-      <link />http://nutrun.com/weblog/2009/11/10/deployment-setup-automation.html
+      <link>http://nutrun.com/weblog/2009/11/10/deployment-setup-automation.html</link>
       <guid>http://nutrun.com/weblog/2009/11/10/deployment-setup-automation.html</guid>
       <pubdate>2009-11-10T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>VCS practices over features</title>
-      <link />http://nutrun.com/weblog/2009/08/29/vcs-practices-over-features.html
+      <link>http://nutrun.com/weblog/2009/08/29/vcs-practices-over-features.html</link>
       <guid>http://nutrun.com/weblog/2009/08/29/vcs-practices-over-features.html</guid>
       <pubdate>2009-08-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Hello world nginx module</title>
-      <link />http://nutrun.com/weblog/2009/08/15/hello-world-nginx-module.html
+      <link>http://nutrun.com/weblog/2009/08/15/hello-world-nginx-module.html</link>
       <guid>http://nutrun.com/weblog/2009/08/15/hello-world-nginx-module.html</guid>
       <pubdate>2009-08-15T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Asynchronous session content injection</title>
-      <link />http://nutrun.com/weblog/2009/08/06/asynchronous-session-content-injection.html
+      <link>http://nutrun.com/weblog/2009/08/06/asynchronous-session-content-injection.html</link>
       <guid>http://nutrun.com/weblog/2009/08/06/asynchronous-session-content-injection.html</guid>
       <pubdate>2009-08-06T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Rack::CacheHeaders code</title>
-      <link />http://nutrun.com/weblog/2009/05/18/rackcacheheaders-code.html
+      <link>http://nutrun.com/weblog/2009/05/18/rackcacheheaders-code.html</link>
       <guid>http://nutrun.com/weblog/2009/05/18/rackcacheheaders-code.html</guid>
       <pubdate>2009-05-18T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>97 Things Every Software Architect Should Know</title>
-      <link />http://nutrun.com/weblog/2009/02/28/97-things-every-software-architect-should-know.html
+      <link>http://nutrun.com/weblog/2009/02/28/97-things-every-software-architect-should-know.html</link>
       <guid>http://nutrun.com/weblog/2009/02/28/97-things-every-software-architect-should-know.html</guid>
       <pubdate>2009-02-28T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Caching proxy fronted web consumer</title>
-      <link />http://nutrun.com/weblog/2009/02/14/caching-proxy-fronted-web-consumer.html
+      <link>http://nutrun.com/weblog/2009/02/14/caching-proxy-fronted-web-consumer.html</link>
       <guid>http://nutrun.com/weblog/2009/02/14/caching-proxy-fronted-web-consumer.html</guid>
       <pubdate>2009-02-14T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>State separation</title>
-      <link />http://nutrun.com/weblog/2009/02/01/state-separation.html
+      <link>http://nutrun.com/weblog/2009/02/01/state-separation.html</link>
       <guid>http://nutrun.com/weblog/2009/02/01/state-separation.html</guid>
       <pubdate>2009-02-01T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Distributed key-value store indexing</title>
-      <link />http://nutrun.com/weblog/2009/02/01/distributed-key-value-store-indexing.html
+      <link>http://nutrun.com/weblog/2009/02/01/distributed-key-value-store-indexing.html</link>
       <guid>http://nutrun.com/weblog/2009/02/01/distributed-key-value-store-indexing.html</guid>
       <pubdate>2009-02-01T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Live component rotation</title>
-      <link />http://nutrun.com/weblog/2009/01/22/live-component-rotation.html
+      <link>http://nutrun.com/weblog/2009/01/22/live-component-rotation.html</link>
       <guid>http://nutrun.com/weblog/2009/01/22/live-component-rotation.html</guid>
       <pubdate>2009-01-22T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Rack cache headers</title>
-      <link />http://nutrun.com/weblog/2008/11/08/rack-cache-headers.html
+      <link>http://nutrun.com/weblog/2008/11/08/rack-cache-headers.html</link>
       <guid>http://nutrun.com/weblog/2008/11/08/rack-cache-headers.html</guid>
       <pubdate>2008-11-08T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>HTTP accelerator cache purging</title>
-      <link />http://nutrun.com/weblog/2008/11/02/http-accelerator-cache-purging.html
+      <link>http://nutrun.com/weblog/2008/11/02/http-accelerator-cache-purging.html</link>
       <guid>http://nutrun.com/weblog/2008/11/02/http-accelerator-cache-purging.html</guid>
       <pubdate>2008-11-02T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Parallelize by process</title>
-      <link />http://nutrun.com/weblog/2008/10/26/parallelize-by-process.html
+      <link>http://nutrun.com/weblog/2008/10/26/parallelize-by-process.html</link>
       <guid>http://nutrun.com/weblog/2008/10/26/parallelize-by-process.html</guid>
       <pubdate>2008-10-26T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Anarchic versus controlled scalability</title>
-      <link />http://nutrun.com/weblog/2008/10/04/anarchic-versus-controlled-scalability.html
+      <link>http://nutrun.com/weblog/2008/10/04/anarchic-versus-controlled-scalability.html</link>
       <guid>http://nutrun.com/weblog/2008/10/04/anarchic-versus-controlled-scalability.html</guid>
       <pubdate>2008-10-04T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Efficient data imports</title>
-      <link />http://nutrun.com/weblog/2008/09/23/efficient-data-imports.html
+      <link>http://nutrun.com/weblog/2008/09/23/efficient-data-imports.html</link>
       <guid>http://nutrun.com/weblog/2008/09/23/efficient-data-imports.html</guid>
       <pubdate>2008-09-23T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>EventMachine MapReduce</title>
-      <link />http://nutrun.com/weblog/2008/09/09/eventmachine-mapreduce.html
+      <link>http://nutrun.com/weblog/2008/09/09/eventmachine-mapreduce.html</link>
       <guid>http://nutrun.com/weblog/2008/09/09/eventmachine-mapreduce.html</guid>
       <pubdate>2008-09-09T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Phusion Passenger on Amazon EC2</title>
-      <link />http://nutrun.com/weblog/2008/08/20/phusion-passenger-on-amazon-ec2.html
+      <link>http://nutrun.com/weblog/2008/08/20/phusion-passenger-on-amazon-ec2.html</link>
       <guid>http://nutrun.com/weblog/2008/08/20/phusion-passenger-on-amazon-ec2.html</guid>
       <pubdate>2008-08-20T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Rails Summit Latin America</title>
-      <link />http://nutrun.com/weblog/2008/08/13/rails-summit-latin-america.html
+      <link>http://nutrun.com/weblog/2008/08/13/rails-summit-latin-america.html</link>
       <guid>http://nutrun.com/weblog/2008/08/13/rails-summit-latin-america.html</guid>
       <pubdate>2008-08-13T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Cheap lunch</title>
-      <link />http://nutrun.com/weblog/2008/08/01/cheap-lunch.html
+      <link>http://nutrun.com/weblog/2008/08/01/cheap-lunch.html</link>
       <guid>http://nutrun.com/weblog/2008/08/01/cheap-lunch.html</guid>
       <pubdate>2008-08-01T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Cache watch</title>
-      <link />http://nutrun.com/weblog/2008/07/29/cache-watch.html
+      <link>http://nutrun.com/weblog/2008/07/29/cache-watch.html</link>
       <guid>http://nutrun.com/weblog/2008/07/29/cache-watch.html</guid>
       <pubdate>2008-07-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Cacheable HTTP search query results</title>
-      <link />http://nutrun.com/weblog/2008/07/15/cacheable-http-search-query-results.html
+      <link>http://nutrun.com/weblog/2008/07/15/cacheable-http-search-query-results.html</link>
       <guid>http://nutrun.com/weblog/2008/07/15/cacheable-http-search-query-results.html</guid>
       <pubdate>2008-07-15T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Testing web services with ActiveResource</title>
-      <link />http://nutrun.com/weblog/2008/07/10/testing-web-services-with-activeresource.html
+      <link>http://nutrun.com/weblog/2008/07/10/testing-web-services-with-activeresource.html</link>
       <guid>http://nutrun.com/weblog/2008/07/10/testing-web-services-with-activeresource.html</guid>
       <pubdate>2008-07-10T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Abstract resource</title>
-      <link />http://nutrun.com/weblog/2008/06/30/abstract-resource.html
+      <link>http://nutrun.com/weblog/2008/06/30/abstract-resource.html</link>
       <guid>http://nutrun.com/weblog/2008/06/30/abstract-resource.html</guid>
       <pubdate>2008-06-30T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>NWRUG Synthesis Talk</title>
-      <link />http://nutrun.com/weblog/2008/06/16/nwrug-synthesis-talk.html
+      <link>http://nutrun.com/weblog/2008/06/16/nwrug-synthesis-talk.html</link>
       <guid>http://nutrun.com/weblog/2008/06/16/nwrug-synthesis-talk.html</guid>
       <pubdate>2008-06-16T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Testing Merb controllers</title>
-      <link />http://nutrun.com/weblog/2008/06/13/testing-merb-controllers.html
+      <link>http://nutrun.com/weblog/2008/06/13/testing-merb-controllers.html</link>
       <guid>http://nutrun.com/weblog/2008/06/13/testing-merb-controllers.html</guid>
       <pubdate>2008-06-13T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesis visualizations</title>
-      <link />http://nutrun.com/weblog/2008/05/29/synthesis-visualizations.html
+      <link>http://nutrun.com/weblog/2008/05/29/synthesis-visualizations.html</link>
       <guid>http://nutrun.com/weblog/2008/05/29/synthesis-visualizations.html</guid>
       <pubdate>2008-05-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>DataMapper without a database</title>
-      <link />http://nutrun.com/weblog/2008/05/29/datamapper-without-a-database.html
+      <link>http://nutrun.com/weblog/2008/05/29/datamapper-without-a-database.html</link>
       <guid>http://nutrun.com/weblog/2008/05/29/datamapper-without-a-database.html</guid>
       <pubdate>2008-05-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Using Bazaar with RubyForge</title>
-      <link />http://nutrun.com/weblog/2008/05/27/using-bazaar-with-rubyforge.html
+      <link>http://nutrun.com/weblog/2008/05/27/using-bazaar-with-rubyforge.html</link>
       <guid>http://nutrun.com/weblog/2008/05/27/using-bazaar-with-rubyforge.html</guid>
       <pubdate>2008-05-27T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>JSynthesis</title>
-      <link />http://nutrun.com/weblog/2008/05/14/jsynthesis.html
+      <link>http://nutrun.com/weblog/2008/05/14/jsynthesis.html</link>
       <guid>http://nutrun.com/weblog/2008/05/14/jsynthesis.html</guid>
       <pubdate>2008-05-14T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Confidence as a test code metric</title>
-      <link />http://nutrun.com/weblog/2008/05/10/confidence-as-a-test-code-metric.html
+      <link>http://nutrun.com/weblog/2008/05/10/confidence-as-a-test-code-metric.html</link>
       <guid>http://nutrun.com/weblog/2008/05/10/confidence-as-a-test-code-metric.html</guid>
       <pubdate>2008-05-10T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Unambiguous command abbreviation</title>
-      <link />http://nutrun.com/weblog/2008/05/07/unambiguous-command-abbreviation.html
+      <link>http://nutrun.com/weblog/2008/05/07/unambiguous-command-abbreviation.html</link>
       <guid>http://nutrun.com/weblog/2008/05/07/unambiguous-command-abbreviation.html</guid>
       <pubdate>2008-05-07T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Distributed programming with Jabber and EventMachine</title>
-      <link />http://nutrun.com/weblog/2008/05/04/distributed-programming-with-jabber-and-eventmachine.html
+      <link>http://nutrun.com/weblog/2008/05/04/distributed-programming-with-jabber-and-eventmachine.html</link>
       <guid>http://nutrun.com/weblog/2008/05/04/distributed-programming-with-jabber-and-eventmachine.html</guid>
       <pubdate>2008-05-04T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Ruby mock instance</title>
-      <link />http://nutrun.com/weblog/2008/04/29/ruby-mock-instance.html
+      <link>http://nutrun.com/weblog/2008/04/29/ruby-mock-instance.html</link>
       <guid>http://nutrun.com/weblog/2008/04/29/ruby-mock-instance.html</guid>
       <pubdate>2008-04-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Event registry</title>
-      <link />http://nutrun.com/weblog/2008/04/22/event-registry.html
+      <link>http://nutrun.com/weblog/2008/04/22/event-registry.html</link>
       <guid>http://nutrun.com/weblog/2008/04/22/event-registry.html</guid>
       <pubdate>2008-04-22T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Erubis with Sinatra</title>
-      <link />http://nutrun.com/weblog/2008/04/20/erubis-with-sinatra.html
+      <link>http://nutrun.com/weblog/2008/04/20/erubis-with-sinatra.html</link>
       <guid>http://nutrun.com/weblog/2008/04/20/erubis-with-sinatra.html</guid>
       <pubdate>2008-04-20T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Merb: render_deferred and render_then_call</title>
-      <link />http://nutrun.com/weblog/2008/04/17/merb-render_deferred-and-render_then_call.html
+      <link>http://nutrun.com/weblog/2008/04/17/merb-render_deferred-and-render_then_call.html</link>
       <guid>http://nutrun.com/weblog/2008/04/17/merb-render_deferred-and-render_then_call.html</guid>
       <pubdate>2008-04-17T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Non blocking merb actions</title>
-      <link />http://nutrun.com/weblog/2008/04/16/non-blocking-merb-actions.html
+      <link>http://nutrun.com/weblog/2008/04/16/non-blocking-merb-actions.html</link>
       <guid>http://nutrun.com/weblog/2008/04/16/non-blocking-merb-actions.html</guid>
       <pubdate>2008-04-16T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesized Testing slides</title>
-      <link />http://nutrun.com/weblog/2008/04/10/synthesized-testing-slides.html
+      <link>http://nutrun.com/weblog/2008/04/10/synthesized-testing-slides.html</link>
       <guid>http://nutrun.com/weblog/2008/04/10/synthesized-testing-slides.html</guid>
       <pubdate>2008-04-10T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Nu Language Event Dispatcher</title>
-      <link />http://nutrun.com/weblog/2008/04/01/nu-language-event-dispatcher.html
+      <link>http://nutrun.com/weblog/2008/04/01/nu-language-event-dispatcher.html</link>
       <guid>http://nutrun.com/weblog/2008/04/01/nu-language-event-dispatcher.html</guid>
       <pubdate>2008-04-01T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Manchester Synthesized Testing talk</title>
-      <link />http://nutrun.com/weblog/2008/03/31/manchester-synthesized-testing-talk.html
+      <link>http://nutrun.com/weblog/2008/03/31/manchester-synthesized-testing-talk.html</link>
       <guid>http://nutrun.com/weblog/2008/03/31/manchester-synthesized-testing-talk.html</guid>
       <pubdate>2008-03-31T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesis Euruko Talk</title>
-      <link />http://nutrun.com/weblog/2008/03/20/synthesis-euruko-talk.html
+      <link>http://nutrun.com/weblog/2008/03/20/synthesis-euruko-talk.html</link>
       <guid>http://nutrun.com/weblog/2008/03/20/synthesis-euruko-talk.html</guid>
       <pubdate>2008-03-20T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Transactional in-memory database tests with Sequel and SQLite</title>
-      <link />http://nutrun.com/weblog/2008/03/13/transactional-in-memory-database-tests-with-sequel-and-sqlite.html
+      <link>http://nutrun.com/weblog/2008/03/13/transactional-in-memory-database-tests-with-sequel-and-sqlite.html</link>
       <guid>http://nutrun.com/weblog/2008/03/13/transactional-in-memory-database-tests-with-sequel-and-sqlite.html</guid>
       <pubdate>2008-03-13T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesis 0.0.7</title>
-      <link />http://nutrun.com/weblog/2008/03/10/synthesis-0.0.7.html
+      <link>http://nutrun.com/weblog/2008/03/10/synthesis-0.0.7.html</link>
       <guid>http://nutrun.com/weblog/2008/03/10/synthesis-0.0.7.html</guid>
       <pubdate>2008-03-10T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesis 0.0.5</title>
-      <link />http://nutrun.com/weblog/2008/02/05/synthesis-0.0.5.html
+      <link>http://nutrun.com/weblog/2008/02/05/synthesis-0.0.5.html</link>
       <guid>http://nutrun.com/weblog/2008/02/05/synthesis-0.0.5.html</guid>
       <pubdate>2008-02-05T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesis 0.0.3</title>
-      <link />http://nutrun.com/weblog/2008/02/03/synthesis-0.0.3.html
+      <link>http://nutrun.com/weblog/2008/02/03/synthesis-0.0.3.html</link>
       <guid>http://nutrun.com/weblog/2008/02/03/synthesis-0.0.3.html</guid>
       <pubdate>2008-02-03T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Queueue version 0.0.5</title>
-      <link />http://nutrun.com/weblog/2008/02/03/queueue-version-0.0.5.html
+      <link>http://nutrun.com/weblog/2008/02/03/queueue-version-0.0.5.html</link>
       <guid>http://nutrun.com/weblog/2008/02/03/queueue-version-0.0.5.html</guid>
       <pubdate>2008-02-03T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Rack RESTful Dispatcher</title>
-      <link />http://nutrun.com/weblog/2008/01/29/rack-restful-dispatcher.html
+      <link>http://nutrun.com/weblog/2008/01/29/rack-restful-dispatcher.html</link>
       <guid>http://nutrun.com/weblog/2008/01/29/rack-restful-dispatcher.html</guid>
       <pubdate>2008-01-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesis 0.0.2</title>
-      <link />http://nutrun.com/weblog/2008/01/27/synthesis-0.0.2.html
+      <link>http://nutrun.com/weblog/2008/01/27/synthesis-0.0.2.html</link>
       <guid>http://nutrun.com/weblog/2008/01/27/synthesis-0.0.2.html</guid>
       <pubdate>2008-01-27T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>rubyworks-ec2 0.1.4</title>
-      <link />http://nutrun.com/weblog/2008/01/26/rubyworks-ec2-0.1.4.html
+      <link>http://nutrun.com/weblog/2008/01/26/rubyworks-ec2-0.1.4.html</link>
       <guid>http://nutrun.com/weblog/2008/01/26/rubyworks-ec2-0.1.4.html</guid>
       <pubdate>2008-01-26T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Using Synthesis with Test::Unit and Mocha</title>
-      <link />http://nutrun.com/weblog/2008/01/13/using-synthesis-with-testunit-and-mocha.html
+      <link>http://nutrun.com/weblog/2008/01/13/using-synthesis-with-testunit-and-mocha.html</link>
       <guid>http://nutrun.com/weblog/2008/01/13/using-synthesis-with-testunit-and-mocha.html</guid>
       <pubdate>2008-01-13T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Using Synthesis with Expectations</title>
-      <link />http://nutrun.com/weblog/2008/01/13/using-synthesis-with-expectations.html
+      <link>http://nutrun.com/weblog/2008/01/13/using-synthesis-with-expectations.html</link>
       <guid>http://nutrun.com/weblog/2008/01/13/using-synthesis-with-expectations.html</guid>
       <pubdate>2008-01-13T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Synthesized Testing: A primer</title>
-      <link />http://nutrun.com/weblog/2008/01/12/synthesized-testing-a-primer.html
+      <link>http://nutrun.com/weblog/2008/01/12/synthesized-testing-a-primer.html</link>
       <guid>http://nutrun.com/weblog/2008/01/12/synthesized-testing-a-primer.html</guid>
       <pubdate>2008-01-12T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>rubyworks-ec2 0.1.3</title>
-      <link />http://nutrun.com/weblog/2007/12/10/rubyworks-ec2-0.1.3.html
+      <link>http://nutrun.com/weblog/2007/12/10/rubyworks-ec2-0.1.3.html</link>
       <guid>http://nutrun.com/weblog/2007/12/10/rubyworks-ec2-0.1.3.html</guid>
       <pubdate>2007-12-10T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>rubyworks-ec2 0.1.2</title>
-      <link />http://nutrun.com/weblog/2007/12/05/rubyworks-ec2-0.1.2.html
+      <link>http://nutrun.com/weblog/2007/12/05/rubyworks-ec2-0.1.2.html</link>
       <guid>http://nutrun.com/weblog/2007/12/05/rubyworks-ec2-0.1.2.html</guid>
       <pubdate>2007-12-05T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>rubyworks-ec2 0.1.1</title>
-      <link />http://nutrun.com/weblog/2007/11/30/rubyworks-ec2-0.1.1.html
+      <link>http://nutrun.com/weblog/2007/11/30/rubyworks-ec2-0.1.1.html</link>
       <guid>http://nutrun.com/weblog/2007/11/30/rubyworks-ec2-0.1.1.html</guid>
       <pubdate>2007-11-30T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>RubyWorks Production Stack on Amazon EC2</title>
-      <link />http://nutrun.com/weblog/2007/11/20/rubyworks-production-stack-on-amazon-ec2.html
+      <link>http://nutrun.com/weblog/2007/11/20/rubyworks-production-stack-on-amazon-ec2.html</link>
       <guid>http://nutrun.com/weblog/2007/11/20/rubyworks-production-stack-on-amazon-ec2.html</guid>
       <pubdate>2007-11-20T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>TextMate: On the fly JavaScript evaluation with Rhino</title>
-      <link />http://nutrun.com/weblog/2007/10/28/textmate-on-the-fly-javascript-evaluation-with-rhino.html
+      <link>http://nutrun.com/weblog/2007/10/28/textmate-on-the-fly-javascript-evaluation-with-rhino.html</link>
       <guid>http://nutrun.com/weblog/2007/10/28/textmate-on-the-fly-javascript-evaluation-with-rhino.html</guid>
       <pubdate>2007-10-28T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Queueue version 0.0.4</title>
-      <link />http://nutrun.com/weblog/2007/10/20/queueue-version-0.0.4.html
+      <link>http://nutrun.com/weblog/2007/10/20/queueue-version-0.0.4.html</link>
       <guid>http://nutrun.com/weblog/2007/10/20/queueue-version-0.0.4.html</guid>
       <pubdate>2007-10-20T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Queueue turns 0.0.3</title>
-      <link />http://nutrun.com/weblog/2007/10/01/queueue-turns-0.0.3.html
+      <link>http://nutrun.com/weblog/2007/10/01/queueue-turns-0.0.3.html</link>
       <guid>http://nutrun.com/weblog/2007/10/01/queueue-turns-0.0.3.html</guid>
       <pubdate>2007-10-01T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Embedding Queueue</title>
-      <link />http://nutrun.com/weblog/2007/10/01/embedding-queueue.html
+      <link>http://nutrun.com/weblog/2007/10/01/embedding-queueue.html</link>
       <guid>http://nutrun.com/weblog/2007/10/01/embedding-queueue.html</guid>
       <pubdate>2007-10-01T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Rails Inline Fixtures</title>
-      <link />http://nutrun.com/weblog/2007/09/13/rails-inline-fixtures.html
+      <link>http://nutrun.com/weblog/2007/09/13/rails-inline-fixtures.html</link>
       <guid>http://nutrun.com/weblog/2007/09/13/rails-inline-fixtures.html</guid>
       <pubdate>2007-09-13T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Rails View Adapter</title>
-      <link />http://nutrun.com/weblog/2007/09/07/rails-view-adapter.html
+      <link>http://nutrun.com/weblog/2007/09/07/rails-view-adapter.html</link>
       <guid>http://nutrun.com/weblog/2007/09/07/rails-view-adapter.html</guid>
       <pubdate>2007-09-07T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Queueue version 0.0.2 released</title>
-      <link />http://nutrun.com/weblog/2007/08/29/queueue-version-0.0.2-released.html
+      <link>http://nutrun.com/weblog/2007/08/29/queueue-version-0.0.2-released.html</link>
       <guid>http://nutrun.com/weblog/2007/08/29/queueue-version-0.0.2-released.html</guid>
       <pubdate>2007-08-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Queueue, a portable Amazon SQS stub in Ruby</title>
-      <link />http://nutrun.com/weblog/2007/08/09/queueue,-a-portable-amazon-sqs-stub-in-ruby.html
+      <link>http://nutrun.com/weblog/2007/08/09/queueue,-a-portable-amazon-sqs-stub-in-ruby.html</link>
       <guid>http://nutrun.com/weblog/2007/08/09/queueue,-a-portable-amazon-sqs-stub-in-ruby.html</guid>
       <pubdate>2007-08-09T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Rails fast test suite</title>
-      <link />http://nutrun.com/weblog/2007/07/31/rails-fast-test-suite.html
+      <link>http://nutrun.com/weblog/2007/07/31/rails-fast-test-suite.html</link>
       <guid>http://nutrun.com/weblog/2007/07/31/rails-fast-test-suite.html</guid>
       <pubdate>2007-07-31T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Unobtrusive AJAX with jQuery and Rails</title>
-      <link />http://nutrun.com/weblog/2007/07/29/unobtrusive-ajax-with-jquery-and-rails.html
+      <link>http://nutrun.com/weblog/2007/07/29/unobtrusive-ajax-with-jquery-and-rails.html</link>
       <guid>http://nutrun.com/weblog/2007/07/29/unobtrusive-ajax-with-jquery-and-rails.html</guid>
       <pubdate>2007-07-29T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Amazon S3 persistent Ruby objects</title>
-      <link />http://nutrun.com/weblog/2007/07/07/amazon-s3-persistent-ruby-objects.html
+      <link>http://nutrun.com/weblog/2007/07/07/amazon-s3-persistent-ruby-objects.html</link>
       <guid>http://nutrun.com/weblog/2007/07/07/amazon-s3-persistent-ruby-objects.html</guid>
       <pubdate>2007-07-07T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Erubis</title>
-      <link />http://nutrun.com/weblog/2007/06/08/erubis.html
+      <link>http://nutrun.com/weblog/2007/06/08/erubis.html</link>
       <guid>http://nutrun.com/weblog/2007/06/08/erubis.html</guid>
       <pubdate>2007-06-08T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Ruby Struct</title>
-      <link />http://nutrun.com/weblog/2007/05/21/ruby-struct.html
+      <link>http://nutrun.com/weblog/2007/05/21/ruby-struct.html</link>
       <guid>http://nutrun.com/weblog/2007/05/21/ruby-struct.html</guid>
       <pubdate>2007-05-21T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Illiterate programming</title>
-      <link />http://nutrun.com/weblog/2007/05/03/illiterate-programming.html
+      <link>http://nutrun.com/weblog/2007/05/03/illiterate-programming.html</link>
       <guid>http://nutrun.com/weblog/2007/05/03/illiterate-programming.html</guid>
       <pubdate>2007-05-03T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Breakfast of Champions</title>
-      <link />http://nutrun.com/weblog/2007/04/22/breakfast-of-champions.html
+      <link>http://nutrun.com/weblog/2007/04/22/breakfast-of-champions.html</link>
       <guid>http://nutrun.com/weblog/2007/04/22/breakfast-of-champions.html</guid>
       <pubdate>2007-04-22T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>Heavy Metal Code</title>
-      <link />http://nutrun.com/weblog/2007/02/14/heavy-metal-code.html
+      <link>http://nutrun.com/weblog/2007/02/14/heavy-metal-code.html</link>
       <guid>http://nutrun.com/weblog/2007/02/14/heavy-metal-code.html</guid>
       <pubdate>2007-02-14T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>IO Language Event Dispatcher</title>
-      <link />http://nutrun.com/weblog/2007/02/11/io-language-event-dispatcher.html
+      <link>http://nutrun.com/weblog/2007/02/11/io-language-event-dispatcher.html</link>
       <guid>http://nutrun.com/weblog/2007/02/11/io-language-event-dispatcher.html</guid>
       <pubdate>2007-02-11T00:00:00+00:00</pubdate>
     </item>
     <item>
       <title>You are not a ‘real’ Java developer until…</title>
-      <link />http://nutrun.com/weblog/2006/06/12/you-are-not-a-real-java-developer-until.html
+      <link>http://nutrun.com/weblog/2006/06/12/you-are-not-a-real-java-developer-until.html</link>
       <guid>http://nutrun.com/weblog/2006/06/12/you-are-not-a-real-java-developer-until.html</guid>
       <pubdate>2006-06-12T00:00:00+00:00</pubdate>
     </item>
