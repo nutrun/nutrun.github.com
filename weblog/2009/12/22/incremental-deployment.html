@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="strict" ?>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
   <head>
-    <title>Incremental deployment :: nutrun</title>
+    <title>nutrun</title>
     <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
     <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
     <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
     <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-    <script src="/js/app.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="site">
@@ -64,19 +63,30 @@
             </a>
           </p>
           <p>A part of the project that struck me as particularly interesting is the deployment strategy Paul and Andy settled on. Regardless of how much trust we have in our builds and QA process, deployments become a whole different, much more stressful activity when critical systems like the one under discussion are involved. Andy mentioned it is important to find the balance between what to automate and bits that should require manual input.</p>
-          <pre>&#x000A;# deploy.rb&#x000A;&#x000A;task :us_1b do&#x000A;  set :region, 'us-east-1'&#x000A;  set :servers, us_1b&#x000A;  # More US 1b specific setup...&#x000A;end&#x000A;&#x000A;task :eu_1a do&#x000A;  set :region, 'eu-west-1'&#x000A;  set :servers, eu_1a&#x000A;  # More EU 1a specific setup...&#x000A;end</pre>
-          <p>
-            This service is
-            <em>incrementally deployed one availability zone at a time</em>,
-            e.g.
-            <code>cap us_1b deploy</code>.
-            Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.
-          </p>
+          <pre>&#x000A;# deploy.rb&#x000A;&#x000A;task :us_1b do&#x000A;  set :region, 'us-east-1'&#x000A;  set :servers, us_1b&#x000A;  # More US 1b specific setup...&#x000A;end&#x000A;&#x000A;task :eu_1a do&#x000A;  set :region, 'eu-west-1'&#x000A;  set :servers, eu_1a&#x000A;  # More EU 1a specific setup...&#x000A;end  %p
+          This service is
+          <em>incrementally deployed one availability zone at a time</em>,
+          e.g.
+          <code>cap us_1b deploy</code>.
+          Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.</pre>
         </div>
       </div>
       <div id="footer">
         All content &copy; 2006-2011 George Malamidis, nutrun
       </div>
     </div>
+    <script type="text/javascript">
+      //<![CDATA[
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      //]]>
+    </script>
+    <script type="text/javascript">
+      //<![CDATA[
+        var pageTracker = _gat._getTracker("UA-402519-1");
+        pageTracker._initData();
+        pageTracker._trackPageview();
+      //]]>
+    </script>
   </body>
 </html>

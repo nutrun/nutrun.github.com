@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="strict" ?>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
   <head>
-    <title>Rubyworks production stack on amazon ec2 :: nutrun</title>
+    <title>nutrun</title>
     <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
     <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
     <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
     <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-    <script src="/js/app.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="site">
@@ -75,7 +74,7 @@
             <code>cap deploy</code>
             - or 4, in case there's a need to migrate the database.
           </p>
-          <h2>Prerequisites</h2>
+          <h3>Prerequisites</h3>
           <p>
             A working Amazon EC2 account, based on the instructions described in the
             <a href="http://docs.amazonwebservices.com/AWSEC2/2007-08-29/GettingStartedGuide/" title="Amazon Elastic Compute Cloud">EC2 Getting Started Guide</a>
@@ -83,7 +82,7 @@
             <code>vendor</code>
             directory and is versioned in a Subversion repository.
           </p>
-          <h2>Getting started</h2>
+          <h3>Getting started</h3>
           <p>
             Following the
             <a href="http://docs.amazonwebservices.com/AWSEC2/2007-08-29/GettingStartedGuide/" title="Amazon Elastic Compute Cloud">EC2 Getting Started Guide</a>,
@@ -126,7 +125,7 @@
             Next, configure the required deployment properties in
             <code>config/deploy.rb</code>:
           </p>
-          <pre>&#x000A;set :instance_id, ""&#x000A;set :instance_url, ""&#x000A;&#x000A;set :application, "shotgun_blues"&#x000A;set :repository, "http://svn.shotgun.com/blues/trunk"&#x000A;&#x000A;role :app, instance_url&#x000A;role :web, instance_url&#x000A;role :db,  instance_url, :primary => true&#x000A;&#x000A;set :keypair, "gsp-keypair"&#x000A;set :account_id, "123456789098"&#x000A;set :access_key_id, "ABCDE123456789"&#x000A;set :secret_access_key, "323848492AHSBCYEBDNCSCUENCCKS"&#x000A;set :pk, "pk-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :cert, "cert-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :packages, %w(apache2 subversion mysql-server libmysql-ruby less) # plus any additional packages you'd like to install on the image&#x000A;set :gems, %w(aws-s3 ezcrypto) #plus any additional gems you'd like to install on the instance</pre>
+          <pre>&#x000A;set :instance_id, ""&#x000A;set :instance_url, ""&#x000A;&#x000A;set :application, "shotgun_blues"&#x000A;set :repository, "http://svn.shotgun.com/blues/trunk"&#x000A;&#x000A;role :app, instance_url&#x000A;role :web, instance_url&#x000A;role :db,  instance_url, :primary =&gt; true&#x000A;&#x000A;set :keypair, "gsp-keypair"&#x000A;set :account_id, "123456789098"&#x000A;set :access_key_id, "ABCDE123456789"&#x000A;set :secret_access_key, "323848492AHSBCYEBDNCSCUENCCKS"&#x000A;set :pk, "pk-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :cert, "cert-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :packages, %w(apache2 subversion mysql-server libmysql-ruby less) # plus any additional packages you'd like to install on the image&#x000A;set :gems, %w(aws-s3 ezcrypto) #plus any additional gems you'd like to install on the instance</pre>
           <p>
             We'll set the
             <code>instance_id</code>
@@ -159,7 +158,7 @@
             <code>config/deploy.rb</code>:
           </p>
           <pre>&#x000A;set :scm_username, 'svnusername'&#x000A;set :scm_password, 'svnpassword'</pre>
-          <h2>Deploy the application</h2>
+          <h3>Deploy the application</h3>
           <p>
             Start a Debian Etch AMI:
           </p>
@@ -224,11 +223,11 @@
             To stop the instance:
           </p>
           <pre>&#x000A;cap instance:stop</pre>
-          <h2>Acknowledgments</h2>
+          <h3>Acknowledgments</h3>
           <p>
             rubyworks-ec2 uses Paul Morris's public Debian Etch AMI (<em>ami-30f11459</em>).
           </p>
-          <h2>License</h2>
+          <h3>License</h3>
           <p>
             rubyworks-ec2 is copyright © 2007
             <a href="http://nutrun.com" title="nutrun.com">nutrun.com</a>.
@@ -236,7 +235,7 @@
             <a href="http://nutrun.com/rwec2/license.txt">LICENSE</a>
           </p>
           <p>
-            RubyWorks and the RubyWorks Production Stack are &copy;
+            RubyWorks and the RubyWorks Production Stack are ©
             <a href="http://thoughtworks.com">ThoughtWorks</a>
             inc.
           </p>
@@ -255,5 +254,18 @@
         All content &copy; 2006-2011 George Malamidis, nutrun
       </div>
     </div>
+    <script type="text/javascript">
+      //<![CDATA[
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      //]]>
+    </script>
+    <script type="text/javascript">
+      //<![CDATA[
+        var pageTracker = _gat._getTracker("UA-402519-1");
+        pageTracker._initData();
+        pageTracker._trackPageview();
+      //]]>
+    </script>
   </body>
 </html>

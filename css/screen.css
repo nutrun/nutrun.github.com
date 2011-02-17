@@ -5,9 +5,8 @@ body {
 a {
   color: #376973;
   text-decoration: underline; }
-
-a:hover {
-  color: #f7931d; }
+  a:hover {
+    color: #f7931d; }
 
 code {
   font-family: courier;
@@ -48,8 +47,8 @@ pre {
   #menu a {
     color: #c1ffef;
     text-decoration: none; }
-  #menu a:hover {
-    color: #f7931d; }
+    #menu a:hover {
+      color: #f7931d; }
 
 #content {
   background-color: white;
@@ -71,9 +70,12 @@ pre {
 h1 {
   font-size: 6em;
   font-weight: bold; }
-  h1 a, h1 a:hover, h1 a:active, h1 a:visited {
+  h1 a {
     color: white;
     text-decoration: none; }
+    h1 a:hover, h1 a:active, h1 a:visited {
+      color: white;
+      text-decoration: none; }
 
 .date {
   background-color: #c1ffef;
@@ -94,12 +96,16 @@ h1 {
   margin-top: 0.5em;
   font-size: 1.8em;
   font-weight: bold; }
+
 .article p, #fourofour p {
   font-size: 1.1em;
   padding: 0.8em 1.8em 0.8em 0; }
-.article li, #fourofour li {
+
+.article li {
   padding: 0.5em 0; }
 
+#fourofour li {
+  padding: 0.5em 0; }
 #fourofour h2 {
   padding: 0.5em 1.5em;
   background-repeat: no-repeat;

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="strict" ?>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
   <head>
-    <title>Asynchronous session content injection :: nutrun</title>
+    <title>nutrun</title>
     <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
     <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
     <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
     <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-    <script src="/js/app.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="site">
@@ -44,7 +43,7 @@
             Applying a clear distinction between stateless and stateful content when designing a web application is tricky but worth tackling early so that content not specific to user sessions can benefit from web caching. The technique we are trying out for
             <a href="http://www.scramble.com/" title="">scramble.com</a>
             reminds me of what I described in
-            <a href="http://nutrun.com/weblog/state-separation/" title="nutrun  &raquo; Blog Archive   &raquo; State separation">State separation</a>
+            <a href="http://nutrun.com/weblog/state-separation/" title="nutrun  » Blog Archive   » State separation">State separation</a>
             and was introduced to me by
             <a href="http://www.neophiliac.net/" title="ne•o•phil•i•ac">Mike Jones</a>
             who was inspired by the
@@ -58,11 +57,9 @@
             </a>
           </p>
           <p>The idea involves serving non session specific resources independent from personalized content and use AJAX calls to inject the page with session specific content.</p>
-          <pre>&#x000A;require 'rubygems'&#x000A;require 'sinatra'&#x000A;require 'json'&#x000A;&#x000A;configure do&#x000A;  enable :sessions&#x000A;end&#x000A;&#x000A;get '/' do&#x000A;  headers['Cache-Control'] = 'max-age=60, must-revalidate'&#x000A;  erb :index&#x000A;end&#x000A;&#x000A;get '/userinfo' do&#x000A;  if session[:user]&#x000A;    JSON.dump(:user =&gt; session[:user])&#x000A;  else&#x000A;    halt 401&#x000A;  end&#x000A;end&#x000A;&#x000A;get '/login' do&#x000A;  session[:user] = 'rock'&#x000A;  redirect '/'&#x000A;end&#x000A;&#x000A;get '/logout' do&#x000A;  session.clear&#x000A;  redirect '/'&#x000A;end</pre>
-          <p>
-            Notice some of the headers for
-            <code>'/'</code>:
-          </p>
+          <pre>&#x000A;require 'rubygems'&#x000A;require 'sinatra'&#x000A;require 'json'&#x000A;&#x000A;configure do&#x000A;  enable :sessions&#x000A;end&#x000A;&#x000A;get '/' do&#x000A;  headers['Cache-Control'] = 'max-age=60, must-revalidate'&#x000A;  erb :index&#x000A;end&#x000A;&#x000A;get '/userinfo' do&#x000A;  if session[:user]&#x000A;    JSON.dump(:user =&gt; session[:user])&#x000A;  else&#x000A;    halt 401&#x000A;  end&#x000A;end&#x000A;&#x000A;get '/login' do&#x000A;  session[:user] = 'rock'&#x000A;  redirect '/'&#x000A;end&#x000A;&#x000A;get '/logout' do&#x000A;  session.clear&#x000A;  redirect '/'&#x000A;end  %p
+          Notice some of the headers for
+          <code>'/'</code>:</pre>
           <pre>&#x000A;$ curl -I http://localhost:4567/&#x000A;Cache-Control: max-age=60, must-revalidate&#x000A;Set-Cookie: rack.session=BAh7AA%3D%3D%0A; path=/</pre>
           <p>
             The
@@ -76,11 +73,9 @@
             <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>
             to throw away the cookie from any request/response that doesn' match one of the URLs that require authorization, thus causing it to react to response cache policies.
           </p>
-          <pre>&#x000A;sub vcl_recv {&#x000A;  if (req.url !~ "^(/login|/logout|/userinfo)") {&#x000A;    unset req.http.cookie;&#x000A;  }&#x000A;}&#x000A;&#x000A;sub vcl_fetch {&#x000A;  if (req.url !~ "^(/login|/logout|/userinfo)") {&#x000A;    unset obj.http.set-cookie;&#x000A;  }&#x000A;}</pre>
-          <p>
-            A snippet from the HTML response for
-            <code>'/'</code>:
-          </p>
+          <pre>&#x000A;sub vcl_recv {&#x000A;  if (req.url !~ "^(/login|/logout|/userinfo)") {&#x000A;    unset req.http.cookie;&#x000A;  }&#x000A;}&#x000A;&#x000A;sub vcl_fetch {&#x000A;  if (req.url !~ "^(/login|/logout|/userinfo)") {&#x000A;    unset obj.http.set-cookie;&#x000A;  }&#x000A;}  %p
+          A snippet from the HTML response for
+          <code>'/'</code>:</pre>
           <pre>&#x000A;&lt;h1&gt;Hi&lt;/h1&gt;&#x000A;&lt;div id="nav"&gt;&#x000A;  &lt;a href="/login" class='login-control'&gt;Login&lt;/a&gt;&#x000A;&lt;/div&gt;</pre>
           <p>... and the javascript for asynchronously injecting session data to the page:</p>
           <pre>&#x000A;$(function() {&#x000A;  $.getJSON('/userinfo', function(data) {&#x000A;    $('h1').text('Hi ' + data.user);&#x000A;    $('#nav .login-control').attr('href', '/logout').html('logout');&#x000A;  })&#x000A;})</pre>
@@ -95,5 +90,18 @@
         All content &copy; 2006-2011 George Malamidis, nutrun
       </div>
     </div>
+    <script type="text/javascript">
+      //<![CDATA[
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      //]]>
+    </script>
+    <script type="text/javascript">
+      //<![CDATA[
+        var pageTracker = _gat._getTracker("UA-402519-1");
+        pageTracker._initData();
+        pageTracker._trackPageview();
+      //]]>
+    </script>
   </body>
 </html>

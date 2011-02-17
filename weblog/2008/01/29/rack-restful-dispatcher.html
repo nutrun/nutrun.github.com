@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="strict" ?>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
   <head>
-    <title>Rack restful dispatcher :: nutrun</title>
+    <title>nutrun</title>
     <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
     <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
     <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
     <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-    <script src="/js/app.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="site">
@@ -55,7 +54,7 @@
             <em>PUT</em>,
             etc HTTP verbs in Ruby classes.
           </p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "rack"&#x000A;&#x000A;module RestfulDispatcher&#x000A;  def call(env)&#x000A;    request = Rack::Request.new(env)&#x000A;    dispatcher = dispatcher_class.new(request)&#x000A;    body = dispatcher.send(request.request_method.downcase)&#x000A;    [200, {'Content-Type' => dispatcher.content_type}, body]&#x000A;  end&#x000A;&#x000A;  def dispatcher_class&#x000A;    @dispatcher ||= Class.new(self.class) do&#x000A;      attr_accessor :content_type&#x000A;&#x000A;      def initialize(request)&#x000A;        @request, @content_type = request, 'text/xml'&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;&#x000A;  module SingletonMethods&#x000A;    def start(handler, host, port)&#x000A;      handler.run Rack::Lint.new(self.new), :Host => host, :Port => port&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend SingletonMethods&#x000A;  end&#x000A;end</pre>
+          <pre>&#x000A;require "rubygems"&#x000A;require "rack"&#x000A;&#x000A;module RestfulDispatcher&#x000A;  def call(env)&#x000A;    request = Rack::Request.new(env)&#x000A;    dispatcher = dispatcher_class.new(request)&#x000A;    body = dispatcher.send(request.request_method.downcase)&#x000A;    [200, {'Content-Type' =&gt; dispatcher.content_type}, body]&#x000A;  end&#x000A;&#x000A;  def dispatcher_class&#x000A;    @dispatcher ||= Class.new(self.class) do&#x000A;      attr_accessor :content_type&#x000A;&#x000A;      def initialize(request)&#x000A;        @request, @content_type = request, 'text/xml'&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;&#x000A;  module SingletonMethods&#x000A;    def start(handler, host, port)&#x000A;      handler.run Rack::Lint.new(self.new), :Host =&gt; host, :Port =&gt; port&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend SingletonMethods&#x000A;  end&#x000A;end</pre>
           <p>
             Let's examine the example one method at a time.
           </p>
@@ -125,5 +124,18 @@
         All content &copy; 2006-2011 George Malamidis, nutrun
       </div>
     </div>
+    <script type="text/javascript">
+      //<![CDATA[
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      //]]>
+    </script>
+    <script type="text/javascript">
+      //<![CDATA[
+        var pageTracker = _gat._getTracker("UA-402519-1");
+        pageTracker._initData();
+        pageTracker._trackPageview();
+      //]]>
+    </script>
   </body>
 </html>

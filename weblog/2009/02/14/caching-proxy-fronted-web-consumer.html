@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="strict" ?>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
   <head>
-    <title>Caching proxy fronted web consumer :: nutrun</title>
+    <title>nutrun</title>
     <link href="http://nutrun.com/feed.atom" rel="alternate" title="nutrun Atom feed" type="application/atom+xml" />
     <link href="http://nutrun.com/feed.rss" rel="alternate" title="nutrun RSS feed" type="application/rss+xml" />
     <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
     <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="http://fonts.googleapis.com/css?family=IM+Fell+English" media="all" rel="stylesheet" type="text/css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-    <script src="/js/app.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="site">
@@ -41,7 +40,7 @@
           </div>
           <h2 class="title">Caching proxy fronted web consumer</h2>
           <p>Consider an application which as part of its functionality queries a product search web service.</p>
-          <pre>&#x000A;WEB_SERVICE_ADDRESS = 'http://www.example.com'&#x000A;&#x000A;url = URI.parse(WEB_SERVICE_ADDRESS)&#x000A;&#x000A;Net::HTTP.start(url.host, url.port) do |http|&#x000A;  http.get('/product-search', 'q' => 'guitar')&#x000A;end</pre>
+          <pre>&#x000A;WEB_SERVICE_ADDRESS = 'http://www.example.com'&#x000A;&#x000A;url = URI.parse(WEB_SERVICE_ADDRESS)&#x000A;&#x000A;Net::HTTP.start(url.host, url.port) do |http|&#x000A;  http.get('/product-search', 'q' =&gt; 'guitar')&#x000A;end</pre>
           <p>Inspecting the response headers, we notice the web service instructs consumers that the results of the query will remain the same for one hour.</p>
           <pre>curl -I "http://www.example.com/product-search?q=guitar"
           HTTP/1.1 200 OK
@@ -74,7 +73,7 @@
           <strong>'http://service-proxy'</strong>
           url = URI.parse(WEB_SERVICE_ADDRESS)
           Net::HTTP.start(url.host, url.port) do |http|
-          http.get('/product-search', 'q' => 'guitar')
+          http.get('/product-search', 'q' =&gt; 'guitar')
           end</pre>
         </div>
       </div>
@@ -82,5 +81,18 @@
         All content &copy; 2006-2011 George Malamidis, nutrun
       </div>
     </div>
+    <script type="text/javascript">
+      //<![CDATA[
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      //]]>
+    </script>
+    <script type="text/javascript">
+      //<![CDATA[
+        var pageTracker = _gat._getTracker("UA-402519-1");
+        pageTracker._initData();
+        pageTracker._trackPageview();
+      //]]>
+    </script>
   </body>
 </html>
