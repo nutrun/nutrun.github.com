@@ -5,7 +5,7 @@
     <link>http://nutrun.com/</link>
     <description>nutrun RSS feed</description>
     <copyright>Copyright 2006-2011 George Malamidis</copyright>
-    <lastBuildDate>2010-11-17T00:00:00+00:00</lastBuildDate>
+    <lastBuildDate>Wed, 17 Nov 2010 00:00:00 +0000</lastBuildDate>
     <item>
       <title>  Supercharged ruby console output</title>
       <description>
@@ -19,7 +19,7 @@
           </p>
         </div>
       </description>
-      <pubDate>2010-11-17T00:00:00+00:00</pubDate>
+      <pubDate>Wed, 17 Nov 2010 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2010/11/17/supercharged-ruby-console-output.html</guid>
     </item>
     <item>
@@ -68,7 +68,7 @@
           </p>
         </div>
       </description>
-      <pubDate>2010-06-24T00:00:00+00:00</pubDate>
+      <pubDate>Thu, 24 Jun 2010 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2010/06/24/sinatra-reloader.html</guid>
     </item>
     <item>
@@ -111,7 +111,7 @@
           Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.</pre>
         </div>
       </description>
-      <pubDate>2009-12-22T00:00:00+00:00</pubDate>
+      <pubDate>Tue, 22 Dec 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/12/22/incremental-deployment.html</guid>
     </item>
     <item>
@@ -136,7 +136,7 @@
           <p>With this approach, the application knows how to setup the system the way it needs it to be next time it gets deployed for the first time. As an added benefit, the Capistrano code serves as documentation for the application's system requirements.</p>
         </div>
       </description>
-      <pubDate>2009-11-10T00:00:00+00:00</pubDate>
+      <pubDate>Tue, 10 Nov 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/11/10/deployment-setup-automation.html</guid>
     </item>
     <item>
@@ -171,7 +171,7 @@
           <p>When I first started using git I was wondering if I had developed a fear of branching because of Subversion's inefficiencies in that area. In reality, I think that an environment where every developer constantly has an up to date understanding of the codebase and especially a current grasp of the design and overall vision will always be more efficient than working remotely and having merge checkpoints, no matter how cleverly the VCS handles branching. This is why I think a faster, distributed, superior at merging VCS is not something more dramatic than a desirable step forward.</p>
         </div>
       </description>
-      <pubDate>2009-08-29T00:00:00+00:00</pubDate>
+      <pubDate>Sat, 29 Aug 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/08/29/vcs-practices-over-features.html</guid>
     </item>
     <item>
@@ -237,7 +237,7 @@
           </p>
         </div>
       </description>
-      <pubDate>2009-08-15T00:00:00+00:00</pubDate>
+      <pubDate>Sat, 15 Aug 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/08/15/hello-world-nginx-module.html</guid>
     </item>
     <item>
@@ -295,7 +295,7 @@
           </p>
         </div>
       </description>
-      <pubDate>2009-08-06T00:00:00+00:00</pubDate>
+      <pubDate>Thu, 6 Aug 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/08/06/asynchronous-session-content-injection.html</guid>
     </item>
     <item>
@@ -342,7 +342,7 @@
           </p>
         </div>
       </description>
-      <pubDate>2009-05-18T00:00:00+00:00</pubDate>
+      <pubDate>Mon, 18 May 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/05/18/rackcacheheaders-code.html</guid>
     </item>
     <item>
@@ -366,7 +366,7 @@
           </p>
         </div>
       </description>
-      <pubDate>2009-02-28T00:00:00+00:00</pubDate>
+      <pubDate>Sat, 28 Feb 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/02/28/97-things-every-software-architect-should-know.html</guid>
     </item>
     <item>
@@ -415,7 +415,7 @@
           end</pre>
         </div>
       </description>
-      <pubDate>2009-02-14T00:00:00+00:00</pubDate>
+      <pubDate>Sat, 14 Feb 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/02/14/caching-proxy-fronted-web-consumer.html</guid>
     </item>
   </channel>
