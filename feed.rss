@@ -9,15 +9,15 @@
     <item>
       <title>  Supercharged ruby console output</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Nov 17 2010</span>
-          </div>
-          <h2 class="title">Supercharged ruby console output</h2>
-          <p>
-            <a href="https://gist.github.com/703943">https://gist.github.com/703943</a>
-          </p>
-        </div>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Nov 17 2010&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Supercharged ruby console output&lt;/h2&gt;
+          &lt;p&gt;
+            &lt;a href=&quot;https://gist.github.com/703943&quot;&gt;https://gist.github.com/703943&lt;/a&gt;
+          &lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Wed, 17 Nov 2010 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2010/11/17/supercharged-ruby-console-output.html</guid>
@@ -25,48 +25,48 @@
     <item>
       <title>  Sinatra reloader</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Jun 24 2010</span>
-          </div>
-          <h2 class="title">Sinatra reloader</h2>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Jun 24 2010&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Sinatra reloader&lt;/h2&gt;
+          &lt;p&gt;
             When I first started using it to write web apps a couple of years ago,
-            <a href="http://www.sinatrarb.com/" title="Sinatra">Sinatra</a>
+            &lt;a href=&quot;http://www.sinatrarb.com/&quot; title=&quot;Sinatra&quot;&gt;Sinatra&lt;/a&gt;
             supported code reloading in development mode. That feature was dropped from the core of Sinatra at some point and we just got used to restarting the app every time we made a change whilst developing, it's not that huge an overhead, especially considering Sinatra's fast start up.
-          </p>
-          <p>
+          &lt;/p&gt;
+          &lt;p&gt;
             I recently had to work on a Rails codebase for a while, which reminded me that code reloading without restarting in dev mode is functionality I don't mind spoiling myself with. At the time,
-            <a href="http://twitter.com/abhinay" title="">Abs</a>
+            &lt;a href=&quot;http://twitter.com/abhinay&quot; title=&quot;&quot;&gt;Abs&lt;/a&gt;
             pointed me to
-            <a href="http://github.com/rkh/sinatra-reloader" title="rkh's sinatra-reloader at master - GitHub">sinatra-reloader</a>
+            &lt;a href=&quot;http://github.com/rkh/sinatra-reloader&quot; title=&quot;rkh's sinatra-reloader at master - GitHub&quot;&gt;sinatra-reloader&lt;/a&gt;
             which I installed and used in a couple of apps and it works well. As I'm writing this, I'm also looking at
-            <a href="http://github.com/rack/rack/blob/master/lib/rack/reloader.rb" title="lib/rack/reloader.rb at master from rack's rack - GitHub">Rack::Reloader</a>,
+            &lt;a href=&quot;http://github.com/rack/rack/blob/master/lib/rack/reloader.rb&quot; title=&quot;lib/rack/reloader.rb at master from rack's rack - GitHub&quot;&gt;Rack::Reloader&lt;/a&gt;,
             which I've never used and seems somewhat different with its own set of interesting features.
-            <a href="http://rtomayko.github.com/shotgun/" title="shotgun(1) - reloading rack development server">Shotgun</a>
+            &lt;a href=&quot;http://rtomayko.github.com/shotgun/&quot; title=&quot;shotgun(1) - reloading rack development server&quot;&gt;Shotgun&lt;/a&gt;
             is out of the question for me, because it feels like manually restarting the app is faster than the time Shotgun takes to load everything per request.
-          </p>
-          <p>
-            <a href="http://rvm.beginrescueend.com/" title="RVM: Ruby Version Manager -&#x000A;        RVM Ruby Version Manager - Documentation">RVM</a>
+          &lt;/p&gt;
+          &lt;p&gt;
+            &lt;a href=&quot;http://rvm.beginrescueend.com/&quot; title=&quot;RVM: Ruby Version Manager -&amp;#x000A;        RVM Ruby Version Manager - Documentation&quot;&gt;RVM&lt;/a&gt;
             has prompted me to switch between Ruby versions more often than in the past, resulting in installing gems more frequently than I used to, which in turn brings out an OCD side of me when it comes to gems that download other gems as dependencies. That's the one thing that bugs me about sinatra-reloader and since I found myself with a bit of time on my hands, I wrote my own Sinatra reloader which I've put in
-            <a href="http://gist.github.com/450814" title="gist: 450814 - Code reloading for Sinatra- GitHub">this gist</a>
+            &lt;a href=&quot;http://gist.github.com/450814&quot; title=&quot;gist: 450814 - Code reloading for Sinatra- GitHub&quot;&gt;this gist&lt;/a&gt;
             in case someone else finds it useful.
-          </p>
-          <p>
+          &lt;/p&gt;
+          &lt;p&gt;
             It works by reloading all source files and routes when it detects a change. This is less efficient than selectively reloading only code from files that have changed, although I tried it in a few of my projects without noticeable penalties. A thing to watch out for is that once a constant has been loaded, it will still be around after you delete the code that declares it. Restarting is required for such changes to take effect. I've also noticed a similar issue with classes that extend
-            <code>Sequel::Model</code>
+            &lt;code&gt;Sequel::Model&lt;/code&gt;
             - if I run a migration and don't restart, database field mappings don't get updated, because Sequel makes those mappings at the time
-            <code>Sequel::Model</code>
+            &lt;code&gt;Sequel::Model&lt;/code&gt;
             is subclassed.
-          </p>
-          <p>
+          &lt;/p&gt;
+          &lt;p&gt;
             In summary, if you don't mind installing a bunch of gems you're likely to never use, I recommend
-            <a href="http://github.com/rkh/sinatra-reloader" title="rkh's sinatra-reloader at master - GitHub">sinatra-reloader</a>.
+            &lt;a href=&quot;http://github.com/rkh/sinatra-reloader&quot; title=&quot;rkh's sinatra-reloader at master - GitHub&quot;&gt;sinatra-reloader&lt;/a&gt;.
             If you're after code reloading which you might want to customise with a couple of lines of code on the spot to suit your particular project's needs,
-            <a href="http://gist.github.com/450814" title="gist: 450814 - Code reloading for Sinatra- GitHub">this</a>
+            &lt;a href=&quot;http://gist.github.com/450814&quot; title=&quot;gist: 450814 - Code reloading for Sinatra- GitHub&quot;&gt;this&lt;/a&gt;
             can be a starting point.
-          </p>
-        </div>
+          &lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Thu, 24 Jun 2010 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2010/06/24/sinatra-reloader.html</guid>
@@ -74,42 +74,42 @@
     <item>
       <title>  Incremental deployment</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Dec 22 2009</span>
-          </div>
-          <h2 class="title">Incremental deployment</h2>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Dec 22 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Incremental deployment&lt;/h2&gt;
+          &lt;p&gt;
             I've recently had a chance to look at a high availability system designed and built by
-            <a href="http://www.forward.co.uk/" title="Forward: Connecting business with customers and people with products online">Forward</a>
+            &lt;a href=&quot;http://www.forward.co.uk/&quot; title=&quot;Forward: Connecting business with customers and people with products online&quot;&gt;Forward&lt;/a&gt;
             colleagues
-            <a href="http://adkent.com/" title="adkent.com">Andy Kent</a>
+            &lt;a href=&quot;http://adkent.com/&quot; title=&quot;adkent.com&quot;&gt;Andy Kent&lt;/a&gt;
             and
-            <a href="http://oobaloo.co.uk/" title="Paul Ingles - Articles">Paul Ingles</a>.
+            &lt;a href=&quot;http://oobaloo.co.uk/&quot; title=&quot;Paul Ingles - Articles&quot;&gt;Paul Ingles&lt;/a&gt;.
             It is a critical web service with a very high impact of failure. Essentially, it
-            <b>must</b>
+            &lt;b&gt;must&lt;/b&gt;
             stay up at all times.
-          </p>
-          <p>
+          &lt;/p&gt;
+          &lt;p&gt;
             The service is hosted on
-            <a href="http://aws.amazon.com/ec2/" title="Amazon Elastic Compute Cloud (Amazon EC2)">Amazon EC2</a>.
+            &lt;a href=&quot;http://aws.amazon.com/ec2/&quot; title=&quot;Amazon Elastic Compute Cloud (Amazon EC2)&quot;&gt;Amazon EC2&lt;/a&gt;.
             It makes use of EC2's geographically distributed regions and different availability zones within each region, fronted by
-            <a href="http://aws.amazon.com/elasticloadbalancing/" title="Elastic Load Balancing">AWS Elastic Load Balancing</a>
+            &lt;a href=&quot;http://aws.amazon.com/elasticloadbalancing/&quot; title=&quot;Elastic Load Balancing&quot;&gt;AWS Elastic Load Balancing&lt;/a&gt;
             and additional global DNS fail over outside of EC2/AWS.
-          </p>
-          <p>
-            <a href="http://www.flickr.com/photos/nutrun/4206247218/" title="high-availability-arch by nutrunflickr, on Flickr">
-              <img alt="high-availability-arch" height="309" src="http://farm5.static.flickr.com/4008/4206247218_4b8f165e0b_o.png" width="497" />
-            </a>
-          </p>
-          <p>A part of the project that struck me as particularly interesting is the deployment strategy Paul and Andy settled on. Regardless of how much trust we have in our builds and QA process, deployments become a whole different, much more stressful activity when critical systems like the one under discussion are involved. Andy mentioned it is important to find the balance between what to automate and bits that should require manual input.</p>
-          <pre>&#x000A;# deploy.rb&#x000A;&#x000A;task :us_1b do&#x000A;  set :region, 'us-east-1'&#x000A;  set :servers, us_1b&#x000A;  # More US 1b specific setup...&#x000A;end&#x000A;&#x000A;task :eu_1a do&#x000A;  set :region, 'eu-west-1'&#x000A;  set :servers, eu_1a&#x000A;  # More EU 1a specific setup...&#x000A;end  %p
+          &lt;/p&gt;
+          &lt;p&gt;
+            &lt;a href=&quot;http://www.flickr.com/photos/nutrun/4206247218/&quot; title=&quot;high-availability-arch by nutrunflickr, on Flickr&quot;&gt;
+              &lt;img alt=&quot;high-availability-arch&quot; height=&quot;309&quot; src=&quot;http://farm5.static.flickr.com/4008/4206247218_4b8f165e0b_o.png&quot; width=&quot;497&quot; /&gt;
+            &lt;/a&gt;
+          &lt;/p&gt;
+          &lt;p&gt;A part of the project that struck me as particularly interesting is the deployment strategy Paul and Andy settled on. Regardless of how much trust we have in our builds and QA process, deployments become a whole different, much more stressful activity when critical systems like the one under discussion are involved. Andy mentioned it is important to find the balance between what to automate and bits that should require manual input.&lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;# deploy.rb&amp;#x000A;&amp;#x000A;task :us_1b do&amp;#x000A;  set :region, 'us-east-1'&amp;#x000A;  set :servers, us_1b&amp;#x000A;  # More US 1b specific setup...&amp;#x000A;end&amp;#x000A;&amp;#x000A;task :eu_1a do&amp;#x000A;  set :region, 'eu-west-1'&amp;#x000A;  set :servers, eu_1a&amp;#x000A;  # More EU 1a specific setup...&amp;#x000A;end  %p
           This service is
-          <em>incrementally deployed one availability zone at a time</em>,
+          &lt;em&gt;incrementally deployed one availability zone at a time&lt;/em&gt;,
           e.g.
-          <code>cap us_1b deploy</code>.
-          Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.</pre>
-        </div>
+          &lt;code&gt;cap us_1b deploy&lt;/code&gt;.
+          Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.&lt;/pre&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Tue, 22 Dec 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/12/22/incremental-deployment.html</guid>
@@ -117,24 +117,24 @@
     <item>
       <title>  Deployment setup automation</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Nov 10 2009</span>
-          </div>
-          <h2 class="title">Deployment setup automation</h2>
-          <p>Part of my work these days has to do with building and deploying numerous experimental applications with varying life cycles. Many of these applications get built and put on a server in less than a day only to be shut down and never looked at again a couple of days later, others get turned off and revisited after some time, while others graduate to larger, wider scope systems.</p>
-          <p>This means that I get to deploy applications for the first time more frequently than usual. Also, because we deploy to virtualised infrastructures (including an internal cloud, Slicehost and Amazon EC2), slice instances (servers) tend to get rebuilt more often than they would in the absence of virtualisation. First time deployments are generally more involved than subsequent ones because there is setup up to be made and software to be installed in order for the host servers to accommodate the application.</p>
-          <p>One way to treat first time deployment woes is to create and maintain images of the system in the state required to host the application. I find this to work well when dealing with moderate numbers of applications and servers, whereas creating and keeping images up to date has a tendency to become tedious and inflexible as the number of applications and images increases.</p>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Nov 10 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Deployment setup automation&lt;/h2&gt;
+          &lt;p&gt;Part of my work these days has to do with building and deploying numerous experimental applications with varying life cycles. Many of these applications get built and put on a server in less than a day only to be shut down and never looked at again a couple of days later, others get turned off and revisited after some time, while others graduate to larger, wider scope systems.&lt;/p&gt;
+          &lt;p&gt;This means that I get to deploy applications for the first time more frequently than usual. Also, because we deploy to virtualised infrastructures (including an internal cloud, Slicehost and Amazon EC2), slice instances (servers) tend to get rebuilt more often than they would in the absence of virtualisation. First time deployments are generally more involved than subsequent ones because there is setup up to be made and software to be installed in order for the host servers to accommodate the application.&lt;/p&gt;
+          &lt;p&gt;One way to treat first time deployment woes is to create and maintain images of the system in the state required to host the application. I find this to work well when dealing with moderate numbers of applications and servers, whereas creating and keeping images up to date has a tendency to become tedious and inflexible as the number of applications and images increases.&lt;/p&gt;
+          &lt;p&gt;
             As an alternative, we can move prerequisite system setup and installations responsibility closer to the application code, in the form of an
-            <code>after</code>
+            &lt;code&gt;after&lt;/code&gt;
             hook to the
-            <code>deploy:setup task</code>
+            &lt;code&gt;deploy:setup task&lt;/code&gt;
             that we call the first time we deploy an application with Capistrano. Here's some Capistrano code that performs one time setup tasks.
-          </p>
-          <pre>&#x000A;namespace :util do&#x000A;  task :install_libraries do&#x000A;    sudo 'apt-get install libxml2 libxml2-dev libmysqlclient15-dev -y'&#x000A;  end  &#x000A;end&#x000A;&#x000A;after 'deploy:setup', 'util:install_libraries'</pre>
-          <p>With this approach, the application knows how to setup the system the way it needs it to be next time it gets deployed for the first time. As an added benefit, the Capistrano code serves as documentation for the application's system requirements.</p>
-        </div>
+          &lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;namespace :util do&amp;#x000A;  task :install_libraries do&amp;#x000A;    sudo 'apt-get install libxml2 libxml2-dev libmysqlclient15-dev -y'&amp;#x000A;  end  &amp;#x000A;end&amp;#x000A;&amp;#x000A;after 'deploy:setup', 'util:install_libraries'&lt;/pre&gt;
+          &lt;p&gt;With this approach, the application knows how to setup the system the way it needs it to be next time it gets deployed for the first time. As an added benefit, the Capistrano code serves as documentation for the application's system requirements.&lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Tue, 10 Nov 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/11/10/deployment-setup-automation.html</guid>
@@ -142,34 +142,34 @@
     <item>
       <title>  VCS practices over features</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Aug 29 2009</span>
-          </div>
-          <h2 class="title">VCS practices over features</h2>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Aug 29 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;VCS practices over features&lt;/h2&gt;
+          &lt;p&gt;
             I've often heard people I know and respect say that
-            <cite>
-              <a href="http://git-scm.com/" title="Git - Fast Version Control System">git</a>
+            &lt;cite&gt;
+              &lt;a href=&quot;http://git-scm.com/&quot; title=&quot;Git - Fast Version Control System&quot;&gt;git&lt;/a&gt;
               is leaps and bounds better than
-              <a href="http://subversion.tigris.org/" title="subversion.tigris.org">Subversion</a>
-            </cite>.
-            I've been a relatively early adopter of git, it's been my VCS of choice for almost two years now. Even though I find it superior to most of the competition I struggle to justify the "leaps and bounds" claim and would rather more modestly call it "a step forward".
-          </p>
-          <p>This is probably due to the practices we find benefit our development process. Git puts great emphasis on branching, something we generally tend to avoid (to clarify, I'm not referring to local branching). We concentrate on feedback based on the usage of our applications. This means that we strive to commit as often as possible and, most importantly, deploy to production at a constant rate. Grossly simplified, the process is: identify a small coherent feature, build it, commit it to the master branch and deploy. No part of the codebase is owned by a subdivision of the team, everyone works on everything.</p>
-          <p>
+              &lt;a href=&quot;http://subversion.tigris.org/&quot; title=&quot;subversion.tigris.org&quot;&gt;Subversion&lt;/a&gt;
+            &lt;/cite&gt;.
+            I've been a relatively early adopter of git, it's been my VCS of choice for almost two years now. Even though I find it superior to most of the competition I struggle to justify the &quot;leaps and bounds&quot; claim and would rather more modestly call it &quot;a step forward&quot;.
+          &lt;/p&gt;
+          &lt;p&gt;This is probably due to the practices we find benefit our development process. Git puts great emphasis on branching, something we generally tend to avoid (to clarify, I'm not referring to local branching). We concentrate on feedback based on the usage of our applications. This means that we strive to commit as often as possible and, most importantly, deploy to production at a constant rate. Grossly simplified, the process is: identify a small coherent feature, build it, commit it to the master branch and deploy. No part of the codebase is owned by a subdivision of the team, everyone works on everything.&lt;/p&gt;
+          &lt;p&gt;
             By far the most popular git commands we issue are
-            <code>git pull</code>,
-            <code>git add</code>
+            &lt;code&gt;git pull&lt;/code&gt;,
+            &lt;code&gt;git add&lt;/code&gt;
             and
-            <code>git push</code>,
+            &lt;code&gt;git push&lt;/code&gt;,
             not that different to
-            <code>svn update</code>
+            &lt;code&gt;svn update&lt;/code&gt;
             and
-            <code>svn commit</code>.
-          </p>
-          <p>When I first started using git I was wondering if I had developed a fear of branching because of Subversion's inefficiencies in that area. In reality, I think that an environment where every developer constantly has an up to date understanding of the codebase and especially a current grasp of the design and overall vision will always be more efficient than working remotely and having merge checkpoints, no matter how cleverly the VCS handles branching. This is why I think a faster, distributed, superior at merging VCS is not something more dramatic than a desirable step forward.</p>
-        </div>
+            &lt;code&gt;svn commit&lt;/code&gt;.
+          &lt;/p&gt;
+          &lt;p&gt;When I first started using git I was wondering if I had developed a fear of branching because of Subversion's inefficiencies in that area. In reality, I think that an environment where every developer constantly has an up to date understanding of the codebase and especially a current grasp of the design and overall vision will always be more efficient than working remotely and having merge checkpoints, no matter how cleverly the VCS handles branching. This is why I think a faster, distributed, superior at merging VCS is not something more dramatic than a desirable step forward.&lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Sat, 29 Aug 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/08/29/vcs-practices-over-features.html</guid>
@@ -177,65 +177,65 @@
     <item>
       <title>  Hello world nginx module</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Aug 15 2009</span>
-          </div>
-          <h2 class="title">Hello world nginx module</h2>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Aug 15 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Hello world nginx module&lt;/h2&gt;
+          &lt;p&gt;
             Several times over the past few months I made short lived attempts of delving into the mechanics of
-            <a href="http://nginx.net/" title="nginx">nginx</a>
+            &lt;a href=&quot;http://nginx.net/&quot; title=&quot;nginx&quot;&gt;nginx&lt;/a&gt;
             modules. Although an invaluable resource to anyone seriously interested in the subject,
-            <a href="http://www.evanmiller.org/nginx-modules-guide.html" title="Emiller's Guide to Nginx Module Development">Emiller's Guide To Nginx Module Development</a>
-            doesn't at the time of this writing include a quick-start example I could hack together and see in action. Getting something to run as quickly as possible is my preferred way of starting the study of new things and every time I caught myself searching the web for a "Hello world nginx module".
-          </p>
-          <p>
+            &lt;a href=&quot;http://www.evanmiller.org/nginx-modules-guide.html&quot; title=&quot;Emiller's Guide to Nginx Module Development&quot;&gt;Emiller's Guide To Nginx Module Development&lt;/a&gt;
+            doesn't at the time of this writing include a quick-start example I could hack together and see in action. Getting something to run as quickly as possible is my preferred way of starting the study of new things and every time I caught myself searching the web for a &quot;Hello world nginx module&quot;.
+          &lt;/p&gt;
+          &lt;p&gt;
             I will not go into any details,
-            <a href="http://www.evanmiller.org/nginx-modules-guide.html" title="Emiller's Guide to Nginx Module Development">Emiller's Guide</a>
-            does an excellent job at that, I'm only going to mention the steps I believe are absolutely necessary to write, compile and run an nginx handler module that responds to every request with the string "Hello world".
-          </p>
-          <p>
+            &lt;a href=&quot;http://www.evanmiller.org/nginx-modules-guide.html&quot; title=&quot;Emiller's Guide to Nginx Module Development&quot;&gt;Emiller's Guide&lt;/a&gt;
+            does an excellent job at that, I'm only going to mention the steps I believe are absolutely necessary to write, compile and run an nginx handler module that responds to every request with the string &quot;Hello world&quot;.
+          &lt;/p&gt;
+          &lt;p&gt;
             There is a minimum of two files required for writing an nginx module, the first should be called
-            <code>config</code>
+            &lt;code&gt;config&lt;/code&gt;
             and looks something like this:
-          </p>
-          <pre>&#x000A;ngx_addon_name=ngx_http_hello_world_module&#x000A;HTTP_MODULES="$HTTP_MODULES ngx_http_hello_world_module"&#x000A;NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_hello_world_module.c"</pre>
-          <p>
+          &lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;ngx_addon_name=ngx_http_hello_world_module&amp;#x000A;HTTP_MODULES=&quot;$HTTP_MODULES ngx_http_hello_world_module&quot;&amp;#x000A;NGX_ADDON_SRCS=&quot;$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_hello_world_module.c&quot;&lt;/pre&gt;
+          &lt;p&gt;
             The second is the module's implementation in C and nginx convention suggests a name like
-            <code>ngx_http_modulename_module.c</code>,
+            &lt;code&gt;ngx_http_modulename_module.c&lt;/code&gt;,
             in this case
-            <code>ngx_http_hello_world_module.c</code>.
-          </p>
-          <pre>&#x000A;#include &lt;ngx_config.h&gt;&#x000A;#include &lt;ngx_core.h&gt;&#x000A;#include &lt;ngx_http.h&gt;&#x000A;&#x000A;static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);&#x000A;&#x000A;static ngx_command_t  ngx_http_hello_world_commands[] = {&#x000A;&#x000A;  { ngx_string("hello_world"),&#x000A;    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,&#x000A;    ngx_http_hello_world,&#x000A;    0,&#x000A;    0,&#x000A;    NULL },&#x000A;&#x000A;    ngx_null_command&#x000A;};&#x000A;&#x000A;&#x000A;static u_char  ngx_hello_world[] = "hello world";&#x000A;&#x000A;static ngx_http_module_t  ngx_http_hello_world_module_ctx = {&#x000A;  NULL,                          /* preconfiguration */&#x000A;  NULL,                          /* postconfiguration */&#x000A;&#x000A;  NULL,                          /* create main configuration */&#x000A;  NULL,                          /* init main configuration */&#x000A;&#x000A;  NULL,                          /* create server configuration */&#x000A;  NULL,                          /* merge server configuration */&#x000A;&#x000A;  NULL,                          /* create location configuration */&#x000A;  NULL                           /* merge location configuration */&#x000A;};&#x000A;&#x000A;&#x000A;ngx_module_t ngx_http_hello_world_module = {&#x000A;  NGX_MODULE_V1,&#x000A;  &amp;ngx_http_hello_world_module_ctx, /* module context */&#x000A;  ngx_http_hello_world_commands,   /* module directives */&#x000A;  NGX_HTTP_MODULE,               /* module type */&#x000A;  NULL,                          /* init master */&#x000A;  NULL,                          /* init module */&#x000A;  NULL,                          /* init process */&#x000A;  NULL,                          /* init thread */&#x000A;  NULL,                          /* exit thread */&#x000A;  NULL,                          /* exit process */&#x000A;  NULL,                          /* exit master */&#x000A;  NGX_MODULE_V1_PADDING&#x000A;};&#x000A;&#x000A;&#x000A;static ngx_int_t ngx_http_hello_world_handler(ngx_http_request_t *r)&#x000A;{&#x000A;  ngx_buf_t    *b;&#x000A;  ngx_chain_t   out;&#x000A;&#x000A;  r-&gt;headers_out.content_type.len = sizeof("text/plain") - 1;&#x000A;  r-&gt;headers_out.content_type.data = (u_char *) "text/plain";&#x000A;&#x000A;  b = ngx_pcalloc(r-&gt;pool, sizeof(ngx_buf_t));&#x000A;&#x000A;  out.buf = b;&#x000A;  out.next = NULL;&#x000A;&#x000A;  b-&gt;pos = ngx_hello_world;&#x000A;  b-&gt;last = ngx_hello_world + sizeof(ngx_hello_world);&#x000A;  b-&gt;memory = 1;&#x000A;  b-&gt;last_buf = 1;&#x000A;&#x000A;  r-&gt;headers_out.status = NGX_HTTP_OK;&#x000A;  r-&gt;headers_out.content_length_n = sizeof(ngx_hello_world);&#x000A;  ngx_http_send_header(r);&#x000A;&#x000A;  return ngx_http_output_filter(r, &amp;out);&#x000A;}&#x000A;&#x000A;&#x000A;static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)&#x000A;{&#x000A;  ngx_http_core_loc_conf_t  *clcf;&#x000A;&#x000A;  clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);&#x000A;  clcf-&gt;handler = ngx_http_hello_world_handler;&#x000A;&#x000A;  return NGX_CONF_OK;&#x000A;}</pre>
-          <p>
+            &lt;code&gt;ngx_http_hello_world_module.c&lt;/code&gt;.
+          &lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;#include &lt;ngx_config.h&gt;&amp;#x000A;#include &lt;ngx_core.h&gt;&amp;#x000A;#include &lt;ngx_http.h&gt;&amp;#x000A;&amp;#x000A;static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);&amp;#x000A;&amp;#x000A;static ngx_command_t  ngx_http_hello_world_commands[] = {&amp;#x000A;&amp;#x000A;  { ngx_string(&quot;hello_world&quot;),&amp;#x000A;    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,&amp;#x000A;    ngx_http_hello_world,&amp;#x000A;    0,&amp;#x000A;    0,&amp;#x000A;    NULL },&amp;#x000A;&amp;#x000A;    ngx_null_command&amp;#x000A;};&amp;#x000A;&amp;#x000A;&amp;#x000A;static u_char  ngx_hello_world[] = &quot;hello world&quot;;&amp;#x000A;&amp;#x000A;static ngx_http_module_t  ngx_http_hello_world_module_ctx = {&amp;#x000A;  NULL,                          /* preconfiguration */&amp;#x000A;  NULL,                          /* postconfiguration */&amp;#x000A;&amp;#x000A;  NULL,                          /* create main configuration */&amp;#x000A;  NULL,                          /* init main configuration */&amp;#x000A;&amp;#x000A;  NULL,                          /* create server configuration */&amp;#x000A;  NULL,                          /* merge server configuration */&amp;#x000A;&amp;#x000A;  NULL,                          /* create location configuration */&amp;#x000A;  NULL                           /* merge location configuration */&amp;#x000A;};&amp;#x000A;&amp;#x000A;&amp;#x000A;ngx_module_t ngx_http_hello_world_module = {&amp;#x000A;  NGX_MODULE_V1,&amp;#x000A;  &amp;ngx_http_hello_world_module_ctx, /* module context */&amp;#x000A;  ngx_http_hello_world_commands,   /* module directives */&amp;#x000A;  NGX_HTTP_MODULE,               /* module type */&amp;#x000A;  NULL,                          /* init master */&amp;#x000A;  NULL,                          /* init module */&amp;#x000A;  NULL,                          /* init process */&amp;#x000A;  NULL,                          /* init thread */&amp;#x000A;  NULL,                          /* exit thread */&amp;#x000A;  NULL,                          /* exit process */&amp;#x000A;  NULL,                          /* exit master */&amp;#x000A;  NGX_MODULE_V1_PADDING&amp;#x000A;};&amp;#x000A;&amp;#x000A;&amp;#x000A;static ngx_int_t ngx_http_hello_world_handler(ngx_http_request_t *r)&amp;#x000A;{&amp;#x000A;  ngx_buf_t    *b;&amp;#x000A;  ngx_chain_t   out;&amp;#x000A;&amp;#x000A;  r-&gt;headers_out.content_type.len = sizeof(&quot;text/plain&quot;) - 1;&amp;#x000A;  r-&gt;headers_out.content_type.data = (u_char *) &quot;text/plain&quot;;&amp;#x000A;&amp;#x000A;  b = ngx_pcalloc(r-&gt;pool, sizeof(ngx_buf_t));&amp;#x000A;&amp;#x000A;  out.buf = b;&amp;#x000A;  out.next = NULL;&amp;#x000A;&amp;#x000A;  b-&gt;pos = ngx_hello_world;&amp;#x000A;  b-&gt;last = ngx_hello_world + sizeof(ngx_hello_world);&amp;#x000A;  b-&gt;memory = 1;&amp;#x000A;  b-&gt;last_buf = 1;&amp;#x000A;&amp;#x000A;  r-&gt;headers_out.status = NGX_HTTP_OK;&amp;#x000A;  r-&gt;headers_out.content_length_n = sizeof(ngx_hello_world);&amp;#x000A;  ngx_http_send_header(r);&amp;#x000A;&amp;#x000A;  return ngx_http_output_filter(r, &amp;out);&amp;#x000A;}&amp;#x000A;&amp;#x000A;&amp;#x000A;static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)&amp;#x000A;{&amp;#x000A;  ngx_http_core_loc_conf_t  *clcf;&amp;#x000A;&amp;#x000A;  clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);&amp;#x000A;  clcf-&gt;handler = ngx_http_hello_world_handler;&amp;#x000A;&amp;#x000A;  return NGX_CONF_OK;&amp;#x000A;}&lt;/pre&gt;
+          &lt;p&gt;
             Both
-            <code>config</code>
+            &lt;code&gt;config&lt;/code&gt;
             and
-            <code>ngx_http_hello_world_module.c</code>
+            &lt;code&gt;ngx_http_hello_world_module.c&lt;/code&gt;
             should be placed in the same directory, let's say
-            <code>/etc/ngxhelloworld</code>.
+            &lt;code&gt;/etc/ngxhelloworld&lt;/code&gt;.
             Modules are compiled into the nginx binary. To do so,
-            <a href="http://wiki.nginx.org/NginxInstall" title="NginxInstall">download the nginx source</a>,
+            &lt;a href=&quot;http://wiki.nginx.org/NginxInstall&quot; title=&quot;NginxInstall&quot;&gt;download the nginx source&lt;/a&gt;,
             uncompress, and in the nginx source directory run:
-          </p>
-          <pre>&#x000A;./configure --add-module=/etc/ngxhelloworld&#x000A;make&#x000A;sudo make install</pre>
-          <p>
+          &lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;./configure --add-module=/etc/ngxhelloworld&amp;#x000A;make&amp;#x000A;sudo make install&lt;/pre&gt;
+          &lt;p&gt;
             Finally, add a module directive to nginx's configuration (default is
-            <code>/usr/local/nginx/conf/nginx.conf</code>)
+            &lt;code&gt;/usr/local/nginx/conf/nginx.conf&lt;/code&gt;)
             to enable the module for a location.
-          </p>
-          <pre>&#x000A;location = /hello {&#x000A;  hello_world;&#x000A;}</pre>
-          <p>
+          &lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;location = /hello {&amp;#x000A;  hello_world;&amp;#x000A;}&lt;/pre&gt;
+          &lt;p&gt;
             At this point, we can start nginx and navigating to
-            <code>http://localhost/hello</code>
+            &lt;code&gt;http://localhost/hello&lt;/code&gt;
             will yield the result of all this labor.
-          </p>
-          <p>
+          &lt;/p&gt;
+          &lt;p&gt;
             Alongside Emiller's Guide, I also found reading
-            <a href="http://wiki.nginx.org/Nginx3rdPartyModules" title="Nginx3rdPartyModules">nginx third party module</a>
+            &lt;a href=&quot;http://wiki.nginx.org/Nginx3rdPartyModules&quot; title=&quot;Nginx3rdPartyModules&quot;&gt;nginx third party module&lt;/a&gt;
             code helpful.
-          </p>
-        </div>
+          &lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Sat, 15 Aug 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/08/15/hello-world-nginx-module.html</guid>
@@ -243,57 +243,57 @@
     <item>
       <title>  Asynchronous session content injection</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Aug 06 2009</span>
-          </div>
-          <h2 class="title">Asynchronous session content injection</h2>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Aug 06 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Asynchronous session content injection&lt;/h2&gt;
+          &lt;p&gt;
             Applying a clear distinction between stateless and stateful content when designing a web application is tricky but worth tackling early so that content not specific to user sessions can benefit from web caching. The technique we are trying out for
-            <a href="http://www.scramble.com/" title="">scramble.com</a>
+            &lt;a href=&quot;http://www.scramble.com/&quot; title=&quot;&quot;&gt;scramble.com&lt;/a&gt;
             reminds me of what I described in
-            <a href="http://nutrun.com/weblog/state-separation/" title="nutrun  » Blog Archive   » State separation">State separation</a>
+            &lt;a href=&quot;http://nutrun.com/weblog/state-separation/&quot; title=&quot;nutrun  » Blog Archive   » State separation&quot;&gt;State separation&lt;/a&gt;
             and was introduced to me by
-            <a href="http://www.neophiliac.net/" title="ne•o•phil•i•ac">Mike Jones</a>
+            &lt;a href=&quot;http://www.neophiliac.net/&quot; title=&quot;ne•o•phil•i•ac&quot;&gt;Mike Jones&lt;/a&gt;
             who was inspired by the
-            <em>Dynamically Update Cached Pages</em>
+            &lt;em&gt;Dynamically Update Cached Pages&lt;/em&gt;
             chapter in
-            <a href="http://www.pragprog.com/titles/fr_arr/advanced-rails-recipes" title="The Pragmatic Bookshelf | Advanced Rails Recipes">Advanced Rails Recipes</a>.
-          </p>
-          <p>
-            <a href="http://www.flickr.com/photos/nutrun/3794424247/" title="asynchronous-session-content-injection by nutrunflickr, on Flickr">
-              <img alt="asynchronous-session-content-injection" height="242" src="http://farm3.static.flickr.com/2501/3794424247_30b0d5cc52_o.png" width="331" />
-            </a>
-          </p>
-          <p>The idea involves serving non session specific resources independent from personalized content and use AJAX calls to inject the page with session specific content.</p>
-          <pre>&#x000A;require 'rubygems'&#x000A;require 'sinatra'&#x000A;require 'json'&#x000A;&#x000A;configure do&#x000A;  enable :sessions&#x000A;end&#x000A;&#x000A;get '/' do&#x000A;  headers['Cache-Control'] = 'max-age=60, must-revalidate'&#x000A;  erb :index&#x000A;end&#x000A;&#x000A;get '/userinfo' do&#x000A;  if session[:user]&#x000A;    JSON.dump(:user =&gt; session[:user])&#x000A;  else&#x000A;    halt 401&#x000A;  end&#x000A;end&#x000A;&#x000A;get '/login' do&#x000A;  session[:user] = 'rock'&#x000A;  redirect '/'&#x000A;end&#x000A;&#x000A;get '/logout' do&#x000A;  session.clear&#x000A;  redirect '/'&#x000A;end  %p
+            &lt;a href=&quot;http://www.pragprog.com/titles/fr_arr/advanced-rails-recipes&quot; title=&quot;The Pragmatic Bookshelf | Advanced Rails Recipes&quot;&gt;Advanced Rails Recipes&lt;/a&gt;.
+          &lt;/p&gt;
+          &lt;p&gt;
+            &lt;a href=&quot;http://www.flickr.com/photos/nutrun/3794424247/&quot; title=&quot;asynchronous-session-content-injection by nutrunflickr, on Flickr&quot;&gt;
+              &lt;img alt=&quot;asynchronous-session-content-injection&quot; height=&quot;242&quot; src=&quot;http://farm3.static.flickr.com/2501/3794424247_30b0d5cc52_o.png&quot; width=&quot;331&quot; /&gt;
+            &lt;/a&gt;
+          &lt;/p&gt;
+          &lt;p&gt;The idea involves serving non session specific resources independent from personalized content and use AJAX calls to inject the page with session specific content.&lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;require 'rubygems'&amp;#x000A;require 'sinatra'&amp;#x000A;require 'json'&amp;#x000A;&amp;#x000A;configure do&amp;#x000A;  enable :sessions&amp;#x000A;end&amp;#x000A;&amp;#x000A;get '/' do&amp;#x000A;  headers['Cache-Control'] = 'max-age=60, must-revalidate'&amp;#x000A;  erb :index&amp;#x000A;end&amp;#x000A;&amp;#x000A;get '/userinfo' do&amp;#x000A;  if session[:user]&amp;#x000A;    JSON.dump(:user =&gt; session[:user])&amp;#x000A;  else&amp;#x000A;    halt 401&amp;#x000A;  end&amp;#x000A;end&amp;#x000A;&amp;#x000A;get '/login' do&amp;#x000A;  session[:user] = 'rock'&amp;#x000A;  redirect '/'&amp;#x000A;end&amp;#x000A;&amp;#x000A;get '/logout' do&amp;#x000A;  session.clear&amp;#x000A;  redirect '/'&amp;#x000A;end  %p
           Notice some of the headers for
-          <code>'/'</code>:</pre>
-          <pre>&#x000A;$ curl -I http://localhost:4567/&#x000A;Cache-Control: max-age=60, must-revalidate&#x000A;Set-Cookie: rack.session=BAh7AA%3D%3D%0A; path=/</pre>
-          <p>
+          &lt;code&gt;'/'&lt;/code&gt;:&lt;/pre&gt;
+          &lt;pre&gt;&amp;#x000A;$ curl -I http://localhost:4567/&amp;#x000A;Cache-Control: max-age=60, must-revalidate&amp;#x000A;Set-Cookie: rack.session=BAh7AA%3D%3D%0A; path=/&lt;/pre&gt;
+          &lt;p&gt;
             The
-            <code>Cache-Control</code>
+            &lt;code&gt;Cache-Control&lt;/code&gt;
             policy instructs a web cache to keep this version of the resource for 60 seconds before requesting a fresh one.
-            <code>Set-Cookie</code>
+            &lt;code&gt;Set-Cookie&lt;/code&gt;
             however will usually cause a web cache to never store the response and always query its back end.
-          </p>
-          <p>
+          &lt;/p&gt;
+          &lt;p&gt;
             The following configuration tells
-            <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>
+            &lt;a href=&quot;http://varnish.projects.linpro.no/&quot; title=&quot;Varnish - Trac&quot;&gt;Varnish&lt;/a&gt;
             to throw away the cookie from any request/response that doesn' match one of the URLs that require authorization, thus causing it to react to response cache policies.
-          </p>
-          <pre>&#x000A;sub vcl_recv {&#x000A;  if (req.url !~ "^(/login|/logout|/userinfo)") {&#x000A;    unset req.http.cookie;&#x000A;  }&#x000A;}&#x000A;&#x000A;sub vcl_fetch {&#x000A;  if (req.url !~ "^(/login|/logout|/userinfo)") {&#x000A;    unset obj.http.set-cookie;&#x000A;  }&#x000A;}  %p
+          &lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;sub vcl_recv {&amp;#x000A;  if (req.url !~ &quot;^(/login|/logout|/userinfo)&quot;) {&amp;#x000A;    unset req.http.cookie;&amp;#x000A;  }&amp;#x000A;}&amp;#x000A;&amp;#x000A;sub vcl_fetch {&amp;#x000A;  if (req.url !~ &quot;^(/login|/logout|/userinfo)&quot;) {&amp;#x000A;    unset obj.http.set-cookie;&amp;#x000A;  }&amp;#x000A;}  %p
           A snippet from the HTML response for
-          <code>'/'</code>:</pre>
-          <pre>&#x000A;&lt;h1&gt;Hi&lt;/h1&gt;&#x000A;&lt;div id="nav"&gt;&#x000A;  &lt;a href="/login" class='login-control'&gt;Login&lt;/a&gt;&#x000A;&lt;/div&gt;</pre>
-          <p>... and the javascript for asynchronously injecting session data to the page:</p>
-          <pre>&#x000A;$(function() {&#x000A;  $.getJSON('/userinfo', function(data) {&#x000A;    $('h1').text('Hi ' + data.user);&#x000A;    $('#nav .login-control').attr('href', '/logout').html('logout');&#x000A;  })&#x000A;})</pre>
-          <p>In summary, it is likely that a website will have significant amounts of content that is intended for everyone without the need for personalization. The performance of serving that content can benefit from web caching, but that becomes difficult as many websites' user experience depends on the presence of user sessions. Separating stateless from session specific content at the resource level and using a combination of HTTP and AJAX to merge the results of requests for both types of resources will make stateless content cacheable by decoupling it from the unnecessary cookie dependency.</p>
-          <p>
+          &lt;code&gt;'/'&lt;/code&gt;:&lt;/pre&gt;
+          &lt;pre&gt;&amp;#x000A;&lt;h1&gt;Hi&lt;/h1&gt;&amp;#x000A;&lt;div id=&quot;nav&quot;&gt;&amp;#x000A;  &lt;a href=&quot;/login&quot; class='login-control'&gt;Login&lt;/a&gt;&amp;#x000A;&lt;/div&gt;&lt;/pre&gt;
+          &lt;p&gt;... and the javascript for asynchronously injecting session data to the page:&lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;$(function() {&amp;#x000A;  $.getJSON('/userinfo', function(data) {&amp;#x000A;    $('h1').text('Hi ' + data.user);&amp;#x000A;    $('#nav .login-control').attr('href', '/logout').html('logout');&amp;#x000A;  })&amp;#x000A;})&lt;/pre&gt;
+          &lt;p&gt;In summary, it is likely that a website will have significant amounts of content that is intended for everyone without the need for personalization. The performance of serving that content can benefit from web caching, but that becomes difficult as many websites' user experience depends on the presence of user sessions. Separating stateless from session specific content at the resource level and using a combination of HTTP and AJAX to merge the results of requests for both types of resources will make stateless content cacheable by decoupling it from the unnecessary cookie dependency.&lt;/p&gt;
+          &lt;p&gt;
             Runnable code example :
-            <a href="http://pastie.org/573878">http://pastie.org/573878</a>
-          </p>
-        </div>
+            &lt;a href=&quot;http://pastie.org/573878&quot;&gt;http://pastie.org/573878&lt;/a&gt;
+          &lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Thu, 6 Aug 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/08/06/asynchronous-session-content-injection.html</guid>
@@ -301,46 +301,46 @@
     <item>
       <title>  Rack::CacheHeaders code</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">May 18 2009</span>
-          </div>
-          <h2 class="title">Rack::CacheHeaders code</h2>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;May 18 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Rack::CacheHeaders code&lt;/h2&gt;
+          &lt;p&gt;
             A few months ago I
-            <a href="http://nutrun.com/weblog/rack-cache-headers/" title="nutrun  » Blog Archive   » Rack cache headers">wrote</a>
+            &lt;a href=&quot;http://nutrun.com/weblog/rack-cache-headers/&quot; title=&quot;nutrun  » Blog Archive   » Rack cache headers&quot;&gt;wrote&lt;/a&gt;
             about a possible method for centrally configuring HTTP cache headers in
-            <a href="http://rack.rubyforge.org/" title="Rack: a Ruby Webserver Interface">Rack</a>
+            &lt;a href=&quot;http://rack.rubyforge.org/&quot; title=&quot;Rack: a Ruby Webserver Interface&quot;&gt;Rack&lt;/a&gt;
             based web applications which I called
-            <code>Rack::CacheHeaders</code>.
+            &lt;code&gt;Rack::CacheHeaders&lt;/code&gt;.
             This is useful if your application's architecture involves tools like
-            <a href="http://www.squid-cache.org/" title="squid : Optimising Web Delivery">Squid</a>
+            &lt;a href=&quot;http://www.squid-cache.org/&quot; title=&quot;squid : Optimising Web Delivery&quot;&gt;Squid&lt;/a&gt;
             or
-            <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>,
+            &lt;a href=&quot;http://varnish.projects.linpro.no/&quot; title=&quot;Varnish - Trac&quot;&gt;Varnish&lt;/a&gt;,
             or if you are generally interested in harvesting the numerous advantages of HTTP caching for your web application.
-          </p>
-          <p>
+          &lt;/p&gt;
+          &lt;p&gt;
             The code has evolved a bit since and proven useful in a number of production systems. I created a
-            <a href="http://gist.github.com/113441" title="gist: 113441 - GitHub">gist</a>
+            &lt;a href=&quot;http://gist.github.com/113441&quot; title=&quot;gist: 113441 - GitHub&quot;&gt;gist&lt;/a&gt;
             of
-            <code>Rack::CacheHeaders</code>
+            &lt;code&gt;Rack::CacheHeaders&lt;/code&gt;
             in case someone else finds it handy. The tool is not exhaustive in terms of policies as found in the HTTP
-            <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html" title="HTTP/1.1: Caching in HTTP">specs</a>,
+            &lt;a href=&quot;http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html&quot; title=&quot;HTTP/1.1: Caching in HTTP&quot;&gt;specs&lt;/a&gt;,
             it's a collection of the ones we needed in the projects it's been used so far. Consider adding ones you need to the gist to make the code more complete and widely useful.
-          </p>
-          <p>
-            <code>Rack::CacheHeaders</code>
+          &lt;/p&gt;
+          &lt;p&gt;
+            &lt;code&gt;Rack::CacheHeaders&lt;/code&gt;
             allows configuring HTTP cache policy response headers based on request URI patterns. For example, to set the
-            <code>Cache-Control: max-age</code>
+            &lt;code&gt;Cache-Control: max-age&lt;/code&gt;
             header for a
-            <code>/guitars/:id</code>
+            &lt;code&gt;/guitars/:id&lt;/code&gt;
             resource to one hour:
-          </p>
-          <pre>&#x000A;Rack::CacheHeaders.configure do |cache|&#x000A;  cache.max_age(/^\/guitars\/d+$/, 3600)&#x000A;end</pre>
-          <p>
-            <a href="http://gist.github.com/113441" title="gist: 113441 - GitHub">Download/develop Rack::CacheHeaders</a>
-          </p>
-        </div>
+          &lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;Rack::CacheHeaders.configure do |cache|&amp;#x000A;  cache.max_age(/^\/guitars\/d+$/, 3600)&amp;#x000A;end&lt;/pre&gt;
+          &lt;p&gt;
+            &lt;a href=&quot;http://gist.github.com/113441&quot; title=&quot;gist: 113441 - GitHub&quot;&gt;Download/develop Rack::CacheHeaders&lt;/a&gt;
+          &lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Mon, 18 May 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/05/18/rackcacheheaders-code.html</guid>
@@ -348,23 +348,23 @@
     <item>
       <title>  97 Things Every Software Architect Should Know</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Feb 28 2009</span>
-          </div>
-          <h2 class="title">97 Things Every Software Architect Should Know</h2>
-          <p>
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Feb 28 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;97 Things Every Software Architect Should Know&lt;/h2&gt;
+          &lt;p&gt;
             A few months ago I wrote one of the axioms for a community effort called
-            <a href="http://97-things.near-time.net/wiki" title="Home Page for 97 Things 		 [97 Things] : Near-Time">97 Things Every Software Architect Should Know</a>
+            &lt;a href=&quot;http://97-things.near-time.net/wiki&quot; title=&quot;Home Page for 97 Things 		 [97 Things] : Near-Time&quot;&gt;97 Things Every Software Architect Should Know&lt;/a&gt;
             which was driven and edited by
-            <a href="http://www.monson-haefel.com/" title="Monson-Haefel's Web Site">Richard Monson-Haefel</a>.
+            &lt;a href=&quot;http://www.monson-haefel.com/&quot; title=&quot;Monson-Haefel's Web Site&quot;&gt;Richard Monson-Haefel&lt;/a&gt;.
             This collection of principles, as contributed by an impressive range of software architects around the world, was recently released as a
-            <a href="http://oreilly.com/catalog/9780596522698/index.html" title="97 Things Every Software Architect Should Know | O'Reilly Media">book</a>
+            &lt;a href=&quot;http://oreilly.com/catalog/9780596522698/index.html&quot; title=&quot;97 Things Every Software Architect Should Know | O'Reilly Media&quot;&gt;book&lt;/a&gt;
             by
-            <a href="http://oreilly.com/" title="O'Reilly Media - Spreading the knowledge of technology innovators">O'Reilly Media</a>
+            &lt;a href=&quot;http://oreilly.com/&quot; title=&quot;O'Reilly Media - Spreading the knowledge of technology innovators&quot;&gt;O'Reilly Media&lt;/a&gt;
             and is well worth a look if you're interested in pragmatic advice based on how some of our colleagues approach technology projects.
-          </p>
-        </div>
+          &lt;/p&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Sat, 28 Feb 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/02/28/97-things-every-software-architect-should-know.html</guid>
@@ -372,48 +372,48 @@
     <item>
       <title>  Caching proxy fronted web consumer</title>
       <description>
-        <div class="article">
-          <div>
-            <span class="date">Feb 14 2009</span>
-          </div>
-          <h2 class="title">Caching proxy fronted web consumer</h2>
-          <p>Consider an application which as part of its functionality queries a product search web service.</p>
-          <pre>&#x000A;WEB_SERVICE_ADDRESS = 'http://www.example.com'&#x000A;&#x000A;url = URI.parse(WEB_SERVICE_ADDRESS)&#x000A;&#x000A;Net::HTTP.start(url.host, url.port) do |http|&#x000A;  http.get('/product-search', 'q' =&gt; 'guitar')&#x000A;end</pre>
-          <p>Inspecting the response headers, we notice the web service instructs consumers that the results of the query will remain the same for one hour.</p>
-          <pre>curl -I "http://www.example.com/product-search?q=guitar"
+        &lt;div class=&quot;article&quot;&gt;
+          &lt;div&gt;
+            &lt;span class=&quot;date&quot;&gt;Feb 14 2009&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;h2 class=&quot;title&quot;&gt;Caching proxy fronted web consumer&lt;/h2&gt;
+          &lt;p&gt;Consider an application which as part of its functionality queries a product search web service.&lt;/p&gt;
+          &lt;pre&gt;&amp;#x000A;WEB_SERVICE_ADDRESS = 'http://www.example.com'&amp;#x000A;&amp;#x000A;url = URI.parse(WEB_SERVICE_ADDRESS)&amp;#x000A;&amp;#x000A;Net::HTTP.start(url.host, url.port) do |http|&amp;#x000A;  http.get('/product-search', 'q' =&gt; 'guitar')&amp;#x000A;end&lt;/pre&gt;
+          &lt;p&gt;Inspecting the response headers, we notice the web service instructs consumers that the results of the query will remain the same for one hour.&lt;/p&gt;
+          &lt;pre&gt;curl -I &quot;http://www.example.com/product-search?q=guitar&quot;
           HTTP/1.1 200 OK
           Content-Type: text/html
-          <strong>Cache-Control: max-age=3600, must-revalidate</strong>
+          &lt;strong&gt;Cache-Control: max-age=3600, must-revalidate&lt;/strong&gt;
           Content-Length: 32650
           Date: Sat, 14 Feb 2009 13:53:31 GMT
           Age: 0
-          Connection: keep-alive</pre>
-          <p>At this point we can choose to ignore the cache control header and keep on querying the service for this specific resource regardless of whether the response is going to be the same. This is suboptimal for the consumer, which will suffer unnecessary latency penalties, the service, which will have to respond to inessential requests, and the network which will be subject to unnecessary bandwidth usage. Another option involves making the web consumer aware of the service's caching policies so that it only queries for data that it doesn't have or data that's become stale. This option remedies the above problems but introduces additional complexity to the consumer.</p>
-          <p>A third option involves introducing a caching proxy to the web consumer's stack responsible for mediating the service/consumer interactions solely based on the content's caching characteristics.</p>
-          <p>
-            <a href="http://www.flickr.com/photos/nutrun/3278914298/" title="caching-proxy-fronted-web-consumer by nutrunflickr, on Flickr">
-              <img alt="caching-proxy-fronted-web-consumer" height="149" src="http://farm4.static.flickr.com/3054/3278914298_f039f380ff_o.png" width="422" />
-            </a>
-          </p>
-          <p>Benefits of this approach include: The consumer never has to deal with any caching logic; No effort is required in re-implementing cache handling code; It is likely that the caching engine will perform better than custom caching code in the consumer because it's been built and optimized for this purpose; The caching proxy can be re-used by more than one types of consumer or more than one instances of the same consumer in the stack. As a possible side-effect, the caching proxy is an additional layer to the consumer stack and this can result in network (the consumer's LAN) latency.</p>
-          <p>
+          Connection: keep-alive&lt;/pre&gt;
+          &lt;p&gt;At this point we can choose to ignore the cache control header and keep on querying the service for this specific resource regardless of whether the response is going to be the same. This is suboptimal for the consumer, which will suffer unnecessary latency penalties, the service, which will have to respond to inessential requests, and the network which will be subject to unnecessary bandwidth usage. Another option involves making the web consumer aware of the service's caching policies so that it only queries for data that it doesn't have or data that's become stale. This option remedies the above problems but introduces additional complexity to the consumer.&lt;/p&gt;
+          &lt;p&gt;A third option involves introducing a caching proxy to the web consumer's stack responsible for mediating the service/consumer interactions solely based on the content's caching characteristics.&lt;/p&gt;
+          &lt;p&gt;
+            &lt;a href=&quot;http://www.flickr.com/photos/nutrun/3278914298/&quot; title=&quot;caching-proxy-fronted-web-consumer by nutrunflickr, on Flickr&quot;&gt;
+              &lt;img alt=&quot;caching-proxy-fronted-web-consumer&quot; height=&quot;149&quot; src=&quot;http://farm4.static.flickr.com/3054/3278914298_f039f380ff_o.png&quot; width=&quot;422&quot; /&gt;
+            &lt;/a&gt;
+          &lt;/p&gt;
+          &lt;p&gt;Benefits of this approach include: The consumer never has to deal with any caching logic; No effort is required in re-implementing cache handling code; It is likely that the caching engine will perform better than custom caching code in the consumer because it's been built and optimized for this purpose; The caching proxy can be re-used by more than one types of consumer or more than one instances of the same consumer in the stack. As a possible side-effect, the caching proxy is an additional layer to the consumer stack and this can result in network (the consumer's LAN) latency.&lt;/p&gt;
+          &lt;p&gt;
             Here's the configuration needed in order to use
-            <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>
+            &lt;a href=&quot;http://varnish.projects.linpro.no/&quot; title=&quot;Varnish - Trac&quot;&gt;Varnish&lt;/a&gt;
             as a caching web consumer proxy for the above example.
-          </p>
-          <pre><strong># varnish.conf</strong>
+          &lt;/p&gt;
+          &lt;pre&gt;&lt;strong&gt;# varnish.conf&lt;/strong&gt;
           backend default {
-          .host = "www.example.com";
-          .port = "http";
-          }</pre>
-          <p>The only thing that changes in the consumer is the address it directs its requests to.</p>
-          <pre>WEB_SERVICE_ADDRESS =
-          <strong>'http://service-proxy'</strong>
+          .host = &quot;www.example.com&quot;;
+          .port = &quot;http&quot;;
+          }&lt;/pre&gt;
+          &lt;p&gt;The only thing that changes in the consumer is the address it directs its requests to.&lt;/p&gt;
+          &lt;pre&gt;WEB_SERVICE_ADDRESS =
+          &lt;strong&gt;'http://service-proxy'&lt;/strong&gt;
           url = URI.parse(WEB_SERVICE_ADDRESS)
           Net::HTTP.start(url.host, url.port) do |http|
           http.get('/product-search', 'q' =&gt; 'guitar')
-          end</pre>
-        </div>
+          end&lt;/pre&gt;
+        &lt;/div&gt;
       </description>
       <pubDate>Sat, 14 Feb 2009 00:00:00 +0000</pubDate>
       <guid>http://nutrun.com/weblog/2009/02/14/caching-proxy-fronted-web-consumer.html</guid>
