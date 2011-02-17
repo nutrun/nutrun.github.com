@@ -111,12 +111,14 @@
           </a>
         </p>
         <p>A part of the project that struck me as particularly interesting is the deployment strategy Paul and Andy settled on. Regardless of how much trust we have in our builds and QA process, deployments become a whole different, much more stressful activity when critical systems like the one under discussion are involved. Andy mentioned it is important to find the balance between what to automate and bits that should require manual input.</p>
-        <pre>&#x000A;# deploy.rb&#x000A;&#x000A;task :us_1b do&#x000A;  set :region, 'us-east-1'&#x000A;  set :servers, us_1b&#x000A;  # More US 1b specific setup...&#x000A;end&#x000A;&#x000A;task :eu_1a do&#x000A;  set :region, 'eu-west-1'&#x000A;  set :servers, eu_1a&#x000A;  # More EU 1a specific setup...&#x000A;end  %p
-        This service is
-        <em>incrementally deployed one availability zone at a time</em>,
-        e.g.
-        <code>cap us_1b deploy</code>.
-        Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.</pre>
+        <pre>&#x000A;# deploy.rb&#x000A;&#x000A;task :us_1b do&#x000A;  set :region, 'us-east-1'&#x000A;  set :servers, us_1b&#x000A;  # More US 1b specific setup...&#x000A;end&#x000A;&#x000A;task :eu_1a do&#x000A;  set :region, 'eu-west-1'&#x000A;  set :servers, eu_1a&#x000A;  # More EU 1a specific setup...&#x000A;end</pre>
+        <p>
+          This service is
+          <em>incrementally deployed one availability zone at a time</em>,
+          e.g.
+          <code>cap us_1b deploy</code>.
+          Each deployment step is manual - it requires someone to push the button. This means that if something goes wrong, only part of the system will be affected, achieving significant redundancy. If the failure was severe enough to bring the system down, only one availability zone in one region will fail and the load balancers will make sure that this failure is transparent to end users and does not overall affect the entire system.
+        </p>
       </div>
     </content>
   </entry>
