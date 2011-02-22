@@ -35,23 +35,19 @@
         </ul>
       </div>
       <div id="content">
-        <div class="article">
-          <div>
-            <span class="date">Feb 28 2009</span>
-          </div>
-          <h2 class="title">97 Things Every Software Architect Should Know</h2>
-          <p>
-            A few months ago I wrote one of the axioms for a community effort called
-            <a href="http://97-things.near-time.net/wiki" title="Home Page for 97 Things 		 [97 Things] : Near-Time">97 Things Every Software Architect Should Know</a>
-            which was driven and edited by
-            <a href="http://www.monson-haefel.com/" title="Monson-Haefel's Web Site">Richard Monson-Haefel</a>.
-            This collection of principles, as contributed by an impressive range of software architects around the world, was recently released as a
-            <a href="http://oreilly.com/catalog/9780596522698/index.html" title="97 Things Every Software Architect Should Know | O'Reilly Media">book</a>
-            by
-            <a href="http://oreilly.com/" title="O'Reilly Media - Spreading the knowledge of technology innovators">O'Reilly Media</a>
-            and is well worth a look if you're interested in pragmatic advice based on how some of our colleagues approach technology projects.
-          </p>
-        </div>
+        <div id="cse" style="width: 100%;">Loading</div>
+        <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+        <script type="text/javascript">
+          //<![CDATA[
+            google.load('search', '1', {language : 'en'});
+            google.setOnLoadCallback(function() {
+              var customSearchControl = new google.search.CustomSearchControl('004405868132883306447:w4vxwxnk7wu');
+              customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+              customSearchControl.draw('cse');
+            }, true);
+          //]]>
+        </script>
+        <link href="http://www.google.com/cse/style/look/default.css" rel="stylesheet" type="text/css" />
       </div>
       <div id="footer">
         <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
