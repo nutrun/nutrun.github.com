@@ -4,10 +4,34 @@
   <link href="http://nutrun.com/" rel="alternate" type="text/html" />
   <title>nutrun</title>
   <subtitle>nutrun atom feed</subtitle>
-  <updated>2010-11-17T00:00:00Z</updated>
+  <updated>2011-03-02T00:00:00Z</updated>
   <author>
     <name>George Malamidis</name>
   </author>
+  <entry>
+    <id>http://nutrun.com/weblog/2011/03/02/earl-webified-strings.html</id>
+    <published>2011-03-02T00:00:00Z</published>
+    <updated>2011-03-02T00:00:00Z</updated>
+    <link href="http://nutrun.com/weblog/2011/03/02/earl-webified-strings.html" rel="alternate" type="text/html" />
+    <title>  Earl - webified strings</title>
+    <author>
+      <name>George Malamidis</name>
+      <url>http://nutrun.com</url>
+    </author>
+    <content type="html">
+      &lt;div class=&quot;article&quot;&gt;
+        &lt;div&gt;
+          &lt;span class=&quot;date&quot;&gt;Mar 2 2011&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;h2 class=&quot;title&quot;&gt;Earl - webified strings&lt;/h2&gt;
+        &lt;p&gt;
+          &lt;a href=&quot;https://gist.github.com/852228&quot;&gt;Earl&lt;/a&gt;
+          makes Ruby strings do web stuff like extracting urls or finding redirect destinations.
+          &lt;pre&gt;text = &quot;Blah blah http://tinyurl.com/4bnjzbu blah http://tinyurl.com/4tefu9f&quot;&amp;#x000A;text.urls # =&gt; [&quot;http://tinyurl.com/4bnjzbu&quot;, &quot;http://tinyurl.com/4tefu9f&quot;]&amp;#x000A;&amp;#x000A;&quot;http://tinyurl.com/4tefu9f&quot;.location # =&gt; &quot;http://nutrun.com/&quot;&lt;/pre&gt;
+        &lt;/p&gt;
+      &lt;/div&gt;
+    </content>
+  </entry>
   <entry>
     <id>http://nutrun.com/weblog/2010/11/17/supercharged-ruby-console-output.html</id>
     <published>2010-11-17T00:00:00Z</published>
@@ -424,61 +448,6 @@
           &lt;a href=&quot;http://oreilly.com/&quot; title=&quot;O'Reilly Media - Spreading the knowledge of technology innovators&quot;&gt;O'Reilly Media&lt;/a&gt;
           and is well worth a look if you're interested in pragmatic advice based on how some of our colleagues approach technology projects.
         &lt;/p&gt;
-      &lt;/div&gt;
-    </content>
-  </entry>
-  <entry>
-    <id>http://nutrun.com/weblog/2009/02/14/caching-proxy-fronted-web-consumer.html</id>
-    <published>2009-02-14T00:00:00Z</published>
-    <updated>2009-02-14T00:00:00Z</updated>
-    <link href="http://nutrun.com/weblog/2009/02/14/caching-proxy-fronted-web-consumer.html" rel="alternate" type="text/html" />
-    <title>  Caching proxy fronted web consumer</title>
-    <author>
-      <name>George Malamidis</name>
-      <url>http://nutrun.com</url>
-    </author>
-    <content type="html">
-      &lt;div class=&quot;article&quot;&gt;
-        &lt;div&gt;
-          &lt;span class=&quot;date&quot;&gt;Feb 14 2009&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;h2 class=&quot;title&quot;&gt;Caching proxy fronted web consumer&lt;/h2&gt;
-        &lt;p&gt;Consider an application which as part of its functionality queries a product search web service.&lt;/p&gt;
-        &lt;pre&gt;&amp;#x000A;WEB_SERVICE_ADDRESS = 'http://www.example.com'&amp;#x000A;&amp;#x000A;url = URI.parse(WEB_SERVICE_ADDRESS)&amp;#x000A;&amp;#x000A;Net::HTTP.start(url.host, url.port) do |http|&amp;#x000A;  http.get('/product-search', 'q' =&gt; 'guitar')&amp;#x000A;end&lt;/pre&gt;
-        &lt;p&gt;Inspecting the response headers, we notice the web service instructs consumers that the results of the query will remain the same for one hour.&lt;/p&gt;
-        &lt;pre&gt;curl -I &quot;http://www.example.com/product-search?q=guitar&quot;
-        HTTP/1.1 200 OK
-        Content-Type: text/html
-        &lt;strong&gt;Cache-Control: max-age=3600, must-revalidate&lt;/strong&gt;
-        Content-Length: 32650
-        Date: Sat, 14 Feb 2009 13:53:31 GMT
-        Age: 0
-        Connection: keep-alive&lt;/pre&gt;
-        &lt;p&gt;At this point we can choose to ignore the cache control header and keep on querying the service for this specific resource regardless of whether the response is going to be the same. This is suboptimal for the consumer, which will suffer unnecessary latency penalties, the service, which will have to respond to inessential requests, and the network which will be subject to unnecessary bandwidth usage. Another option involves making the web consumer aware of the service's caching policies so that it only queries for data that it doesn't have or data that's become stale. This option remedies the above problems but introduces additional complexity to the consumer.&lt;/p&gt;
-        &lt;p&gt;A third option involves introducing a caching proxy to the web consumer's stack responsible for mediating the service/consumer interactions solely based on the content's caching characteristics.&lt;/p&gt;
-        &lt;p&gt;
-          &lt;a href=&quot;http://www.flickr.com/photos/nutrun/3278914298/&quot; title=&quot;caching-proxy-fronted-web-consumer by nutrunflickr, on Flickr&quot;&gt;
-            &lt;img alt=&quot;caching-proxy-fronted-web-consumer&quot; height=&quot;149&quot; src=&quot;http://farm4.static.flickr.com/3054/3278914298_f039f380ff_o.png&quot; width=&quot;422&quot; /&gt;
-          &lt;/a&gt;
-        &lt;/p&gt;
-        &lt;p&gt;Benefits of this approach include: The consumer never has to deal with any caching logic; No effort is required in re-implementing cache handling code; It is likely that the caching engine will perform better than custom caching code in the consumer because it's been built and optimized for this purpose; The caching proxy can be re-used by more than one types of consumer or more than one instances of the same consumer in the stack. As a possible side-effect, the caching proxy is an additional layer to the consumer stack and this can result in network (the consumer's LAN) latency.&lt;/p&gt;
-        &lt;p&gt;
-          Here's the configuration needed in order to use
-          &lt;a href=&quot;http://varnish.projects.linpro.no/&quot; title=&quot;Varnish - Trac&quot;&gt;Varnish&lt;/a&gt;
-          as a caching web consumer proxy for the above example.
-        &lt;/p&gt;
-        &lt;pre&gt;&lt;strong&gt;# varnish.conf&lt;/strong&gt;
-        backend default {
-        .host = &quot;www.example.com&quot;;
-        .port = &quot;http&quot;;
-        }&lt;/pre&gt;
-        &lt;p&gt;The only thing that changes in the consumer is the address it directs its requests to.&lt;/p&gt;
-        &lt;pre&gt;WEB_SERVICE_ADDRESS =
-        &lt;strong&gt;'http://service-proxy'&lt;/strong&gt;
-        url = URI.parse(WEB_SERVICE_ADDRESS)
-        Net::HTTP.start(url.host, url.port) do |http|
-        http.get('/product-search', 'q' =&gt; 'guitar')
-        end&lt;/pre&gt;
       &lt;/div&gt;
     </content>
   </entry>
