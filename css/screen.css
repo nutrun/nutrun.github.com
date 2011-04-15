@@ -84,14 +84,8 @@ h1 {
   letter-spacing: 1px; }
 
 #footer {
-  text-align: right;
-  background-color: #0a0c0d;
-  color: #c1ffef;
-  font-size: 0.7em;
-  padding: 0.5em 1.5em;
-  -moz-border-radius-bottomright: 0.8em;
-  -webkit-border-bottom-right-radius: 0.8em;
-  border-bottom-right-radius: 0.8em; }
+  margin-top: 3em;
+  font-size: 0.7em; }
 
 .article p, #fourofour p {
   padding: 0.8em 1.8em 0.8em 0; }
