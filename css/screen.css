@@ -54,7 +54,10 @@ pre {
 
 h1 {
   font-size: 6em;
-  font-weight: bold; }
+  font-weight: bold;
+  background-repeat: no-repeat;
+  background-image: url("/img/nut.gif");
+  background-position: 290px 10px; }
   h1 a {
     color: black;
     text-decoration: none; }
