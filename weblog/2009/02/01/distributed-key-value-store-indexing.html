@@ -1,212 +1,176 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Distributed key value store indexing |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
-          <div>
-            <span class="date">Feb 01 2009</span>
-          </div>
-          <h2 class="title">Distributed key-value store indexing</h2>
-          <p>Distributed key-value stores present an interesting alternative to some of the functionality relational databases are commonly employed for. Advantages include improved performance, easy replication, horizontal scaling and redundancy.</p>
-          <p>
-            By nature, key value stores offer one way of retrieving data, by some sort of primary key which uniquely identifies each entry. But what about queries that require more elaborate input in order to collect relevant entries? Full text search engines like
-            <a href="http://www.sphinxsearch.com/" rel="nofollow" title="Sphinx - Free open-source SQL full-text search engine">Sphinx</a>
-            and
-            <a href="http://lucene.apache.org/java/docs/" rel="nofollow" title="Apache Lucene - Overview">Lucence</a>
-            do exactly this and when used in conjunction with a database will query their indexes and return a collection of ids which are then used to retrieve the results from the database. Full text search engines support indexing data sources other than RDBMSs, so there's no reason why one couldn't index a distributed key-value store.
-          </p>
-          <p>
-            <a href="http://www.flickr.com/photos/nutrun/3244315588/" title="distributed-key-value-store-index by nutrunflickr, on Flickr">
-              <img alt="distributed-key-value-store-index" height="390" src="http://farm4.static.flickr.com/3515/3244315588_b9e2f08356_o.png" width="413" />
-            </a>
-          </p>
-          <p>
-            Here, we'll look at how we can integrate Sphinx with
-            <a href="http://memcachedb.org/" title="MemcacheDB: A distributed key-value storage system designed for persistent">MemcacheDB</a>,
-            a distributed key-value store which conforms to the
-            <a href="http://www.danga.com/memcached/" rel="nofollow" title="memcached: a distributed memory object caching system">memcached</a>
-            protocol and uses Berkeley DB as its storage back-end.
-          </p>
-          <p>
-            Sphinx comes with an
-            <a href="http://www.sphinxsearch.com/docs/current.html#xmlpipe2" rel="nofollow" title="Sphinx - Free open-source SQL full-text search engine">xmlpipe2 datasource</a>,
-            a generic XML interface aimed at simplifying custom integration. What this means is that our application can transform content from MemcacheDB into this format and feed it to Sphinx for indexing. The highlighted lines from the following Sphinx configuration instruct Sphinx to use the
-            <code>xmlpipe2</code>
-            source type and invoke the
-            <code>ruby /app/lib/sphinxpipe.rb</code>
-            script in order to retrieve the data to index.
-          </p>
-          <pre><strong># sphinx.conf</strong>
-          source products_src
-          {
-          <strong>type = xmlpipe2</strong>
-          <strong>xmlpipe_command = ruby /app/lib/sphinxpipe.rb</strong>
-          }
-          index products
-          {
-          source = products_src
-          path = /app/sphinx/data/products
-          docinfo = extern
-          mlock = 0
-          morphology = stem_en
-          min_word_len = 1
-          charset_type = utf-8
-          enable_star = 1
-          html_strip = 0
-          }
-          indexer
-          {
-          mem_limit = 256M
-          }
-          searchd
-          {
-          port = 3312
-          log = /app/sphinx/log/searchd.log
-          query_log = /app/sphinx/log/query.log
-          read_timeout = 5
-          max_children = 30
-          pid_file = /app/sphinx/searchd.pid
-          max_matches = 10000
-          seamless_rotate = 1
-          preopen_indexes = 0
-          unlink_old = 1
-          }</pre>
-          <p>
-            Following is a Product class. Each product instance can present itself as
-            <code>xmlpipe2</code>
-            data. The class itself gets the entire product catalog as a
-            <code>xmlpipe2</code>
-            data source. It also has a
-            <code>search</code>
-            method used for querying Sphinx and retrieving matched products from MemcacheDB. Finally, there's a
-            <code>bootstrap</code>
-            method for populating the store with some example data.
-          </p>
-          <pre><strong># product.rb</strong>
-          require "rubygems"
-          require "xml/libxml"
-          require "memcached"
-          require "riddle"
-          class Product
-          attr_reader :id
-          MEM = Memcached.new('localhost:21201')
-          def initialize(id, title)
-          @id, @title = id, title
-          end
-          def to_sphinx_doc
-          sphinx_document = XML::Node.new('sphinx:document')
-          sphinx_document['id'] = @id
-          sphinx_document &lt;&lt; title = XML::Node.new('title')
-          title &lt;&lt; @title
-          sphinx_document
-          end
-          <strong># Query sphinx and load products with matched ids from MemcacheDB</strong>
-          def self.search(query)
-          client = Riddle::Client.new
-          client.match_mode = :any
-          client.max_matches = 10_000
-          results = client.query(query, 'products')
-          ids = results[:matches].map {|m| m[:doc].to_s}
-          MEM.get(ids) if ids.any?
-          end
-          <strong># Load all products from MemcacheDB and convert them to xmlpipe2 data</strong>
-          def self.sphinx_datasource
-          docset = XML::Document.new.root = XML::Node.new("sphinx:docset")
-          docset &lt;&lt; sphinx_schema = XML::Node.new("sphinx:schema")
-          sphinx_schema &lt;&lt; sphinx_field = XML::Node.new('sphinx:field')
-          sphinx_field['name'] = 'title'
-          keys = MEM.get('product_keys')
-          products = MEM.get(keys)
-          products.each { |id, product| docset &lt;&lt; product.to_sphinx_doc }
-          %(&lt;?xml version="1.0" encoding="utf-8"?&gt;\n#{docset})
-          end
-          <strong># Create a some products and store them in MemcacheDB</strong>
-          def self.bootstrap
-          product_ids = ('1'..'5').to_a.inject([]) do |ids, id|
-          product = Product.new(id, "product #{id}")
-          MEM.set(product.id, product)
-          ids &lt;&lt; id
-          end
-          MEM.set('product_keys', product_ids)
-          end
-          end</pre>
-          <p>
-            The
-            <code>sphinxpipe.rb</code>
-            script looks like this.
-          </p>
-          <pre><strong># sphinxpipe.rb</strong>
-          Product.bootstrap
-          puts Product.sphinx_datasource</pre>
-          <p>
-            With MemcacheDB (or even memcached for the purpose of this example) running, we can tell Sphinx to create an index of products by invoking
-            <code>indexer --all -c sphinx.conf</code>
-            and then start the search daemon -
-            <code>searchd -c sphinx.conf</code>.
-            Now we're ready to start querying the index and retrieving results from the distributed store.
-          </p>
-          <pre>&#x000A;puts Product.search('product 1').inspect</pre>
-          <p>It is not uncommon for the database to become a performance hotspot. The integration of a fast, distributed key-value store with an efficient search engine can be an interesting substitute for high throughput data retrieval operations.</p>
-        </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
+<head>
+  <title>Distributed key value store indexing | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
+  <div>
+    <span class="date">Feb 01 2009</span>
+  </div>
+  <h2 class="title">Distributed key-value store indexing</h2>
+  <p>Distributed key-value stores present an interesting alternative to some of the functionality relational databases are commonly employed for. Advantages include improved performance, easy replication, horizontal scaling and redundancy.</p>
+  <p>By nature, key value stores offer one way of retrieving data, by some sort of primary key which uniquely identifies each entry. But what about queries that require more elaborate input in order to collect relevant entries? Full text search engines like <a href="http://www.sphinxsearch.com/" rel="nofollow" title="Sphinx - Free open-source SQL full-text search engine">Sphinx</a> and <a href="http://lucene.apache.org/java/docs/" rel="nofollow" title="Apache Lucene - Overview">Lucence</a> do exactly this and when used in conjunction with a database will query their indexes and return a collection of ids which are then used to retrieve the results from the database. Full text search engines support indexing data sources other than RDBMSs, so there's no reason why one couldn't index a distributed key-value store.</p>
+  <p><a href="http://www.flickr.com/photos/nutrun/3244315588/" title="distributed-key-value-store-index by nutrunflickr, on Flickr"><img alt="distributed-key-value-store-index" height="390" src="http://farm4.static.flickr.com/3515/3244315588_b9e2f08356_o.png" width="413"></a></p>
+  <p>Here, we'll look at how we can integrate Sphinx with <a href="http://memcachedb.org/" title="MemcacheDB: A distributed key-value storage system designed for persistent">MemcacheDB</a>, a distributed key-value store which conforms to the <a href="http://www.danga.com/memcached/" rel="nofollow" title="memcached: a distributed memory object caching system">memcached</a> protocol and uses Berkeley DB as its storage back-end.</p>
+  <p>Sphinx comes with an <a href="http://www.sphinxsearch.com/docs/current.html#xmlpipe2" rel="nofollow" title="Sphinx - Free open-source SQL full-text search engine">xmlpipe2 datasource</a>, a generic XML interface aimed at simplifying custom integration. What this means is that our application can transform content from MemcacheDB into this format and feed it to Sphinx for indexing. The highlighted lines from the following Sphinx configuration instruct Sphinx to use the <code>xmlpipe2</code> source type and invoke the <code>ruby /app/lib/sphinxpipe.rb</code> script in order to retrieve the data to index.</p>
+  <pre>
+<strong># sphinx.conf</strong>
+source products_src
+{
+  <strong>type = xmlpipe2</strong>
+  <strong>xmlpipe_command = ruby /app/lib/sphinxpipe.rb</strong>
+}
+
+index products
+{
+  source = products_src
+  path = /app/sphinx/data/products
+  docinfo = extern
+  mlock = 0
+  morphology = stem_en
+  min_word_len = 1
+  charset_type = utf-8
+  enable_star = 1
+  html_strip = 0
+}
+
+indexer
+{
+  mem_limit = 256M
+}
+
+searchd
+{
+  port = 3312
+  log = /app/sphinx/log/searchd.log
+  query_log = /app/sphinx/log/query.log
+  read_timeout = 5
+  max_children = 30
+  pid_file = /app/sphinx/searchd.pid
+  max_matches = 10000
+  seamless_rotate = 1
+  preopen_indexes = 0
+  unlink_old = 1
+}
+  </pre>
+  <p>Following is a Product class. Each product instance can present itself as <code>xmlpipe2</code> data. The class itself gets the entire product catalog as a <code>xmlpipe2</code> data source. It also has a <code>search</code> method used for querying Sphinx and retrieving matched products from MemcacheDB. Finally, there's a <code>bootstrap</code> method for populating the store with some example data.</p>
+  <pre>
+<strong># product.rb</strong>
+require "rubygems"
+require "xml/libxml"
+require "memcached"
+require "riddle"
+
+class Product
+  attr_reader :id
+  MEM = Memcached.new('localhost:21201')
+  def initialize(id, title)
+    @id, @title = id, title
+  end
+
+  def to_sphinx_doc
+    sphinx_document = XML::Node.new('sphinx:document')
+    sphinx_document['id'] = @id
+    sphinx_document &lt;&lt; title = XML::Node.new('title')
+    title &lt;&lt; @title
+    sphinx_document
+  end
+
+  <strong># Query sphinx and load products with matched ids from MemcacheDB</strong>
+  def self.search(query)
+    client = Riddle::Client.new
+    client.match_mode = :any
+    client.max_matches = 10_000
+    results = client.query(query, 'products')
+    ids = results[:matches].map {|m| m[:doc].to_s}
+    MEM.get(ids) if ids.any?
+  end
+
+  <strong># Load all products from MemcacheDB and convert them to xmlpipe2 data</strong>
+  def self.sphinx_datasource
+    docset = XML::Document.new.root = XML::Node.new("sphinx:docset")
+    docset &lt;&lt; sphinx_schema = XML::Node.new("sphinx:schema")
+    sphinx_schema &lt;&lt; sphinx_field = XML::Node.new('sphinx:field')
+    sphinx_field['name'] = 'title'
+    keys = MEM.get('product_keys')
+    products = MEM.get(keys)
+    products.each { |id, product| docset &lt;&lt; product.to_sphinx_doc }
+    %(&lt;?xml version="1.0" encoding="utf-8"?&gt;\n#{docset})
+  end
+  
+  <strong># Create a some products and store them in MemcacheDB</strong>
+  def self.bootstrap
+    product_ids = ('1'..'5').to_a.inject([]) do |ids, id|
+      product = Product.new(id, "product #{id}")
+      MEM.set(product.id, product)
+      ids &lt;&lt; id
+    end
+    MEM.set('product_keys', product_ids)
+  end
+end
+  </pre>
+  <p>The <code>sphinxpipe.rb</code> script looks like this.</p>
+  <pre>
+<strong># sphinxpipe.rb</strong>
+Product.bootstrap
+puts Product.sphinx_datasource
+  </pre>
+  <p>With MemcacheDB (or even memcached for the purpose of this example) running, we can tell Sphinx to create an index of products by invoking <code>indexer --all -c sphinx.conf</code> and then start the search daemon - <code>searchd -c sphinx.conf</code>. Now we're ready to start querying the index and retrieving results from the distributed store.</p>
+  <pre>
+puts Product.search('product 1').inspect
+  </pre>
+  <p>It is not uncommon for the database to become a performance hotspot. The integration of a fast, distributed key-value store with an efficient search engine can be an interesting substitute for high throughput data retrieval operations.</p>
+</div>
+    </div>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Embedding queueue |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Embedding queueue | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Oct 01 2007</span>
           </div>
@@ -49,7 +46,37 @@
             <em>simple</em>
             alternative for instrumenting message driven Ruby code.
           </p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "queueue"&#x000A;&#x000A;QUEUE_NAME = "queue"&#x000A;SERVICE = Queueue::QueueService.new&#x000A;&#x000A;SERVICE.create_queue QUEUE_NAME&#x000A;SERVICE.set_visibility_timeout QUEUE_NAME, 5&#x000A;&#x000A;listener = Thread.new do&#x000A;  loop do&#x000A;    messages = SERVICE.receive_message QUEUE_NAME&#x000A;    messages.each do |msg|&#x000A;      p msg.body&#x000A;      SERVICE.delete_message QUEUE_NAME, msg.message_id&#x000A;    end&#x000A;  end&#x000A;end&#x000A;&#x000A;talker = Thread.new do&#x000A;  %w(We've been dancing with Mr Brownstone).each do |msg|&#x000A;    SERVICE.send_message QUEUE_NAME, msg&#x000A;    sleep 2&#x000A;  end&#x000A;  p "Done. Exiting running threads"&#x000A;  Thread.list.each { |t| t.exit! }&#x000A;end&#x000A;&#x000A;talker.join&#x000A;listener.join</pre>
+          <pre>
+require "rubygems"
+require "queueue"
+
+QUEUE_NAME = "queue"
+SERVICE = Queueue::QueueService.new
+
+SERVICE.create_queue QUEUE_NAME
+SERVICE.set_visibility_timeout QUEUE_NAME, 5
+
+listener = Thread.new do
+  loop do
+    messages = SERVICE.receive_message QUEUE_NAME
+    messages.each do |msg|
+      p msg.body
+      SERVICE.delete_message QUEUE_NAME, msg.message_id
+    end
+  end
+end
+
+talker = Thread.new do
+  %w(We've been dancing with Mr Brownstone).each do |msg|
+    SERVICE.send_message QUEUE_NAME, msg
+    sleep 2
+  end
+  p "Done. Exiting running threads"
+  Thread.list.each { |t| t.exit! }
+end
+
+talker.join
+listener.join</pre>
           <p>
             Another interesting scenario can involve
             <code>QueueService</code>
@@ -62,37 +89,47 @@
             <code>QueueService</code>
             wrapped inside a DRb server:
           </p>
-          <pre>&#x000A;require "drb"&#x000A;require "rubygems"&#x000A;require "queueue"&#x000A;&#x000A;DRb.start_service "druby://0.0.0.0:7777", Queueue::QueueService.new&#x000A;DRb.thread.join</pre>
+          <pre>
+require "drb"
+require "rubygems"
+require "queueue"
+
+DRb.start_service "druby://0.0.0.0:7777", Queueue::QueueService.new
+DRb.thread.join</pre>
           <p>
             And DRb clients posting and consuming messages:
           </p>
-          <pre>&#x000A;require "drb"&#x000A;require "rubygems"&#x000A;require "queueue"&#x000A;&#x000A;service = DRbObject.new nil, 'druby://0.0.0.0:7777'&#x000A;service.create_queue 'q'&#x000A;service.send_message 'q', "We've been dancing with Mr Brownstone"&#x000A;messages = service.receive_message 'q'&#x000A;messages.first.body # =&gt; "We've been dancing with Mr Brownstone"</pre>
+          <pre>
+require "drb"
+require "rubygems"
+require "queueue"
+
+service = DRbObject.new nil, 'druby://0.0.0.0:7777'
+service.create_queue 'q'
+service.send_message 'q', "We've been dancing with Mr Brownstone"
+messages = service.receive_message 'q'
+messages.first.body # =&gt; "We've been dancing with Mr Brownstone"</pre>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

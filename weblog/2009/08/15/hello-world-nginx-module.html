@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Hello world nginx module |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Hello world nginx module | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Aug 15 2009</span>
           </div>
@@ -58,14 +55,104 @@
             <code>config</code>
             and looks something like this:
           </p>
-          <pre>&#x000A;ngx_addon_name=ngx_http_hello_world_module&#x000A;HTTP_MODULES="$HTTP_MODULES ngx_http_hello_world_module"&#x000A;NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_hello_world_module.c"</pre>
+          <pre>
+ngx_addon_name=ngx_http_hello_world_module
+HTTP_MODULES="$HTTP_MODULES ngx_http_hello_world_module"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_hello_world_module.c"</pre>
           <p>
             The second is the module's implementation in C and nginx convention suggests a name like
             <code>ngx_http_modulename_module.c</code>,
             in this case
             <code>ngx_http_hello_world_module.c</code>.
           </p>
-          <pre>&#x000A;#include &lt;ngx_config.h&gt;&#x000A;#include &lt;ngx_core.h&gt;&#x000A;#include &lt;ngx_http.h&gt;&#x000A;&#x000A;static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);&#x000A;&#x000A;static ngx_command_t  ngx_http_hello_world_commands[] = {&#x000A;&#x000A;  { ngx_string("hello_world"),&#x000A;    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,&#x000A;    ngx_http_hello_world,&#x000A;    0,&#x000A;    0,&#x000A;    NULL },&#x000A;&#x000A;    ngx_null_command&#x000A;};&#x000A;&#x000A;&#x000A;static u_char  ngx_hello_world[] = "hello world";&#x000A;&#x000A;static ngx_http_module_t  ngx_http_hello_world_module_ctx = {&#x000A;  NULL,                          /* preconfiguration */&#x000A;  NULL,                          /* postconfiguration */&#x000A;&#x000A;  NULL,                          /* create main configuration */&#x000A;  NULL,                          /* init main configuration */&#x000A;&#x000A;  NULL,                          /* create server configuration */&#x000A;  NULL,                          /* merge server configuration */&#x000A;&#x000A;  NULL,                          /* create location configuration */&#x000A;  NULL                           /* merge location configuration */&#x000A;};&#x000A;&#x000A;&#x000A;ngx_module_t ngx_http_hello_world_module = {&#x000A;  NGX_MODULE_V1,&#x000A;  &amp;ngx_http_hello_world_module_ctx, /* module context */&#x000A;  ngx_http_hello_world_commands,   /* module directives */&#x000A;  NGX_HTTP_MODULE,               /* module type */&#x000A;  NULL,                          /* init master */&#x000A;  NULL,                          /* init module */&#x000A;  NULL,                          /* init process */&#x000A;  NULL,                          /* init thread */&#x000A;  NULL,                          /* exit thread */&#x000A;  NULL,                          /* exit process */&#x000A;  NULL,                          /* exit master */&#x000A;  NGX_MODULE_V1_PADDING&#x000A;};&#x000A;&#x000A;&#x000A;static ngx_int_t ngx_http_hello_world_handler(ngx_http_request_t *r)&#x000A;{&#x000A;  ngx_buf_t    *b;&#x000A;  ngx_chain_t   out;&#x000A;&#x000A;  r-&gt;headers_out.content_type.len = sizeof("text/plain") - 1;&#x000A;  r-&gt;headers_out.content_type.data = (u_char *) "text/plain";&#x000A;&#x000A;  b = ngx_pcalloc(r-&gt;pool, sizeof(ngx_buf_t));&#x000A;&#x000A;  out.buf = b;&#x000A;  out.next = NULL;&#x000A;&#x000A;  b-&gt;pos = ngx_hello_world;&#x000A;  b-&gt;last = ngx_hello_world + sizeof(ngx_hello_world);&#x000A;  b-&gt;memory = 1;&#x000A;  b-&gt;last_buf = 1;&#x000A;&#x000A;  r-&gt;headers_out.status = NGX_HTTP_OK;&#x000A;  r-&gt;headers_out.content_length_n = sizeof(ngx_hello_world);&#x000A;  ngx_http_send_header(r);&#x000A;&#x000A;  return ngx_http_output_filter(r, &amp;out);&#x000A;}&#x000A;&#x000A;&#x000A;static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)&#x000A;{&#x000A;  ngx_http_core_loc_conf_t  *clcf;&#x000A;&#x000A;  clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);&#x000A;  clcf-&gt;handler = ngx_http_hello_world_handler;&#x000A;&#x000A;  return NGX_CONF_OK;&#x000A;}</pre>
+          <pre>
+#include &lt;ngx_config.h&gt;
+#include &lt;ngx_core.h&gt;
+#include &lt;ngx_http.h&gt;
+
+static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+
+static ngx_command_t  ngx_http_hello_world_commands[] = {
+
+  { ngx_string("hello_world"),
+    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
+    ngx_http_hello_world,
+    0,
+    0,
+    NULL },
+
+    ngx_null_command
+};
+
+
+static u_char  ngx_hello_world[] = "hello world";
+
+static ngx_http_module_t  ngx_http_hello_world_module_ctx = {
+  NULL,                          /* preconfiguration */
+  NULL,                          /* postconfiguration */
+
+  NULL,                          /* create main configuration */
+  NULL,                          /* init main configuration */
+
+  NULL,                          /* create server configuration */
+  NULL,                          /* merge server configuration */
+
+  NULL,                          /* create location configuration */
+  NULL                           /* merge location configuration */
+};
+
+
+ngx_module_t ngx_http_hello_world_module = {
+  NGX_MODULE_V1,
+  &amp;ngx_http_hello_world_module_ctx, /* module context */
+  ngx_http_hello_world_commands,   /* module directives */
+  NGX_HTTP_MODULE,               /* module type */
+  NULL,                          /* init master */
+  NULL,                          /* init module */
+  NULL,                          /* init process */
+  NULL,                          /* init thread */
+  NULL,                          /* exit thread */
+  NULL,                          /* exit process */
+  NULL,                          /* exit master */
+  NGX_MODULE_V1_PADDING
+};
+
+
+static ngx_int_t ngx_http_hello_world_handler(ngx_http_request_t *r)
+{
+  ngx_buf_t    *b;
+  ngx_chain_t   out;
+
+  r-&gt;headers_out.content_type.len = sizeof("text/plain") - 1;
+  r-&gt;headers_out.content_type.data = (u_char *) "text/plain";
+
+  b = ngx_pcalloc(r-&gt;pool, sizeof(ngx_buf_t));
+
+  out.buf = b;
+  out.next = NULL;
+
+  b-&gt;pos = ngx_hello_world;
+  b-&gt;last = ngx_hello_world + sizeof(ngx_hello_world);
+  b-&gt;memory = 1;
+  b-&gt;last_buf = 1;
+
+  r-&gt;headers_out.status = NGX_HTTP_OK;
+  r-&gt;headers_out.content_length_n = sizeof(ngx_hello_world);
+  ngx_http_send_header(r);
+
+  return ngx_http_output_filter(r, &amp;out);
+}
+
+
+static char *ngx_http_hello_world(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+{
+  ngx_http_core_loc_conf_t  *clcf;
+
+  clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+  clcf-&gt;handler = ngx_http_hello_world_handler;
+
+  return NGX_CONF_OK;
+}</pre>
           <p>
             Both
             <code>config</code>
@@ -77,13 +164,19 @@
             <a href="http://wiki.nginx.org/NginxInstall" title="NginxInstall">download the nginx source</a>,
             uncompress, and in the nginx source directory run:
           </p>
-          <pre>&#x000A;./configure --add-module=/etc/ngxhelloworld&#x000A;make&#x000A;sudo make install</pre>
+          <pre>
+./configure --add-module=/etc/ngxhelloworld
+make
+sudo make install</pre>
           <p>
             Finally, add a module directive to nginx's configuration (default is
             <code>/usr/local/nginx/conf/nginx.conf</code>)
             to enable the module for a location.
           </p>
-          <pre>&#x000A;location = /hello {&#x000A;  hello_world;&#x000A;}</pre>
+          <pre>
+location = /hello {
+  hello_world;
+}</pre>
           <p>
             At this point, we can start nginx and navigating to
             <code>http://localhost/hello</code>
@@ -95,31 +188,26 @@
             code helpful.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

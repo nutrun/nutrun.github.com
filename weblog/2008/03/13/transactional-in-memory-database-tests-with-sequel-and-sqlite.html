@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Transactional in memory database tests with sequel and sqlite |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Transactional in memory database tests with sequel and sqlite | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Mar 13 2008</span>
           </div>
@@ -49,50 +46,89 @@
             <a href="http://code.google.com/p/ruby-sequel/" title="ruby-sequel - Google Code">Sequel</a>
             makes using SQLite in its in-memory mode particularly easy.
           </p>
-          <pre>&#x000A;require 'rubygems'&#x000A;require 'sequel'&#x000A;&#x000A;DB = Sequel.sqlite  %p
+          <pre>
+require 'rubygems'
+require 'sequel'
+
+DB = Sequel.sqlite  %p
           Database setup code can follow this step.</pre>
-          <pre>&#x000A;DB.create_table :items do&#x000A;  column :name, :string&#x000A;end</pre>
+          <pre>
+DB.create_table :items do
+  column :name, :string
+end</pre>
           <p>
             The above is for the sake of simplicity, and in a real world scenario it would involve running migrations against the application's current schema.
           </p>
           <p>
             Another useful feature is the ability to run these tests transactionally, that is, never actually change the database state and avoid having to deal with unnecessary database clean up. As an added benefit, a relative speed bump is achieved by not performing database write operations. A simple extension to Test::Unit::TestCase will do the trick.
           </p>
-          <pre>&#x000A;class Test::Unit::TestCase&#x000A;  alias run_orig run&#x000A;  def run(result, &amp;block)&#x000A;    DB.transaction do&#x000A;      begin&#x000A;        run_orig(result, &amp;block)&#x000A;      ensure&#x000A;        rollback!&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Test::Unit::TestCase
+  alias run_orig run
+  def run(result, &amp;block)
+    DB.transaction do
+      begin
+        run_orig(result, &amp;block)
+      ensure
+        rollback!
+      end
+    end
+  end
+end</pre>
           <p>
             Following are some sample tests, with nothing out of the ordinary about them.
           </p>
-          <pre>&#x000A;class SomeTest &lt; Test::Unit::TestCase&#x000A;  def test_rock&#x000A;    items = DB[:items]&#x000A;    items.insert(:name =&gt; 'rock')&#x000A;    assert_equal(1, items.count)&#x000A;    assert_equal('rock', items[1][:name])&#x000A;  end&#x000A;&#x000A;  def test_coast_is_clear&#x000A;    assert_equal(0, DB[:items].size)&#x000A;  end&#x000A;&#x000A;  def test_insert_ten_items&#x000A;    items = DB[:items]&#x000A;    10.times { |i| items.insert(:name =&gt; "item_#{i}") }&#x000A;    assert_equal(10, items.size)&#x000A;  end&#x000A;end</pre>
+          <pre>
+class SomeTest &lt; Test::Unit::TestCase
+  def test_rock
+    items = DB[:items]
+    items.insert(:name =&gt; 'rock')
+    assert_equal(1, items.count)
+    assert_equal('rock', items[1][:name])
+  end
+
+  def test_coast_is_clear
+    assert_equal(0, DB[:items].size)
+  end
+
+  def test_insert_ten_items
+    items = DB[:items]
+    10.times { |i| items.insert(:name =&gt; "item_#{i}") }
+    assert_equal(10, items.size)
+  end
+end</pre>
           <p>
             These tests not only execute in milliseconds, but also largely eliminate any noticeable lag before they run.
           </p>
-          <pre>&#x000A;TW-MacBook-Pro:Desktop gmalamid$ ruby some_test.rb &#x000A;Loaded suite some_test&#x000A;Started&#x000A;...&#x000A;Finished in 0.002673 seconds.&#x000A;&#x000A;3 tests, 4 assertions, 0 failures, 0 errors</pre>
+          <pre>
+TW-MacBook-Pro:Desktop gmalamid$ ruby some_test.rb 
+Loaded suite some_test
+Started
+...
+Finished in 0.002673 seconds.
+
+3 tests, 4 assertions, 0 failures, 0 errors</pre>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

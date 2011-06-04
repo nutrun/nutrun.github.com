@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Testing merb controllers |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Testing merb controllers | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jun 13 2008</span>
           </div>
@@ -49,7 +46,25 @@
             and calling methods (actions) on the controller object.
           </p>
           <p>Let's consider a controller which collaborates with a service.</p>
-          <pre>&#x000A;class Foo &lt; Merb::Controller&#x000A;  def bar&#x000A;    service = Service.new&#x000A;    session[:metal] = service.metal&#x000A;    @zz = service.rock&#x000A;    render&#x000A;  end&#x000A;end&#x000A;&#x000A;class Service&#x000A;  def rock&#x000A;    "zz top"&#x000A;  end&#x000A;&#x000A;  def metal&#x000A;    "metallica"&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Foo &lt; Merb::Controller
+  def bar
+    service = Service.new
+    session[:metal] = service.metal
+    @zz = service.rock
+    render
+  end
+end
+
+class Service
+  def rock
+    "zz top"
+  end
+
+  def metal
+    "metallica"
+  end
+end</pre>
           <p>
             Testing the controller is as straightforward as creating an instance of
             <code>Foo</code>,
@@ -57,38 +72,48 @@
             <code>bar</code>
             and interrogating it.
           </p>
-          <pre>&#x000A;class FooTest &lt; Test::Unit::TestCase&#x000A;  def setup&#x000A;    @foo = Foo.new(Merb::Test::RequestHelper::FakeRequest.new)&#x000A;    @foo.request.session = {}&#x000A;    @foo.bar&#x000A;  end&#x000A;&#x000A;  def test_puts_metallica_in_session&#x000A;    assert_equal("metallica", @foo.session[:metal])&#x000A;  end&#x000A;&#x000A;  def test_assigns_zz_top&#x000A;    assert_equal("zz top", @foo.assigns(:zz))&#x000A;  end&#x000A;end</pre>
+          <pre>
+class FooTest &lt; Test::Unit::TestCase
+  def setup
+    @foo = Foo.new(Merb::Test::RequestHelper::FakeRequest.new)
+    @foo.request.session = {}
+    @foo.bar
+  end
+
+  def test_puts_metallica_in_session
+    assert_equal("metallica", @foo.session[:metal])
+  end
+
+  def test_assigns_zz_top
+    assert_equal("zz top", @foo.assigns(:zz))
+  end
+end</pre>
           <p>
             I'm not sure why the controller's
             <code>session</code>
             variable has to be explicitly initialized, had it been present would make testing slightly cleaner.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

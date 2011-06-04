@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Testing web services with activeresource |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Testing web services with activeresource | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jul 10 2008</span>
           </div>
@@ -46,7 +43,16 @@
             can be a useful tool for abstracting away low level HTTP or data marshaling details when testing web services with an XML schema and URI patterns which respect the Rails protocol for REST.
           </p>
           <p>Here's a possible implementation for use in tests that exercise a service from the outside, a sort of black box web service testing approach, if you'd like.</p>
-          <pre>&#x000A;def resource(name)&#x000A;  class_name = name.to_s.camelize&#x000A;  return class_name.constantize if Object.const_defined?(class_name.intern)&#x000A;  rsrc = Class.new(ActiveResource::Base) do&#x000A;    self.site = "http://localhost:4001/api"&#x000A;    self.element_name = name.to_s&#x000A;  end&#x000A;  Object.const_set(class_name.intern, rsrc)&#x000A;end</pre>
+          <pre>
+def resource(name)
+  class_name = name.to_s.camelize
+  return class_name.constantize if Object.const_defined?(class_name.intern)
+  rsrc = Class.new(ActiveResource::Base) do
+    self.site = "http://localhost:4001/api"
+    self.element_name = name.to_s
+  end
+  Object.const_set(class_name.intern, rsrc)
+end</pre>
           <p>
             Let's imagine an API call to
             <code>http://localhost:4001/api/categories.xml</code>
@@ -54,7 +60,24 @@
             <code>GET</code>
             request to the afore mentioned URI.
           </p>
-          <pre>&#x000A;&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#x000A;&lt;categories type="array"&gt;&#x000A;  &lt;category&gt;&#x000A;    &lt;id type="integer"&gt;3&lt;/id&gt;&#x000A;    &lt;name&gt;Music&lt;/name&gt;&#x000A;    &lt;subcategories type="array"&gt;&#x000A;      &lt;subcategory type="Category"&gt;&#x000A;        &lt;id type="integer"&gt;4&lt;/id&gt;&#x000A;        &lt;name&gt;Rock&lt;/name&gt;&#x000A;      &lt;/subcategory&gt;&#x000A;      &lt;subcategory type="Category"&gt;&#x000A;        &lt;id type="integer"&gt;5&lt;/id&gt;&#x000A;        &lt;name&gt;Metal&lt;/name&gt;&#x000A;      &lt;/subcategory&gt;&#x000A;    &lt;/subcategories&gt;&#x000A;  &lt;/category&gt;&#x000A;&lt;/categories&gt;</pre>
+          <pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;categories type="array"&gt;
+  &lt;category&gt;
+    &lt;id type="integer"&gt;3&lt;/id&gt;
+    &lt;name&gt;Music&lt;/name&gt;
+    &lt;subcategories type="array"&gt;
+      &lt;subcategory type="Category"&gt;
+        &lt;id type="integer"&gt;4&lt;/id&gt;
+        &lt;name&gt;Rock&lt;/name&gt;
+      &lt;/subcategory&gt;
+      &lt;subcategory type="Category"&gt;
+        &lt;id type="integer"&gt;5&lt;/id&gt;
+        &lt;name&gt;Metal&lt;/name&gt;
+      &lt;/subcategory&gt;
+    &lt;/subcategories&gt;
+  &lt;/category&gt;
+&lt;/categories&gt;</pre>
           <p>
             Invoking
             <code>resource :category</code>
@@ -68,33 +91,48 @@
             <code>/categories</code>
             end point of the API.
           </p>
-          <pre>&#x000A;class ApiTest &lt; Test::Unit::TestCase&#x000A;  resource :category&#x000A;&#x000A;  def test_categories&#x000A;    categories = Category.find(:all)&#x000A;    assert_equal(1, categories.size)&#x000A;    assert_equal("Music", categories.first.name)&#x000A;  end&#x000A;&#x000A;  def test_subcategories&#x000A;    subcategories = Category.find(:all).first.subcategories&#x000A;    assert_equal(2, subcategories.size)&#x000A;    assert_equal("Metal", subcategories[1].name)&#x000A;  end&#x000A;  &#x000A;  def test_category_creation&#x000A;    Category.create(:name =&gt; "Hacking")&#x000A;    assert_equal(3, Category.find(:all).size)&#x000A;  end&#x000A;end</pre>
+          <pre>
+class ApiTest &lt; Test::Unit::TestCase
+  resource :category
+
+  def test_categories
+    categories = Category.find(:all)
+    assert_equal(1, categories.size)
+    assert_equal("Music", categories.first.name)
+  end
+
+  def test_subcategories
+    subcategories = Category.find(:all).first.subcategories
+    assert_equal(2, subcategories.size)
+    assert_equal("Metal", subcategories[1].name)
+  end
+  
+  def test_category_creation
+    Category.create(:name =&gt; "Hacking")
+    assert_equal(3, Category.find(:all).size)
+  end
+end</pre>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

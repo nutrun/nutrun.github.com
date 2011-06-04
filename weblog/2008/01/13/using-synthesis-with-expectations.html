@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Using synthesis with expectations |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Using synthesis with expectations | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jan 13 2008</span>
           </div>
@@ -58,18 +55,39 @@
           <p>
             <em>Rakefile:</em>
           </p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "synthesis/task"&#x000A;&#x000A;task :default =&gt; 'synthesis:test'&#x000A;Synthesis::Task.new do |t|&#x000A;  t.adapter = :expectations&#x000A;end</pre>
+          <pre>
+require "rubygems"
+require "synthesis/task"
+
+task :default =&gt; 'synthesis:test'
+Synthesis::Task.new do |t|
+  t.adapter = :expectations
+end</pre>
           <p>
             Following are the project's tests, rewritten with the Expectations library.
           </p>
           <p>
             <em>data_brander_test.rb:</em>
           </p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "expectations"&#x000A;require File.dirname(__FILE__) + "/../lib/synthesis_example"&#x000A;&#x000A;Expectations do&#x000A;  expect Storage.new('yep').to_receive(:save).with('METAL - rock') do |s|&#x000A;    DataBrander.new(s).save_branded 'rock'&#x000A;  end&#x000A;end</pre>
+          <pre>
+require "rubygems"
+require "expectations"
+require File.dirname(__FILE__) + "/../lib/synthesis_example"
+
+Expectations do
+  expect Storage.new('yep').to_receive(:save).with('METAL - rock') do |s|
+    DataBrander.new(s).save_branded 'rock'
+  end
+end</pre>
           <p>
             Running this test will produce:
           </p>
-          <pre>&#x000A;Macintosh-4:synthesis_example gm$ ruby test/data_brander_test.rb&#x000A;Expectations .&#x000A;Finished in 0.001 seconds&#x000A;&#x000A;Success: 1 fulfilled</pre>
+          <pre>
+Macintosh-4:synthesis_example gm$ ruby test/data_brander_test.rb
+Expectations .
+Finished in 0.001 seconds
+
+Success: 1 fulfilled</pre>
           <p>
             Because we haven't yet written a test for the simulated
             <code>save</code>
@@ -77,7 +95,28 @@
             <code>Storage</code>
             instance, the Synthesis Rake task will fail.
           </p>
-          <pre>&#x000A;Macintosh-4:synthesis_example gm$ rake synthesis:test&#x000A;(in /Users/gm/devel/ruby/whatever_code/synthesis_example)&#x000A;[Synthesis] Collecting expectations...&#x000A;Expectations .&#x000A;Finished in 0.001 seconds&#x000A;&#x000A;Success: 1 fulfilled&#x000A;[Synthesis] Verifying expectation invocations...&#x000A;Expectations .&#x000A;Finished in 0.001 seconds&#x000A;&#x000A;Success: 1 fulfilled&#x000A;[Synthesis]&#x000A;[Synthesis] Tested Expectations:&#x000A;[Synthesis]&#x000A;[Synthesis] Untested Expectations:&#x000A;[Synthesis] Storage.new.save&#x000A;[Synthesis]&#x000A;[Synthesis] Ignoring:&#x000A;[Synthesis]&#x000A;[Synthesis] FAILED.</pre>
+          <pre>
+Macintosh-4:synthesis_example gm$ rake synthesis:test
+(in /Users/gm/devel/ruby/whatever_code/synthesis_example)
+[Synthesis] Collecting expectations...
+Expectations .
+Finished in 0.001 seconds
+
+Success: 1 fulfilled
+[Synthesis] Verifying expectation invocations...
+Expectations .
+Finished in 0.001 seconds
+
+Success: 1 fulfilled
+[Synthesis]
+[Synthesis] Tested Expectations:
+[Synthesis]
+[Synthesis] Untested Expectations:
+[Synthesis] Storage.new.save
+[Synthesis]
+[Synthesis] Ignoring:
+[Synthesis]
+[Synthesis] FAILED.</pre>
           <p>
             Writing a test for the concrete implementation of
             <code>Storage.new.save</code>
@@ -86,34 +125,56 @@
           <p>
             <em>storage_test.rb:</em>
           </p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "expectations"&#x000A;require File.dirname(__FILE__) + "/../lib/synthesis_example"&#x000A;&#x000A;Expectations do&#x000A;  expect "rock" do&#x000A;    begin&#x000A;      Storage.new('test.txt').save('rock')&#x000A;      File.read 'test.txt'&#x000A;    ensure&#x000A;      FileUtils.rm_f 'test.txt'&#x000A;    end&#x000A;  end&#x000A;end</pre>
-          <pre>Macintosh-4:synthesis_example gm$ rake synthesis:test&#x000A;(in /Users/gm/devel/ruby/whatever_code/synthesis_example)&#x000A;[Synthesis] Collecting expectations...&#x000A;Expectations ..&#x000A;Finished in 0.00199 seconds&#x000A;&#x000A;Success: 2 fulfilled&#x000A;[Synthesis] Verifying expectation invocations...&#x000A;Expectations ..&#x000A;Finished in 0.00174 seconds&#x000A;&#x000A;Success: 2 fulfilled&#x000A;[Synthesis]&#x000A;[Synthesis] SUCCESS.</pre>
+          <pre>
+require "rubygems"
+require "expectations"
+require File.dirname(__FILE__) + "/../lib/synthesis_example"
+
+Expectations do
+  expect "rock" do
+    begin
+      Storage.new('test.txt').save('rock')
+      File.read 'test.txt'
+    ensure
+      FileUtils.rm_f 'test.txt'
+    end
+  end
+end</pre>
+          <pre>Macintosh-4:synthesis_example gm$ rake synthesis:test
+(in /Users/gm/devel/ruby/whatever_code/synthesis_example)
+[Synthesis] Collecting expectations...
+Expectations ..
+Finished in 0.00199 seconds
+
+Success: 2 fulfilled
+[Synthesis] Verifying expectation invocations...
+Expectations ..
+Finished in 0.00174 seconds
+
+Success: 2 fulfilled
+[Synthesis]
+[Synthesis] SUCCESS.</pre>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

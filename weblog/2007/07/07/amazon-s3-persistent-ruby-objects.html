@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Amazon s3 persistent ruby objects |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Amazon s3 persistent ruby objects | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jul 07 2007</span>
           </div>
@@ -59,7 +56,17 @@
             <a href="http://www.yaml.org/">YAML</a>
             is one of the standard means to object serialization in Ruby, so we will be making use of it.
           </p>
-          <pre>&#x000A;require 'yaml'&#x000A;require 'aws/s3'&#x000A;&#x000A;class S3Record&#x000A;  attr_accessor :id&#x000A;&#x000A;  def initialize(attrs = {})&#x000A;    attrs.each { |k, v| instance_eval "self.#{k} = v" }&#x000A;  end&#x000A;end</pre>
+          <pre>
+require 'yaml'
+require 'aws/s3'
+
+class S3Record
+  attr_accessor :id
+
+  def initialize(attrs = {})
+    attrs.each { |k, v| instance_eval "self.#{k} = v" }
+  end
+end</pre>
           <p>
             Requiring YAML provides
             <code>S3Record</code>
@@ -72,7 +79,13 @@
             <code>S3Record</code>
             to S3.
           </p>
-          <pre>&#x000A;def create&#x000A;  AWS::S3::S3Object.find(@id, self.class.name)&#x000A;  raise "Object with key [] already exists"&#x000A;rescue AWS::S3::NoSuchKey&#x000A;  AWS::S3::S3Object.store(@id, self.to_yaml, self.class.name)&#x000A;end</pre>
+          <pre>
+def create
+  AWS::S3::S3Object.find(@id, self.class.name)
+  raise "Object with key [] already exists"
+rescue AWS::S3::NoSuchKey
+  AWS::S3::S3Object.store(@id, self.to_yaml, self.class.name)
+end</pre>
           <p>
             The first parameter to the
             <code>AWS::S3::S3Object#find</code>
@@ -86,7 +99,15 @@
             This is the actual data of the Object as it is being stored in S3.
           </p>
           <p>Next, we provide the ability to retrieve objects.</p>
-          <pre>&#x000A;def self.find(id)&#x000A;  YAML.load(AWS::S3::S3Object.find(id, self.name).value)&#x000A;end&#x000A;&#x000A;def self.find_all(options = {})&#x000A;  bucket = AWS::S3::Bucket.find(self.name, options)&#x000A;  bucket.objects.map { |s3_obj| YAML.load(s3_obj.value) }&#x000A;end</pre>
+          <pre>
+def self.find(id)
+  YAML.load(AWS::S3::S3Object.find(id, self.name).value)
+end
+
+def self.find_all(options = {})
+  bucket = AWS::S3::Bucket.find(self.name, options)
+  bucket.objects.map { |s3_obj| YAML.load(s3_obj.value) }
+end</pre>
           <p>
             We retrieve one object by its identifier and the name of its bucket (<code>AWS::S3::S3Object.find(id, self.name)</code>) and return it in its de-serialized form. The same applies to finding many objects from one Bucket. The
             <code>options</code>
@@ -102,11 +123,30 @@
           <p>
             Methods to update, delete and count should be self explanatory.
           </p>
-          <pre>&#x000A;def update&#x000A;  AWS::S3::S3Object.store(@id, self.to_yaml, self.class.name)&#x000A;end&#x000A;&#x000A;def self.delete(id)&#x000A;  AWS::S3::S3Object.delete(id, self.name)&#x000A;end&#x000A;&#x000A;def self.count&#x000A;  AWS::S3::Bucket.find(self.name).objects.size&#x000A;end</pre>
+          <pre>
+def update
+  AWS::S3::S3Object.store(@id, self.to_yaml, self.class.name)
+end
+
+def self.delete(id)
+  AWS::S3::S3Object.delete(id, self.name)
+end
+
+def self.count
+  AWS::S3::Bucket.find(self.name).objects.size
+end</pre>
           <p>
             In action, we could operate on objects we would like to persist on S3 in a way similar to the following.
           </p>
-          <pre>&#x000A;class Genre  1, :name =&gt; "rock")&#x000A;rock.create&#x000A;&#x000A;rock = Rock.find(1)&#x000A;rock.name = "heavy rock"&#x000A;rock.update&#x000A;&#x000A;#etc...</pre>
+          <pre>
+class Genre  1, :name =&gt; "rock")
+rock.create
+
+rock = Rock.find(1)
+rock.name = "heavy rock"
+rock.update
+
+#etc...</pre>
           <p>
             What about transactions? Indexing? More elaborate querying? All things databases are well established for? Bandwidth issues?
           </p>
@@ -137,31 +177,26 @@
             </p>
           </div>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

@@ -1,51 +1,79 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Event registry |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Event registry | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Apr 22 2008</span>
           </div>
           <h2 class="title">Event registry</h2>
           <p>During projects I've worked on which involved coding JavaScript, I've had positive experiences enjoying the event driven nature of the language and some bad, especially after code bases grew larger with events firing left and right, producing side effects which were difficult to manage or track down. During the bad days, a centralized way of managing events was often brought up in conversations with colleagues as a means of managing the issue.</p>
           <p>I've long been a fan of the event driven style of programming as a particularly useful alternative promoting loose coupling of system components. Below is the code for a Ruby module which, when included, enables classes to act as event dispatchers. Other classes can subscribe to the events and be notified when an event occurs.</p>
-          <pre>&#x000A;module EventDispatcher&#x000A;  module ClassMethods&#x000A;    attr_reader :listeners&#x000A;&#x000A;    def subscribe(event, &amp;callback)&#x000A;      @listeners ||= {}&#x000A;      (@listeners[event] || @listeners[event] = []) &lt;&lt; callback&#x000A;    end&#x000A;&#x000A;    private&#x000A;&#x000A;    def clear_listeners!&#x000A;      @listeners = {}&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend(ClassMethods)&#x000A;  end&#x000A;&#x000A;  def notify(event, *args)&#x000A;    self.class.listeners[event].each {|callback| callback[*args]}&#x000A;  end&#x000A;end</pre>
+          <pre>
+module EventDispatcher
+  module ClassMethods
+    attr_reader :listeners
+
+    def subscribe(event, &amp;callback)
+      @listeners ||= {}
+      (@listeners[event] || @listeners[event] = []) &lt;&lt; callback
+    end
+
+    private
+
+    def clear_listeners!
+      @listeners = {}
+    end
+  end
+
+  def self.included(receiver)
+    receiver.extend(ClassMethods)
+  end
+
+  def notify(event, *args)
+    self.class.listeners[event].each {|callback| callback[*args]}
+  end
+end</pre>
           <p>Let's consider an example application where the resource management department of an organization hires recruits and upon admission notifies interested services to take relevant action.</p>
-          <pre>&#x000A;class RM&#x000A;  include EventDispatcher&#x000A;&#x000A;  def hire(name)&#x000A;    notify(:new_recruit, name)&#x000A;  end&#x000A;end</pre>
+          <pre>
+class RM
+  include EventDispatcher
+
+  def hire(name)
+    notify(:new_recruit, name)
+  end
+end</pre>
           <p>
             What is especially interesting here is how the
             <code>RM</code>
@@ -55,9 +83,22 @@
             <code>hire</code>
             method.
           </p>
-          <pre>&#x000A;def test_rm_notifies_on_new_hire&#x000A;  service = mock&#x000A;  service.expects(:new_recruit).with("name")&#x000A;  RM.subscribe(:new_recruit) {|name| service.new_recruit(name)}&#x000A;  RM.new.hire("name")&#x000A;end</pre>
+          <pre>
+def test_rm_notifies_on_new_hire
+  service = mock
+  service.expects(:new_recruit).with("name")
+  RM.subscribe(:new_recruit) {|name| service.new_recruit(name)}
+  RM.new.hire("name")
+end</pre>
           <p>Typically, listeners would directly register their interest to the event by subscribing to it. Let's imagine a welcoming letter is issued to new recruits the moment they join the organization.</p>
-          <pre>&#x000A;class WelcomeLetterService&#x000A;  RM.subscribe(:new_recruit) {|name| greet(name)}&#x000A;&#x000A;  def self.greet(name)&#x000A;    "Welcome, #{name}!"&#x000A;  end&#x000A;end</pre>
+          <pre>
+class WelcomeLetterService
+  RM.subscribe(:new_recruit) {|name| greet(name)}
+
+  def self.greet(name)
+    "Welcome, #{name}!"
+  end
+end</pre>
           <p>
             The first thing to notice is
             <code>WelcomeLetterService</code>'s
@@ -65,7 +106,14 @@
             <code>RM</code>.
             Additionally, a code base heavily employing this strategy might suffer ill effects similar to the ones described in the JavaScript inspired first paragraph of this article. Allowing a centralized option for event registration and management could serve as possible remedy to the issue.
           </p>
-          <pre>&#x000A;module EventRegistry&#x000A;  def register_event_listeners&#x000A;    RM.subscribe(:new_recruit) {|name| WelcomeLetterService.greet(name)}&#x000A;  end&#x000A;&#x000A;  extend self&#x000A;end</pre>
+          <pre>
+module EventRegistry
+  def register_event_listeners
+    RM.subscribe(:new_recruit) {|name| WelcomeLetterService.greet(name)}
+  end
+
+  extend self
+end</pre>
           <p>
             The
             <code>EventRegistry</code>
@@ -75,40 +123,49 @@
             <code>RM</code>
             class.
           </p>
-          <pre>&#x000A;class WelcomeLetterService&#x000A;  def self.greet(name)&#x000A;    "Welcome, #{name}!"&#x000A;  end&#x000A;end</pre>
+          <pre>
+class WelcomeLetterService
+  def self.greet(name)
+    "Welcome, #{name}!"
+  end
+end</pre>
           <p>Due to the level of decoupling achieved, testing these two components becomes particularly easy.</p>
-          <pre>&#x000A;def test_welcome_letter_service_greets_by_name&#x000A;  assert_equal(WelcomeLetterService.greet("Name"), "Welcome, Name!")&#x000A;end&#x000A; &#x000A;def test_event_subscription_wiring&#x000A;  WelcomeLetterService.expects(:greet).with("name")&#x000A;  RM.expects(:subscribe).with(:new_recruit).yields("name")&#x000A;  EventRegistry.register_event_listeners&#x000A;end</pre>
+          <pre>
+def test_welcome_letter_service_greets_by_name
+  assert_equal(WelcomeLetterService.greet("Name"), "Welcome, Name!")
+end
+ 
+def test_event_subscription_wiring
+  WelcomeLetterService.expects(:greet).with("name")
+  RM.expects(:subscribe).with(:new_recruit).yields("name")
+  EventRegistry.register_event_listeners
+end</pre>
           <p>
             All this ties well with the philosophy behind
             <a href="http://synthesis.rubyforge.org/" title="synthesis">Synthesized Testing</a>,
             where a coherent collection of lightweight tests becomes a major factor of confidence that the system under test is complete, reducing the need for complex overarching tests.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

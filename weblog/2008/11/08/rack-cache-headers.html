@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Rack cache headers |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Rack cache headers | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Nov 08 2008</span>
           </div>
@@ -50,15 +47,95 @@
             in terms of header fields that control cache behavior. The purpose of this article is to demonstrate a possible implementation of a piece of Rack Middleware which enables web application developers to configure a web application's resource cache related headers in a non obtrusive, centralized manner.
           </p>
           <p>Rack supports the notion of Middleware, pieces of code that sit between the HTTP request and response life cycle. Rack::Lint, for example, validates an application's requests and responses according to the Rack specification.</p>
-          <pre>&#x000A;Rack::Handler::Mongrel.run(&#x000A;  Rack::Lint.new(app), :Host =&gt; "0.0.0.0", :Port =&gt; 9999&#x000A;)</pre>
+          <pre>
+Rack::Handler::Mongrel.run(
+  Rack::Lint.new(app), :Host =&gt; "0.0.0.0", :Port =&gt; 9999
+)</pre>
           <p>Similarly, if we were to implement a cache header producing layer on top of Rack we'd end up with a construct similar to the following.</p>
-          <pre>&#x000A;Rack::Handler::Mongrel.run(&#x000A;  Rack::Lint.new(&#x000A;    Rack::CacheHeaders.new(app)&#x000A;  ), :Host =&gt; "0.0.0.0", :Port =&gt; 9999&#x000A;)</pre>
+          <pre>
+Rack::Handler::Mongrel.run(
+  Rack::Lint.new(
+    Rack::CacheHeaders.new(app)
+  ), :Host =&gt; "0.0.0.0", :Port =&gt; 9999
+)</pre>
           <p>Here's a possible way of configuring how an application provides HTTP caching headers based on URL path patterns.</p>
-          <pre>&#x000A;Rack::CacheHeaders.configure do |cache|&#x000A;  cache.max_age("/rock", 3600)&#x000A;  cache.expires("/metal", "16:00")&#x000A;end</pre>
+          <pre>
+Rack::CacheHeaders.configure do |cache|
+  cache.max_age("/rock", 3600)
+  cache.expires("/metal", "16:00")
+end</pre>
           <p>Following is a potential implementation for the above.</p>
-          <pre>&#x000A;module Rack&#x000A;  class CacheHeaders&#x000A;    def initialize(app)&#x000A;      @app = app&#x000A;    end&#x000A;&#x000A;    def call(env)&#x000A;      result = @app.call(env)&#x000A;      header = Configuration[env['PATH_INFO']].to_header&#x000A;      result[1][header.key] = header.value&#x000A;      result&#x000A;    end&#x000A;&#x000A;    def self.configure(&amp;block)&#x000A;      yield Configuration&#x000A;    end&#x000A;&#x000A;    class Configuration&#x000A;      def self.max_age(path, duration)&#x000A;        paths[path] = MaxAge.new(duration)&#x000A;      end&#x000A;&#x000A;      def self.expires(path, date)&#x000A;        paths[path] = Expires.new(date)&#x000A;      end&#x000A;&#x000A;      def self.[](key)&#x000A;        paths[key]&#x000A;      end&#x000A;&#x000A;      def self.paths&#x000A;        @paths ||= {}&#x000A;      end&#x000A;    end&#x000A;    &#x000A;    class MaxAge&#x000A;      def initialize(duration)&#x000A;        @duration = duration&#x000A;      end&#x000A;      &#x000A;      def to_header&#x000A;        Header.new("Cache-Control", "max-age=, must-revalidate")&#x000A;      end&#x000A;    end&#x000A;    &#x000A;    class Expires&#x000A;      def initialize(date)&#x000A;        @date = date&#x000A;      end&#x000A;      &#x000A;      def to_header&#x000A;        Header.new("Expires", Time.parse(@date).httpdate)&#x000A;      end&#x000A;    end&#x000A;    &#x000A;    class Header &lt; Struct.new(:key, :value);end&#x000A;  end&#x000A;end</pre>
+          <pre>
+module Rack
+  class CacheHeaders
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      result = @app.call(env)
+      header = Configuration[env['PATH_INFO']].to_header
+      result[1][header.key] = header.value
+      result
+    end
+
+    def self.configure(&amp;block)
+      yield Configuration
+    end
+
+    class Configuration
+      def self.max_age(path, duration)
+        paths[path] = MaxAge.new(duration)
+      end
+
+      def self.expires(path, date)
+        paths[path] = Expires.new(date)
+      end
+
+      def self.[](key)
+        paths[key]
+      end
+
+      def self.paths
+        @paths ||= {}
+      end
+    end
+    
+    class MaxAge
+      def initialize(duration)
+        @duration = duration
+      end
+      
+      def to_header
+        Header.new("Cache-Control", "max-age=, must-revalidate")
+      end
+    end
+    
+    class Expires
+      def initialize(date)
+        @date = date
+      end
+      
+      def to_header
+        Header.new("Expires", Time.parse(@date).httpdate)
+      end
+    end
+    
+    class Header &lt; Struct.new(:key, :value);end
+  end
+end</pre>
           <p>The code below is a minimal Rack based application.</p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "rack"&#x000A;&#x000A;app = proc {|env| [200, {"Content-Type" =&gt; "text/plain"}, "hello"]}&#x000A;&#x000A;Rack::Handler::Mongrel.run(&#x000A;  Rack::Lint.new(&#x000A;    Rack::CacheHeaders.new(app)&#x000A;  ), :Host =&gt; "0.0.0.0", :Port =&gt; 9999&#x000A;)</pre>
+          <pre>
+require "rubygems"
+require "rack"
+
+app = proc {|env| [200, {"Content-Type" =&gt; "text/plain"}, "hello"]}
+
+Rack::Handler::Mongrel.run(
+  Rack::Lint.new(
+    Rack::CacheHeaders.new(app)
+  ), :Host =&gt; "0.0.0.0", :Port =&gt; 9999
+)</pre>
           <p>
             In order to observe the caching related headers the application's responses are decorated with we can use
             <code>curl</code>
@@ -68,7 +145,22 @@
             <code>curl -I http://0.0.0.0:9999/metal</code>.
             Output should look something like the following.
           </p>
-          <pre>&#x000A;air:~ gmalamid$ curl -I http://0.0.0.0:9999/rock&#x000A;HTTP/1.1 200 OK&#x000A;Connection: close&#x000A;Date: Sat, 08 Nov 2008 00:51:23 GMT&#x000A;Cache-Control: max-age=3600, must-revalidate&#x000A;Content-Type: text/plain&#x000A;Content-Length: 5&#x000A;&#x000A;air:~ gmalamid$ curl -I http://0.0.0.0:9999/metal&#x000A;HTTP/1.1 200 OK&#x000A;Connection: close&#x000A;Date: Sat, 08 Nov 2008 00:51:16 GMT&#x000A;Content-Type: text/plain&#x000A;Expires: Sat, 08 Nov 2008 16:00:00 GMT&#x000A;Content-Length: 5</pre>
+          <pre>
+air:~ gmalamid$ curl -I http://0.0.0.0:9999/rock
+HTTP/1.1 200 OK
+Connection: close
+Date: Sat, 08 Nov 2008 00:51:23 GMT
+Cache-Control: max-age=3600, must-revalidate
+Content-Type: text/plain
+Content-Length: 5
+
+air:~ gmalamid$ curl -I http://0.0.0.0:9999/metal
+HTTP/1.1 200 OK
+Connection: close
+Date: Sat, 08 Nov 2008 00:51:16 GMT
+Content-Type: text/plain
+Expires: Sat, 08 Nov 2008 16:00:00 GMT
+Content-Length: 5</pre>
           <p>
             Understanding and employing HTTP cache configuration not only enables harnessing the power of tools like
             <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>
@@ -77,31 +169,26 @@
             it also makes good citizens in a diverse ecosystem of HTTP aware browsers and caches outside an application's knowledge or control.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Rack restful dispatcher |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Rack restful dispatcher | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jan 29 2008</span>
           </div>
@@ -56,7 +53,38 @@
             <em>PUT</em>,
             etc HTTP verbs in Ruby classes.
           </p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "rack"&#x000A;&#x000A;module RestfulDispatcher&#x000A;  def call(env)&#x000A;    request = Rack::Request.new(env)&#x000A;    dispatcher = dispatcher_class.new(request)&#x000A;    body = dispatcher.send(request.request_method.downcase)&#x000A;    [200, {'Content-Type' =&gt; dispatcher.content_type}, body]&#x000A;  end&#x000A;&#x000A;  def dispatcher_class&#x000A;    @dispatcher ||= Class.new(self.class) do&#x000A;      attr_accessor :content_type&#x000A;&#x000A;      def initialize(request)&#x000A;        @request, @content_type = request, 'text/xml'&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;&#x000A;  module SingletonMethods&#x000A;    def start(handler, host, port)&#x000A;      handler.run Rack::Lint.new(self.new), :Host =&gt; host, :Port =&gt; port&#x000A;    end&#x000A;  end&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend SingletonMethods&#x000A;  end&#x000A;end</pre>
+          <pre>
+require "rubygems"
+require "rack"
+
+module RestfulDispatcher
+  def call(env)
+    request = Rack::Request.new(env)
+    dispatcher = dispatcher_class.new(request)
+    body = dispatcher.send(request.request_method.downcase)
+    [200, {'Content-Type' =&gt; dispatcher.content_type}, body]
+  end
+
+  def dispatcher_class
+    @dispatcher ||= Class.new(self.class) do
+      attr_accessor :content_type
+
+      def initialize(request)
+        @request, @content_type = request, 'text/xml'
+      end
+    end
+  end
+
+  module SingletonMethods
+    def start(handler, host, port)
+      handler.run Rack::Lint.new(self.new), :Host =&gt; host, :Port =&gt; port
+    end
+  end
+
+  def self.included(receiver)
+    receiver.extend SingletonMethods
+  end
+end</pre>
           <p>
             Let's examine the example one method at a time.
           </p>
@@ -96,7 +124,17 @@
             <code>RestfulDispatcher</code>
             module in a class will effectively enable the class to act as a standalone RESTful service. All we need to do is implement instance methods that correspond to the HTTP verbs we want the service to respond to.
           </p>
-          <pre>&#x000A;class FooService&#x000A;  include RestfulDispatcher&#x000A;&#x000A;  def get&#x000A;    "&lt;test&gt;&lt;/test&gt;"&#x000A;  end&#x000A;end&#x000A;&#x000A;require "thin"&#x000A;FooService.start Rack::Handler::Thin, '127.0.0.1', 2323</pre>
+          <pre>
+class FooService
+  include RestfulDispatcher
+
+  def get
+    "&lt;test&gt;&lt;/test&gt;"
+  end
+end
+
+require "thin"
+FooService.start Rack::Handler::Thin, '127.0.0.1', 2323</pre>
           <p>
             Rack::Request#GET conveniently returns the data received in the request query string (e.g
             <code>http://127.0.0.1/?key=hello</code>)
@@ -107,7 +145,9 @@
             <a href="http://code.macournoyer.com/thin/" title="Thin - yet another web server">Thin</a>
             to Mongrel is as easy as replacing the last two lines of the code above with:
           </p>
-          <pre>&#x000A;require "mongrel"&#x000A;FooService.start Rack::Handler::Mongrel, '127.0.0.1', 2323</pre>
+          <pre>
+require "mongrel"
+FooService.start Rack::Handler::Mongrel, '127.0.0.1', 2323</pre>
           <div class="sponsored">
             <p class="heading">Message from Testkings</p>
             <p>
@@ -121,31 +161,26 @@
             </p>
           </div>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

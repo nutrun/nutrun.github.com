@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Efficient data imports |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Efficient data imports | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Sep 23 2008</span>
           </div>
@@ -48,7 +45,8 @@
             <code>UNIQUE</code>
             database column to ensure data integrity.
           </p>
-          <pre>&#x000A;DATA.each {|e| DB[:entries] &lt;&lt; e rescue nil}</pre>
+          <pre>
+DATA.each {|e| DB[:entries] &lt;&lt; e rescue nil}</pre>
           <p>This code iterates over the adapted object enumeration and attempts a database insert for each entry, ignoring any exceptions due to uniqueness violations. It also introduces the significant overhead of performing a number of database queries equal to the number of entries included in the imported collection.</p>
           <p>
             Bulk inserts are nothing new and most, if not all, modern databases offer this functionality, which is also supported by the majority of database access application libraries. Ruby's
@@ -57,7 +55,8 @@
             <code>    <a href="http://sequel.rubyforge.org/rdoc/classes/Sequel/Dataset.html#M000675" title="Class: Sequel::Dataset">multi_insert</a></code>
             method.
           </p>
-          <pre>&#x000A;DB[:entries].multi_insert(DATA)</pre>
+          <pre>
+DB[:entries].multi_insert(DATA)</pre>
           <p>
             There's a caveat here, as this operation will terminate the moment a duplicate entry violation error occurs. MySQL offers the
             <code>INSERT IGNORE</code>
@@ -71,9 +70,24 @@
             Looking to investigate the performance boost associated with the above technique, I've put together a small extension for Sequel, enabling the toolkit to make use of
             <code>INSERT IGNORE</code>.
           </p>
-          <pre>&#x000A;module InsertIgnore  &#x000A;  def ignore_duplicates!&#x000A;    @ignore = true&#x000A;    self&#x000A;  end&#x000A;  &#x000A;  def multi_insert_sql(columns, values)&#x000A;    columns = column_list(columns)&#x000A;    values = values.map {|r| literal(Array(r))}.join(Sequel::MySQL::Dataset::COMMA_SEPARATOR)&#x000A;    ignore = @ignore ? " IGNORE " : ' '&#x000A;    ["INSERT#{ignore}INTO #{source_list(@opts[:from])} (#{columns}) VALUES #{values}"]&#x000A;  end&#x000A;end</pre>
+          <pre>
+module InsertIgnore  
+  def ignore_duplicates!
+    @ignore = true
+    self
+  end
+  
+  def multi_insert_sql(columns, values)
+    columns = column_list(columns)
+    values = values.map {|r| literal(Array(r))}.join(Sequel::MySQL::Dataset::COMMA_SEPARATOR)
+    ignore = @ignore ? " IGNORE " : ' '
+    ["INSERT#{ignore}INTO #{source_list(@opts[:from])} (#{columns}) VALUES #{values}"]
+  end
+end</pre>
           <p>This can be used like this:</p>
-          <pre>&#x000A;Sequel::MySQL::Dataset.send(:include, InsertIgnore)&#x000A;DB[:entries].ignore_duplicates!.multi_insert(DATA)</pre>
+          <pre>
+Sequel::MySQL::Dataset.send(:include, InsertIgnore)
+DB[:entries].ignore_duplicates!.multi_insert(DATA)</pre>
           <p>
             Inserting 100,000 records, some of them duplicates, using the application loop approach which issues an insert query for each entry took about 49 seconds on my laptop. Its
             <code>INSERT IGNORE</code>
@@ -90,31 +104,26 @@
             which updates an existing column subsequent to a failed insert due to a duplicate value violation.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

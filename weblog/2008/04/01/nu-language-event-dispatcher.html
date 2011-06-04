@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Nu language event dispatcher |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Nu language event dispatcher | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Apr 01 2008</span>
           </div>
@@ -60,7 +57,20 @@
             <code>EventDispatcher</code>
             class.
           </p>
-          <pre>&#x000A;(class EventDispatcher is NSObject	&#x000A;  (- (id) initialize is&#x000A;    (set @listeners (dict))&#x000A;      self)&#x000A;&#x000A;  (- (void) subscribe:(id)event callback:(id)callback is&#x000A;    (unless (@listeners objectForKey:event)&#x000A;      (@listeners setObject:(array) forKey:event))&#x000A;      ((@listeners objectForKey:event) &lt;&lt; callback))&#x000A;&#x000A;  (- (void) notify:(id)event withArgs:(id)args is&#x000A;    ((@listeners objectForKey:event) each: (do &#x000A;      (callback) (callback args)))))</pre>
+          <pre>
+(class EventDispatcher is NSObject	
+  (- (id) initialize is
+    (set @listeners (dict))
+      self)
+
+  (- (void) subscribe:(id)event callback:(id)callback is
+    (unless (@listeners objectForKey:event)
+      (@listeners setObject:(array) forKey:event))
+      ((@listeners objectForKey:event) &lt;&lt; callback))
+
+  (- (void) notify:(id)event withArgs:(id)args is
+    ((@listeners objectForKey:event) each: (do 
+      (callback) (callback args)))))</pre>
           <p>
             There are two prominent methods in this class, namely
             <code>subscribe</code>
@@ -91,7 +101,13 @@
           <p>
             There are two ways that I know of that will allow classes to act as event dispatchers, inheritance being the first.
           </p>
-          <pre>&#x000A;(class Factory is EventDispatcher&#x000A;  (ivars)&#x000A;&#x000A;  (- (void) produce:(id)color is&#x000A;    (puts "#{color} product produced")&#x000A;    (self notify:"new product" withArgs:color)))</pre>
+          <pre>
+(class Factory is EventDispatcher
+  (ivars)
+
+  (- (void) produce:(id)color is
+    (puts "#{color} product produced")
+    (self notify:"new product" withArgs:color)))</pre>
           <p>
             Here, we create a
             <code>Factory</code>
@@ -104,7 +120,15 @@
           <p>
             Composition is the second, and my preferred, option.
           </p>
-          <pre>&#x000A;(class Factory is NSObject&#x000A;  (ivars)&#x000A;&#x000A;  (- (void) produce:(id)color is&#x000A;    (puts "#{color} product produced")&#x000A;    (self notify:"new product" withArgs:color)))&#x000A;&#x000A;(Factory include:EventDispatcher)</pre>
+          <pre>
+(class Factory is NSObject
+  (ivars)
+
+  (- (void) produce:(id)color is
+    (puts "#{color} product produced")
+    (self notify:"new product" withArgs:color)))
+
+(Factory include:EventDispatcher)</pre>
           <p>
             Classes in Nu can be used in a manner similar to that of Module mix-ins in Ruby. Every object in Nu has an
             <code>include</code>
@@ -115,7 +139,11 @@
           <p>
             Following is a potential event listener that subscribes to the "new product" event and prints out a message every time the event is fired.
           </p>
-          <pre>&#x000A;(class ProductWatcher is NSObject&#x000A;  (- (id) watch is&#x000A;    (factory subscribe:"new product" callback:(do (color) &#x000A;      (puts "I see a #{color} product")))))</pre>
+          <pre>
+(class ProductWatcher is NSObject
+  (- (id) watch is
+    (factory subscribe:"new product" callback:(do (color) 
+      (puts "I see a #{color} product")))))</pre>
           <p>
             To run the example, we can instantiate a
             <code>Factory</code>
@@ -123,40 +151,47 @@
             <code>ProducWatcher</code>
             and fire a few events.
           </p>
-          <pre>&#x000A;(set factory ((Factory new) initialize))&#x000A;((ProductWatcher new) watch)&#x000A;&#x000A;(factory produce:"black")&#x000A;(factory produce:"red")&#x000A;(factory produce:"blue")</pre>
+          <pre>
+(set factory ((Factory new) initialize))
+((ProductWatcher new) watch)
+
+(factory produce:"black")
+(factory produce:"red")
+(factory produce:"blue")</pre>
           <p>
             The results look like this:
           </p>
-          <pre>&#x000A;black product produced&#x000A;I see a black product&#x000A;red product produced&#x000A;I see a red product&#x000A;blue product produced&#x000A;I see a blue product</pre>
+          <pre>
+black product produced
+I see a black product
+red product produced
+I see a red product
+blue product produced
+I see a blue product</pre>
           <p>
             There are a lot of reasons as to why I have time for Nu, its combining 3 of my favorite languages not included, greatly simplifying Cocoa development for native Mac and iPhone applications and Objective C's excellent multi-core support to name but a few.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

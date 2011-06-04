@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Distributed programming with jabber and eventmachine |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Distributed programming with jabber and eventmachine | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">May 04 2008</span>
           </div>
@@ -70,7 +67,18 @@
             <code>Worker</code>
             class which performs a potentially long running operation.
           </p>
-          <pre>&#x000A;class Worker&#x000A;  include EM::Deferrable&#x000A;&#x000A;  def heavy_lifting&#x000A;    30.times do |i|&#x000A;      puts "Lifted #{i}"&#x000A;      sleep 0.1&#x000A;    end&#x000A;    set_deferred_status :succeeded&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Worker
+  include EM::Deferrable
+
+  def heavy_lifting
+    30.times do |i|
+      puts "Lifted #{i}"
+      sleep 0.1
+    end
+    set_deferred_status :succeeded
+  end
+end</pre>
           <p>
             Inside an EventMachine loop, we can add callbacks to a
             <code>Worker</code>
@@ -78,7 +86,13 @@
             <code>Worker</code>
             executed once its deferred status is set.
           </p>
-          <pre>&#x000A;EM.run do&#x000A;  worker = Worker.new&#x000A;  worker.callback {p "done!"}&#x000A;  Thread.new {worker.heavy_lifting; EM.stop}&#x000A;  puts "resuming remaining program operations"&#x000A;end</pre>
+          <pre>
+EM.run do
+  worker = Worker.new
+  worker.callback {p "done!"}
+  Thread.new {worker.heavy_lifting; EM.stop}
+  puts "resuming remaining program operations"
+end</pre>
           <p>
             Now, let's look at combining
             <code>Worker</code>
@@ -89,7 +103,27 @@
             Ruby library, which is a wrapper around
             <a href="http://home.gna.org/xmpp4r/" title="XMPP4R: XMPP/Jabber Library for Ruby">xmpp4r</a>.
           </p>
-          <pre>&#x000A;jabber = Jabber::Simple.new("bot@thrash", "password")&#x000A;at_exit{jabber.status(:away, "jabot down")}&#x000A;&#x000A;EM.run do&#x000A;  EM::PeriodicTimer.new(1) do&#x000A;    jabber.received_messages do |message|&#x000A;      case message.body&#x000A;      when "exit" : EM.stop&#x000A;      when "lift" : &#x000A;        EM.spawn do&#x000A;          worker = Worker.new&#x000A;          worker.callback {jabber.deliver(message.from, "Done lifting")}&#x000A;          worker.heavy_lifting&#x000A;        end.notify&#x000A;        jabber.deliver(message.from, "Scheduled heavy job...")&#x000A;      else jabber.deliver(message.from, "Dunno how to #{message.body}")&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</pre>
+          <pre>
+jabber = Jabber::Simple.new("bot@thrash", "password")
+at_exit{jabber.status(:away, "jabot down")}
+
+EM.run do
+  EM::PeriodicTimer.new(1) do
+    jabber.received_messages do |message|
+      case message.body
+      when "exit" : EM.stop
+      when "lift" : 
+        EM.spawn do
+          worker = Worker.new
+          worker.callback {jabber.deliver(message.from, "Done lifting")}
+          worker.heavy_lifting
+        end.notify
+        jabber.deliver(message.from, "Scheduled heavy job...")
+      else jabber.deliver(message.from, "Dunno how to #{message.body}")
+      end
+    end
+  end
+end</pre>
           <p>
             Inside an EventMachine loop, we check for new messages every second. The program understands two commands,
             <code>exit</code>
@@ -131,31 +165,26 @@
             </p>
           </div>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Rubyworks production stack on amazon ec2 |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Rubyworks production stack on amazon ec2 | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Nov 20 2007</span>
           </div>
@@ -109,7 +106,8 @@
             <a href="http://nutrun.com/rwec2/releases/rubyworks-ec2-0.1.0.gem">Download</a>
             the rubyworks-ec2 gem and install it:
           </p>
-          <pre>&#x000A;sudo gem i rubyworks-ec2-&lt;version&gt;.gem</pre>
+          <pre>
+sudo gem i rubyworks-ec2-&lt;version&gt;.gem</pre>
           <p>
             Invoke
             <code>capify .</code>
@@ -122,12 +120,31 @@
             Require rubyworks-ec2 in
             <code>Capfile</code>:
           </p>
-          <pre>&#x000A;require "rubyworks-ec2"</pre>
+          <pre>
+require "rubyworks-ec2"</pre>
           <p>
             Next, configure the required deployment properties in
             <code>config/deploy.rb</code>:
           </p>
-          <pre>&#x000A;set :instance_id, ""&#x000A;set :instance_url, ""&#x000A;&#x000A;set :application, "shotgun_blues"&#x000A;set :repository, "http://svn.shotgun.com/blues/trunk"&#x000A;&#x000A;role :app, instance_url&#x000A;role :web, instance_url&#x000A;role :db,  instance_url, :primary =&gt; true&#x000A;&#x000A;set :keypair, "gsp-keypair"&#x000A;set :account_id, "123456789098"&#x000A;set :access_key_id, "ABCDE123456789"&#x000A;set :secret_access_key, "323848492AHSBCYEBDNCSCUENCCKS"&#x000A;set :pk, "pk-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :cert, "cert-323848492AHSBCYEBDNCSCUENCCKS.pem"&#x000A;set :packages, %w(apache2 subversion mysql-server libmysql-ruby less) # plus any additional packages you'd like to install on the image&#x000A;set :gems, %w(aws-s3 ezcrypto) #plus any additional gems you'd like to install on the instance</pre>
+          <pre>
+set :instance_id, ""
+set :instance_url, ""
+
+set :application, "shotgun_blues"
+set :repository, "http://svn.shotgun.com/blues/trunk"
+
+role :app, instance_url
+role :web, instance_url
+role :db,  instance_url, :primary =&gt; true
+
+set :keypair, "gsp-keypair"
+set :account_id, "123456789098"
+set :access_key_id, "ABCDE123456789"
+set :secret_access_key, "323848492AHSBCYEBDNCSCUENCCKS"
+set :pk, "pk-323848492AHSBCYEBDNCSCUENCCKS.pem"
+set :cert, "cert-323848492AHSBCYEBDNCSCUENCCKS.pem"
+set :packages, %w(apache2 subversion mysql-server libmysql-ruby less) # plus any additional packages you'd like to install on the image
+set :gems, %w(aws-s3 ezcrypto) #plus any additional gems you'd like to install on the instance</pre>
           <p>
             We'll set the
             <code>instance_id</code>
@@ -159,12 +176,15 @@
             If your Subversion repository is using HTTP Basic authentication, add the following two lines in
             <code>config/deploy.rb</code>:
           </p>
-          <pre>&#x000A;set :scm_username, 'svnusername'&#x000A;set :scm_password, 'svnpassword'</pre>
+          <pre>
+set :scm_username, 'svnusername'
+set :scm_password, 'svnpassword'</pre>
           <h3>Deploy the application</h3>
           <p>
             Start a Debian Etch AMI:
           </p>
-          <pre>&#x000A;cap instance:start</pre>
+          <pre>
+cap instance:start</pre>
           <p>
             Wait a few moments and invoke
             <code>ec2-describe-instances</code>.
@@ -173,17 +193,21 @@
             command will provide the instance id and instance url. Set these values in
             <code>config/deploy.rb</code>:
           </p>
-          <pre>&#x000A;set :instance_id, "i-sd92adsd"&#x000A;set :instance_url, "ec2-67-202-1-72.z-2.compute-1.amazonaws.com"</pre>
+          <pre>
+set :instance_id, "i-sd92adsd"
+set :instance_url, "ec2-67-202-1-72.z-2.compute-1.amazonaws.com"</pre>
           <p>
             If you don't have a copy of your public RSA key, invoke:
           </p>
-          <pre>&#x000A;cap instance:cp_public_key</pre>
+          <pre>
+cap instance:cp_public_key</pre>
           <p>
             This will copy you public RSA key from the instance to your
             <code>$HOME/.ec2</code>
             directory.
           </p>
-          <pre>&#x000A;cap instance:bootstrap</pre>
+          <pre>
+cap instance:bootstrap</pre>
           <p>
             This command will take a while to complete. It effectively installs RubyWorks, the
             <a href="http://amazon.rubyforge.org">AWS::S3</a>
@@ -208,23 +232,28 @@
           <p>
             To perform a remote login to the instance, invoke:
           </p>
-          <pre>&#x000A;cap instance:ssh</pre>
+          <pre>
+cap instance:ssh</pre>
           <p>
             To back up the database to S3:
           </p>
-          <pre>&#x000A;cap db:backup</pre>
+          <pre>
+cap db:backup</pre>
           <p>
             To backup the image to S3 (bundle, upload and register), invoke:
           </p>
-          <pre>&#x000A;cap image:backup</pre>
+          <pre>
+cap image:backup</pre>
           <p>
             To monitor services running on the instance:
           </p>
-          <pre>&#x000A;cap monit:status</pre>
+          <pre>
+cap monit:status</pre>
           <p>
             To stop the instance:
           </p>
-          <pre>&#x000A;cap instance:stop</pre>
+          <pre>
+cap instance:stop</pre>
           <h3>Acknowledgments</h3>
           <p>
             rubyworks-ec2 uses Paul Morris's public Debian Etch AMI (<em>ami-30f11459</em>).
@@ -245,37 +274,31 @@
             <a href="http://www.amazon.com/AWS-License-home-page-Money/b/ref=sc_fe_c_0_201590011_8/102-2357457-4703359?ie=UTF8&amp;node=3440661&amp;no=201590011&amp;me=A36L942TSJ2AJA">
               Amazon Web Services
               <small>
-                <sup>TM</sup>
-              </small>
+                <sup>TM</sup></small>
               Customer Agreement
             </a>
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

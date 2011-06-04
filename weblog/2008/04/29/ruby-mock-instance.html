@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Ruby mock instance |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Ruby mock instance | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Apr 29 2008</span>
           </div>
@@ -50,19 +47,57 @@
             <code>Account</code>
             classes.
           </p>
-          <pre>&#x000A;class User&#x000A;  attr_reader :name, :email&#x000A;&#x000A;  def initialize(name, email)&#x000A;    @name, @email = name, email&#x000A;  end&#x000A;&#x000A;  def contact&#x000A;    send_email(@email)&#x000A;  end&#x000A;end&#x000A;&#x000A;class Account&#x000A;  def self.create(name, email)&#x000A;    user = User.new(name, email)&#x000A;    user.contact&#x000A;  end&#x000A;end</pre>
+          <pre>
+class User
+  attr_reader :name, :email
+
+  def initialize(name, email)
+    @name, @email = name, email
+  end
+
+  def contact
+    send_email(@email)
+  end
+end
+
+class Account
+  def self.create(name, email)
+    user = User.new(name, email)
+    user.contact
+  end
+end</pre>
           <p>
             The test for the
             <code>Account#create</code>
             method would look like this:
           </p>
-          <pre>&#x000A;require "rubygems"&#x000A;require "mocha"&#x000A;require "test/unit"&#x000A;	&#x000A;class AccountTest &lt; Test::Unit::TestCase&#x000A;  def test_emails_user_on_account_creation&#x000A;    user = User.new("", "")&#x000A;    user.expects(:contact)&#x000A;    User.expects(:new).with("Kirk", "kirk@metallica.com").returns(user)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+          <pre>
+require "rubygems"
+require "mocha"
+require "test/unit"
+	
+class AccountTest &lt; Test::Unit::TestCase
+  def test_emails_user_on_account_creation
+    user = User.new("", "")
+    user.expects(:contact)
+    User.expects(:new).with("Kirk", "kirk@metallica.com").returns(user)
+    Account.create("Kirk", "kirk@metallica.com")
+  end
+end</pre>
           <p>
             As an alternative, and this is the version I see most often used, a duck typed mock can be used in the place of the "real"
             <code>User</code>
             object.
           </p>
-          <pre>&#x000A;class AccountTest &lt; Test::Unit::TestCase&#x000A;  def test_emails_user_on_account_creation&#x000A;    user = mock&#x000A;    user.expects(:contact)&#x000A;    User.expects(:new).with("Kirk", "kirk@metallica.com").returns(user)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+          <pre>
+class AccountTest &lt; Test::Unit::TestCase
+  def test_emails_user_on_account_creation
+    user = mock
+    user.expects(:contact)
+    User.expects(:new).with("Kirk", "kirk@metallica.com").returns(user)
+    Account.create("Kirk", "kirk@metallica.com")
+  end
+end</pre>
           <p>
             Both implementations have some potentially undesirable issues worth taking into consideration. None of the two is
             <acronym title="Don't Repeat Yourself">DRY</acronym>,
@@ -82,7 +117,25 @@
             <code>User</code>.
           </p>
           <p>The following code can be useful in an effort to DRY up code as the one under discussion, whilst driving such interaction specifications closer to the actual contracts they are meant to express.</p>
-          <pre>&#x000A;class Object&#x000A;  def self.mock_instance(*args)&#x000A;    class_eval do&#x000A;      alias original_initialize initialize&#x000A;      def initialize()end&#x000A;    end&#x000A;&#x000A;    instance = new&#x000A;    expects(:new).with(*args).returns(instance)&#x000A;&#x000A;    class_eval do&#x000A;      alias initialize original_initialize&#x000A;      undef original_initialize&#x000A;    end&#x000A;&#x000A;    return instance&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Object
+  def self.mock_instance(*args)
+    class_eval do
+      alias original_initialize initialize
+      def initialize()end
+    end
+
+    instance = new
+    expects(:new).with(*args).returns(instance)
+
+    class_eval do
+      alias initialize original_initialize
+      undef original_initialize
+    end
+
+    return instance
+  end
+end</pre>
           <p>
             Here is how
             <code>AccountTest</code>
@@ -90,7 +143,13 @@
             <a href="http://mocha.rubyforge.org/" title="Mocha 0.5.6">Mocha</a>
             extension in place.
           </p>
-          <pre>&#x000A;class AccountTest &lt; Test::Unit::TestCase&#x000A;  def test_emails_user_on_account_creation&#x000A;    User.mock_instance("Kirk", "kirk@metallica.com").expects(:contact)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+          <pre>
+class AccountTest &lt; Test::Unit::TestCase
+  def test_emails_user_on_account_creation
+    User.mock_instance("Kirk", "kirk@metallica.com").expects(:contact)
+    Account.create("Kirk", "kirk@metallica.com")
+  end
+end</pre>
           <p>
             If
             <a href="http://rspec.info/" title="RSpec-1.1.3: Overview">RSpec</a>
@@ -98,39 +157,58 @@
             <code>Spec::Mocks::Methods</code>
             module.
           </p>
-          <pre>&#x000A;module Spec::Mocks::Methods&#x000A;  def mock_instance(*args)&#x000A;    class_eval do&#x000A;      alias original_initialize initialize&#x000A;      def initialize()end&#x000A;    end&#x000A;&#x000A;    instance = new&#x000A;    should_receive(:new).with(*args).and_return(instance)&#x000A;&#x000A;    class_eval do&#x000A;      alias initialize original_initialize&#x000A;      undef original_initialize&#x000A;    end&#x000A;&#x000A;    return instance&#x000A;  end&#x000A;end</pre>
+          <pre>
+module Spec::Mocks::Methods
+  def mock_instance(*args)
+    class_eval do
+      alias original_initialize initialize
+      def initialize()end
+    end
+
+    instance = new
+    should_receive(:new).with(*args).and_return(instance)
+
+    class_eval do
+      alias initialize original_initialize
+      undef original_initialize
+    end
+
+    return instance
+  end
+end</pre>
           <p>
             With the above we can use
             <code>mock_instance</code>
             in specs as such.
           </p>
-          <pre>&#x000A;describe Account do&#x000A;  it "should email user on account creation" do&#x000A;    User.mock_instance("Kirk", "kirk@metallica.com").should_receive(:contact)&#x000A;    Account.create("Kirk", "kirk@metallica.com")&#x000A;  end&#x000A;end</pre>
+          <pre>
+describe Account do
+  it "should email user on account creation" do
+    User.mock_instance("Kirk", "kirk@metallica.com").should_receive(:contact)
+    Account.create("Kirk", "kirk@metallica.com")
+  end
+end</pre>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

@@ -1,108 +1,103 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Caching proxy fronted web consumer |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
-          <div>
-            <span class="date">Feb 14 2009</span>
-          </div>
-          <h2 class="title">Caching proxy fronted web consumer</h2>
-          <p>Consider an application which as part of its functionality queries a product search web service.</p>
-          <pre>&#x000A;WEB_SERVICE_ADDRESS = 'http://www.example.com'&#x000A;&#x000A;url = URI.parse(WEB_SERVICE_ADDRESS)&#x000A;&#x000A;Net::HTTP.start(url.host, url.port) do |http|&#x000A;  http.get('/product-search', 'q' =&gt; 'guitar')&#x000A;end</pre>
-          <p>Inspecting the response headers, we notice the web service instructs consumers that the results of the query will remain the same for one hour.</p>
-          <pre>curl -I "http://www.example.com/product-search?q=guitar"
-          HTTP/1.1 200 OK
-          Content-Type: text/html
-          <strong>Cache-Control: max-age=3600, must-revalidate</strong>
-          Content-Length: 32650
-          Date: Sat, 14 Feb 2009 13:53:31 GMT
-          Age: 0
-          Connection: keep-alive</pre>
-          <p>At this point we can choose to ignore the cache control header and keep on querying the service for this specific resource regardless of whether the response is going to be the same. This is suboptimal for the consumer, which will suffer unnecessary latency penalties, the service, which will have to respond to inessential requests, and the network which will be subject to unnecessary bandwidth usage. Another option involves making the web consumer aware of the service's caching policies so that it only queries for data that it doesn't have or data that's become stale. This option remedies the above problems but introduces additional complexity to the consumer.</p>
-          <p>A third option involves introducing a caching proxy to the web consumer's stack responsible for mediating the service/consumer interactions solely based on the content's caching characteristics.</p>
-          <p>
-            <a href="http://www.flickr.com/photos/nutrun/3278914298/" title="caching-proxy-fronted-web-consumer by nutrunflickr, on Flickr">
-              <img alt="caching-proxy-fronted-web-consumer" height="149" src="http://farm4.static.flickr.com/3054/3278914298_f039f380ff_o.png" width="422" />
-            </a>
-          </p>
-          <p>Benefits of this approach include: The consumer never has to deal with any caching logic; No effort is required in re-implementing cache handling code; It is likely that the caching engine will perform better than custom caching code in the consumer because it's been built and optimized for this purpose; The caching proxy can be re-used by more than one types of consumer or more than one instances of the same consumer in the stack. As a possible side-effect, the caching proxy is an additional layer to the consumer stack and this can result in network (the consumer's LAN) latency.</p>
-          <p>
-            Here's the configuration needed in order to use
-            <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a>
-            as a caching web consumer proxy for the above example.
-          </p>
-          <pre><strong># varnish.conf</strong>
-          backend default {
-          .host = "www.example.com";
-          .port = "http";
-          }</pre>
-          <p>The only thing that changes in the consumer is the address it directs its requests to.</p>
-          <pre>WEB_SERVICE_ADDRESS =
-          <strong>'http://service-proxy'</strong>
-          url = URI.parse(WEB_SERVICE_ADDRESS)
-          Net::HTTP.start(url.host, url.port) do |http|
-          http.get('/product-search', 'q' =&gt; 'guitar')
-          end</pre>
-        </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
+<head>
+  <title>Caching proxy fronted web consumer | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
+  <div>
+    <span class="date">Feb 14 2009</span>
+  </div>
+  <h2 class="title">Caching proxy fronted web consumer</h2>
+  <p>Consider an application which as part of its functionality queries a product search web service.</p>
+  <pre>
+url = URI.parse('http://www.example.com')
+Net::HTTP.start(url.host, url.port) do |http|
+  http.get('/product-search', 'q' =&gt; 'guitar')
+end
+  </pre>
+  <p>Inspecting the response headers, we notice the web service instructs consumers that the results of the query will remain the same for one hour.</p>
+  
+  <pre>
+curl -I "http://www.example.com/product-search?q=guitar"
+HTTP/1.1 200 OK
+Content-Type: text/html
+<strong>Cache-Control: max-age=3600, must-revalidate</strong>
+Content-Length: 32650
+Date: Sat, 14 Feb 2009 13:53:31 GMT
+Age: 0
+Connection: keep-alive
+  </pre>
+  <p>At this point we can choose to ignore the cache control header and keep on querying the service for this specific resource regardless of whether the response is going to be the same. This is suboptimal for the consumer, which will suffer unnecessary latency penalties, the service, which will have to respond to inessential requests, and the network which will be subject to unnecessary bandwidth usage. Another option involves making the web consumer aware of the service's caching policies so that it only queries for data that it doesn't have or data that's become stale. This option remedies the above problems but introduces additional complexity to the consumer.</p>
+  <p>A third option involves introducing a caching proxy to the web consumer's stack responsible for mediating the service/consumer interactions solely based on the content's caching characteristics.</p>
+  <p><a href="http://www.flickr.com/photos/nutrun/3278914298/" title="caching-proxy-fronted-web-consumer by nutrunflickr, on Flickr"><img alt="caching-proxy-fronted-web-consumer" height="149" src="http://farm4.static.flickr.com/3054/3278914298_f039f380ff_o.png" width="422"></a></p>
+  <p>Benefits of this approach include: The consumer never has to deal with any caching logic; No effort is required in re-implementing cache handling code; It is likely that the caching engine will perform better than custom caching code in the consumer because it's been built and optimized for this purpose; The caching proxy can be re-used by more than one types of consumer or more than one instances of the same consumer in the stack. As a possible side-effect, the caching proxy is an additional layer to the consumer stack and this can result in network (the consumer's LAN) latency.</p>
+  <p>Here's the configuration needed in order to use <a href="http://varnish.projects.linpro.no/" title="Varnish - Trac">Varnish</a> as a caching web consumer proxy for the above example.</p>
+  
+  <pre>
+<strong># varnish.conf</strong>
+backend default {
+  .host = "www.example.com";
+  .port = "http";
+}
+  </pre>
+  <p>The only thing that changes in the consumer is the address it directs its requests to.</p>
+  <pre>
+url = URI.parse(<strong>'http://service-proxy'</strong>)
+Net::HTTP.start(url.host, url.port) do |http|
+http.get('/product-search', 'q' =&gt; 'guitar')
+end
+  </pre>
+</div>
+    </div>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Synthesis 0.0.2 |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Synthesis 0.0.2 | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jan 27 2008</span>
           </div>
@@ -58,26 +55,61 @@
           <p>
             <em>storage.rb:</em>
           </p>
-          <pre>&#x000A;class Storage&#x000A;  def initialize(filename)&#x000A;    @filename = filename&#x000A;  end&#x000A;&#x000A;  def save(val, mode)&#x000A;    File.open(@filename, mode) {|f| f &lt;&lt; val}&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Storage
+  def initialize(filename)
+    @filename = filename
+  end
+
+  def save(val, mode)
+    File.open(@filename, mode) {|f| f &lt;&lt; val}
+  end
+end</pre>
           <p>
             We should also update the corresponding unit test.
           </p>
           <p>
             <em>storage_test.rb:</em>
           </p>
-          <pre>&#x000A;require "test/unit"&#x000A;require "fileutils"&#x000A;require File.dirname(__FILE__) + "/../lib/synthesis_example"&#x000A;&#x000A;class StorageTest &lt; Test::Unit::TestCase&#x000A;  def test_saves_to_file&#x000A;    Storage.new('test.txt').save('rock', 'w')&#x000A;    assert_equal 'rock', File.read('test.txt')&#x000A;  ensure&#x000A;    FileUtils.rm_f('test.txt')&#x000A;  end&#x000A;end</pre>
+          <pre>
+require "test/unit"
+require "fileutils"
+require File.dirname(__FILE__) + "/../lib/synthesis_example"
+
+class StorageTest &lt; Test::Unit::TestCase
+  def test_saves_to_file
+    Storage.new('test.txt').save('rock', 'w')
+    assert_equal 'rock', File.read('test.txt')
+  ensure
+    FileUtils.rm_f('test.txt')
+  end
+end</pre>
           <p>
             Running
             <code>storage_test.rb</code>
             produces:
           </p>
-          <pre>&#x000A;TW-MacBook-Pro:synthesis_example gmalamid$ ruby test/storage_test.rb&#x000A;Loaded suite test/storage_test&#x000A;Started&#x000A;.&#x000A;Finished in 0.004917 seconds.&#x000A;&#x000A;1 tests, 1 assertions, 0 failures, 0 errors</pre>
+          <pre>
+TW-MacBook-Pro:synthesis_example gmalamid$ ruby test/storage_test.rb
+Loaded suite test/storage_test
+Started
+.
+Finished in 0.004917 seconds.
+
+1 tests, 1 assertions, 0 failures, 0 errors</pre>
           <p>
             Also,
             <code>data_brander_test.rb</code>
             still passes.
           </p>
-          <pre>&#x000A;TW-MacBook-Pro:synthesis_example gmalamid$ ruby test/data_brander_test.rb&#x000A;Loaded suite test/data_brander_test&#x000A;Started&#x000A;.&#x000A;Finished in 0.00047 seconds.&#x000A;&#x000A;1 tests, 1 assertions, 0 failures, 0 errors</pre>
+          <pre>
+TW-MacBook-Pro:synthesis_example gmalamid$ ruby test/data_brander_test.rb
+Loaded suite test/data_brander_test
+Started
+.
+Finished in 0.00047 seconds.
+
+1 tests, 1 assertions, 0 failures, 0 errors</pre>
           <p>
             At this point, all of the application's tests are producing a green build, although there is an obvious bug. The signature of
             <code>Storage#save</code>
@@ -90,7 +122,32 @@
             <code>test:synthesis</code>
             task produces:
           </p>
-          <pre>&#x000A;W-MacBook-Pro:synthesis_example gmalamid$ rake&#x000A;(in /Users/gmalamid/devel/ruby/whatever_code/synthesis_example)&#x000A;[Synthesis] Collecting expectations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;..&#x000A;Finished in 0.002701 seconds.&#x000A;&#x000A;2 tests, 2 assertions, 0 failures, 0 errors&#x000A;[Synthesis] Verifying expectation invocations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;..&#x000A;Finished in 0.002483 seconds.&#x000A;&#x000A;2 tests, 2 assertions, 0 failures, 0 errors&#x000A;[Synthesis]&#x000A;[Synthesis] Tested Expectations:&#x000A;[Synthesis]&#x000A;[Synthesis] Untested Expectations:&#x000A;[Synthesis] Storage.new.save(String)&#x000A;[Synthesis]&#x000A;[Synthesis] Ignoring:&#x000A;[Synthesis]&#x000A;[Synthesis] FAILED.</pre>
+          <pre>
+W-MacBook-Pro:synthesis_example gmalamid$ rake
+(in /Users/gmalamid/devel/ruby/whatever_code/synthesis_example)
+[Synthesis] Collecting expectations...
+Loaded suite /usr/bin/rake
+Started
+..
+Finished in 0.002701 seconds.
+
+2 tests, 2 assertions, 0 failures, 0 errors
+[Synthesis] Verifying expectation invocations...
+Loaded suite /usr/bin/rake
+Started
+..
+Finished in 0.002483 seconds.
+
+2 tests, 2 assertions, 0 failures, 0 errors
+[Synthesis]
+[Synthesis] Tested Expectations:
+[Synthesis]
+[Synthesis] Untested Expectations:
+[Synthesis] Storage.new.save(String)
+[Synthesis]
+[Synthesis] Ignoring:
+[Synthesis]
+[Synthesis] FAILED.</pre>
           <p>
             In order for the Synthesis task to be successful we need to update
             <code>data_brander.rb</code>
@@ -103,41 +160,75 @@
           <p>
             <em>data_brander.rb:</em>
           </p>
-          <pre>&#x000A;class DataBrander&#x000A;  BRAND = "METAL"&#x000A;&#x000A;  def initialize(storage)&#x000A;    @storage = storage&#x000A;  end&#x000A;&#x000A;  def save_branded(data)&#x000A;    @storage.save "#{BRAND} - #{data}", "w"&#x000A;  end&#x000A;end</pre>
+          <pre>
+class DataBrander
+  BRAND = "METAL"
+
+  def initialize(storage)
+    @storage = storage
+  end
+
+  def save_branded(data)
+    @storage.save "#{BRAND} - #{data}", "w"
+  end
+end</pre>
           <p>
             <em>data_brander_test.rb:</em>
           </p>
-          <pre>&#x000A;%w(test/unit rubygems mocha).each { |l| require l }&#x000A;require File.dirname(__FILE__) + "/../lib/synthesis_example"&#x000A;&#x000A;class DataBranderTest &lt;&lt; Test::Unit::TestCase&#x000A;  def test_saves_branded_to_storage&#x000A;    storage = Storage.new 'whatever'&#x000A;    storage.expects(:save).with('METAL - rock', 'w')&#x000A;    DataBrander.new(storage).save_branded 'rock'&#x000A;  end&#x000A;end</pre>
+          <pre>
+%w(test/unit rubygems mocha).each { |l| require l }
+require File.dirname(__FILE__) + "/../lib/synthesis_example"
+
+class DataBranderTest &lt;&lt; Test::Unit::TestCase
+  def test_saves_branded_to_storage
+    storage = Storage.new 'whatever'
+    storage.expects(:save).with('METAL - rock', 'w')
+    DataBrander.new(storage).save_branded 'rock'
+  end
+end</pre>
           <p>
             This will hopefully tip the confidence scale a bit closer to the point where we feel it's safe enough to omit having to write some functional tests that would prove the interacting members will integrate nicely when used together.
           </p>
-          <pre>&#x000A;TW-MacBook-Pro:synthesis_example gmalamid$ rake&#x000A;(in /Users/gmalamid/devel/ruby/whatever_code/synthesis_example)&#x000A;[Synthesis] Collecting expectations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;..&#x000A;Finished in 0.002724 seconds.&#x000A;&#x000A;2 tests, 2 assertions, 0 failures, 0 errors&#x000A;[Synthesis] Verifying expectation invocations...&#x000A;Loaded suite /usr/bin/rake&#x000A;Started&#x000A;..&#x000A;Finished in 0.002409 seconds.&#x000A;&#x000A;2 tests, 2 assertions, 0 failures, 0 errors&#x000A;[Synthesis]&#x000A;[Synthesis] SUCCESS.</pre>
+          <pre>
+TW-MacBook-Pro:synthesis_example gmalamid$ rake
+(in /Users/gmalamid/devel/ruby/whatever_code/synthesis_example)
+[Synthesis] Collecting expectations...
+Loaded suite /usr/bin/rake
+Started
+..
+Finished in 0.002724 seconds.
+
+2 tests, 2 assertions, 0 failures, 0 errors
+[Synthesis] Verifying expectation invocations...
+Loaded suite /usr/bin/rake
+Started
+..
+Finished in 0.002409 seconds.
+
+2 tests, 2 assertions, 0 failures, 0 errors
+[Synthesis]
+[Synthesis] SUCCESS.</pre>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Cache watch |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Cache watch | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jul 29 2008</span>
           </div>
@@ -48,7 +45,10 @@
             <a href="http://merb-cache.rubyforge.org" title="merb-cache docs">merb-cache</a>,
             for example, we can cache an entire page by doing something along the lines of:
           </p>
-          <pre>&#x000A;class Foo &lt; Merb::Controller&#x000A;  cache_page :index&#x000A;end</pre>
+          <pre>
+class Foo &lt; Merb::Controller
+  cache_page :index
+end</pre>
           <p>
             Expiring cached data is handled with a number of instance methods available to controllers, such as
             <code>expire_page(key)</code>
@@ -57,7 +57,11 @@
             This implies that cache expiration needs to be put explicitly in place inside actions.
           </p>
           <p>The most common event signifying the need for cache expiration is the modification of the underlying data which has at some point been cached. More often than not, this means some sort of write (insert, update, delete) storage operation, which in turn means that cache expiration is closer to storage aware parts of the application rather than controllers. With this in mind, it would be useful to be able to configure cache expiration in a manner similar to that of cache creation, for example:</p>
-          <pre>&#x000A;class Foo &lt; Merb::Controller&#x000A;  cache_page :index&#x000A;  cache_watch :foo_store, :bar_store&#x000A;end</pre>
+          <pre>
+class Foo &lt; Merb::Controller
+  cache_page :index
+  cache_watch :foo_store, :bar_store
+end</pre>
           <p>
             The
             <code>cache_watch :foo_store, :bar_store</code>
@@ -71,47 +75,125 @@
             Approaching data altering operations as events presents a good case for employing the Observer pattern in order to enable cache expiration when such events take place. ActiveRecord, for instance, offers means for adding hooks to persistent objects' life cycle methods in the form of
             <a href="http://api.rubyonrails.org/classes/ActiveRecord/Observer.html" title="Class: ActiveRecord::Observer">Observers</a>.
           </p>
-          <pre>&#x000A;class FooObserver &lt; ActiveRecord::Observer&#x000A;  def after_save(foo)&#x000A;    expire_cache&#x000A;  end&#x000A;end</pre>
+          <pre>
+class FooObserver &lt; ActiveRecord::Observer
+  def after_save(foo)
+    expire_cache
+  end
+end</pre>
           <p>Putting it all together, we can create a module that enables configuring cache expiration declaratively inside controllers in a way reminiscent to how cache creation is handled.</p>
-          <pre>&#x000A;module CacheInvalidator  &#x000A;  def cache_watch(controller, *models)&#x000A;    models.each {|model| (@entries ||= Set.new) &lt;&lt; Entry.new(controller, model)}&#x000A;  end&#x000A;&#x000A;  def activate!&#x000A;    @entries.each do |entry|&#x000A;&#x000A;      return nil if Kernel.const_defined?(entry.class_name)&#x000A;&#x000A;      entry.log&#x000A;&#x000A;      observer = Class.new(ActiveRecord::Observer) do&#x000A;        include CacheInvalidator&#x000A;        observe(entry.model)&#x000A;        define_method(:entry) {entry}&#x000A;      end&#x000A;&#x000A;      Kernel.const_set(entry.class_name, observer)&#x000A;      observer.instance&#x000A;    end&#x000A;  end&#x000A;&#x000A;  module_function :watch&#x000A;  module_function :activate!&#x000A;&#x000A;  def after_save(model)&#x000A;    destroy_cache&#x000A;  end&#x000A;&#x000A;  def after_destroy(model)&#x000A;    destroy_cache&#x000A;  end&#x000A;&#x000A;  private&#x000A;&#x000A;  def destroy_cache&#x000A;    FileUtils.rm_f(entry.file_path) if File.file?(entry.file_path)&#x000A;    FileUtils.rm_r(entry.dir_path) if File.directory?(entry.dir_path)&#x000A;  end&#x000A;&#x000A;  class Entry&#x000A;&#x000A;    attr_reader :controller, :model&#x000A;&#x000A;    def initialize(controller, model)&#x000A;      @controller, @model = controller, model&#x000A;    end&#x000A;&#x000A;    def class_name&#x000A;      (controller.name.gsub(/\:\:/, '') + model.to_s.camelize + "CacheObserver").intern&#x000A;    end&#x000A;&#x000A;    def ==(other)&#x000A;      controller == other.controller &amp;&amp; self.model == other.model&#x000A;    end&#x000A;&#x000A;    def file_path&#x000A;      "#{dir_path}.xml"&#x000A;    end&#x000A;&#x000A;    def dir_path&#x000A;      "#{APP_ROOT}/public/cache/#{@controller.name.underscore}"&#x000A;    end&#x000A;&#x000A;    def log&#x000A;      logger.info "Cache-watching #{model.to_s.camelize} for #{controller}"&#x000A;    end&#x000A;  end&#x000A;end</pre>
+          <pre>
+module CacheInvalidator  
+  def cache_watch(controller, *models)
+    models.each {|model| (@entries ||= Set.new) &lt;&lt; Entry.new(controller, model)}
+  end
+
+  def activate!
+    @entries.each do |entry|
+
+      return nil if Kernel.const_defined?(entry.class_name)
+
+      entry.log
+
+      observer = Class.new(ActiveRecord::Observer) do
+        include CacheInvalidator
+        observe(entry.model)
+        define_method(:entry) {entry}
+      end
+
+      Kernel.const_set(entry.class_name, observer)
+      observer.instance
+    end
+  end
+
+  module_function :watch
+  module_function :activate!
+
+  def after_save(model)
+    destroy_cache
+  end
+
+  def after_destroy(model)
+    destroy_cache
+  end
+
+  private
+
+  def destroy_cache
+    FileUtils.rm_f(entry.file_path) if File.file?(entry.file_path)
+    FileUtils.rm_r(entry.dir_path) if File.directory?(entry.dir_path)
+  end
+
+  class Entry
+
+    attr_reader :controller, :model
+
+    def initialize(controller, model)
+      @controller, @model = controller, model
+    end
+
+    def class_name
+      (controller.name.gsub(/\:\:/, '') + model.to_s.camelize + "CacheObserver").intern
+    end
+
+    def ==(other)
+      controller == other.controller &amp;&amp; self.model == other.model
+    end
+
+    def file_path
+      "#{dir_path}.xml"
+    end
+
+    def dir_path
+      "#{APP_ROOT}/public/cache/#{@controller.name.underscore}"
+    end
+
+    def log
+      logger.info "Cache-watching #{model.to_s.camelize} for #{controller}"
+    end
+  end
+end</pre>
           <p>
             By including the
             <code>CacheInvalidator</code>
             module we can declare cache invalidation rules inside controllers.
           </p>
-          <pre>&#x000A;class FooController &lt; Merb::Controller&#x000A;  include CacheInvalidator&#x000A;  cache_page :index&#x000A;  cache_watch :FooStore, :BarStore&#x000A;end</pre>
+          <pre>
+class FooController &lt; Merb::Controller
+  include CacheInvalidator
+  cache_page :index
+  cache_watch :FooStore, :BarStore
+end</pre>
           <p>
             The cache can be activated where app initialization tasks are kept, such as
             <code>init.rb</code>
             in Merb.
           </p>
-          <pre>&#x000A;Merb::BootLoader.after_app_loads do&#x000A;   CacheInvalidator.activate!&#x000A;end</pre>
+          <pre>
+Merb::BootLoader.after_app_loads do
+   CacheInvalidator.activate!
+end</pre>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

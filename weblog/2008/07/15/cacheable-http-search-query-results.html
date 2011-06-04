@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Cacheable http search query results |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Cacheable http search query results | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Jul 15 2008</span>
           </div>
@@ -46,7 +43,8 @@
             <code>GET</code>
             request to a search service, providing the search criteria as part of the request's query string.
           </p>
-          <pre>&#x000A;http://example.com/search?category=music&amp;subcategory=rock&amp;page=7</pre>
+          <pre>
+http://example.com/search?category=music&amp;subcategory=rock&amp;page=7</pre>
           <p>
             This approach does not easily lend itself to static resource caching, one of the most effective ways to improve a web app's performance. Regardless of the level of optimization applied to application code, fine tuning of database queries, even the addition of something like
             <a href="http://www.danga.com/memcached/" title="memcached: a distributed memory object caching system">memcached</a>,
@@ -54,7 +52,8 @@
             <a href="http://nginx.net/" title="nginx">Nginx</a>.
           </p>
           <p>By approaching search queries as RESTful HTTP resources uniquely identified by a URI as opposed to RPC based commands we should be able to cache the results the first time they are processed following a search request.</p>
-          <pre>&#x000A;http://example.com/search_results/someuniqueidentifier</pre>
+          <pre>
+http://example.com/search_results/someuniqueidentifier</pre>
           <p>
             The unique identifier part of the URI can take the form of a hash which, when deserialized, will provide the application with the filter criteria for the search. This assumes that the client and server share a common protocol, one which defines how the hash for the URI is constructed. For example, it is a good idea that there is an expected order for the set of criteria. While searches for
             <code>{category : music, subcategory : rock}</code>
@@ -63,34 +62,30 @@
             will produce the same results, using both combinations will cause the resource to be cached twice under two separate URIs, resulting in a performance penalty.
           </p>
           <p>A potential solution can involve Base64 encoding and decoding a string constructed using a predefined format and comprising of the filter criteria.</p>
-          <pre>&#x000A;CGI.unescape(identifier).unpack('m')[0] # =&gt; "music,rock,,,,7,30"</pre>
+          <pre>
+CGI.unescape(identifier).unpack('m')[0] # =&gt; "music,rock,,,,7,30"</pre>
           <p>This method will not be useful for plain HTML fronted websites. It requires a potent enough client with the ability to dynamically construct URIs based on filter criteria. JavaScript, ActionScript or generic web service consumer applications are all good candidates.</p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

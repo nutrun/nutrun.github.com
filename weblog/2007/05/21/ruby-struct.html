@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Ruby struct |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Ruby struct | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">May 21 2007</span>
           </div>
@@ -49,56 +46,76 @@
           <p>
             For example, let's look at a DTO used with a Rails ActionMailer class:
           </p>
-          <pre>&#x000A;class EmailDto &lt; Struct.new(:full_name, :email, :date); end</pre>
+          <pre>
+class EmailDto &lt; Struct.new(:full_name, :email, :date); end</pre>
           <p>
             So in a
             <code>Model</code>
             we can have something along the lines of:
           </p>
-          <pre>&#x000A;class Account &lt; ActiveRecord::Base&#x000A;  def activate&#x000A;    self.active = true; self.save&#x000A;    dto = EmailDto.new(self.full_name, self.email, Time.now)&#x000A;    Notifier.deliver_activation_notification(dto)&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Account &lt; ActiveRecord::Base
+  def activate
+    self.active = true; self.save
+    dto = EmailDto.new(self.full_name, self.email, Time.now)
+    Notifier.deliver_activation_notification(dto)
+  end
+end</pre>
           <p>
             ... with a Notifier that looks like:
           </p>
-          <pre>&#x000A;class Notifier &lt; ActionMailer::Base&#x000A;  def activation_notification(dto)&#x000A;    @recipients = dto.email&#x000A;    @from = "newsletters@example.com"&#x000A;    @subject = "Your account is now active!"&#x000A;    @body[:content] = dto&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Notifier &lt; ActionMailer::Base
+  def activation_notification(dto)
+    @recipients = dto.email
+    @from = "newsletters@example.com"
+    @subject = "Your account is now active!"
+    @body[:content] = dto
+  end
+end</pre>
           <p>
             An interesting, more flexible/dynamic alternative to Struct is
             <a href="http://www.ruby-doc.org/core/classes/OpenStruct.html" title="OpenStruct">OpenStruct</a>.
             OpenStruct allows the creation of data objects which accept arbitrary attributes at any time.
           </p>
-          <pre>&#x000A;require 'ostruct'&#x000A;&#x000A;flexie = OpenStruct.new(:music =&gt; 'rock')&#x000A;flexie.bands = ['zep', 'sabbath']&#x000A;&#x000A;flexie.music # =&gt; "rock"&#x000A;flexie.bands.first # =&gt; "zep"</pre>
+          <pre>
+require 'ostruct'
+
+flexie = OpenStruct.new(:music =&gt; 'rock')
+flexie.bands = ['zep', 'sabbath']
+
+flexie.music # =&gt; "rock"
+flexie.bands.first # =&gt; "zep"</pre>
           <p>
             Of course, attributes can always be assigned blocks:
           </p>
-          <pre>&#x000A;flexie.hello = Proc.new { puts 'hello world'}&#x000A;flexie.hello.call # =&gt; hello world</pre>
+          <pre>
+flexie.hello = Proc.new { puts 'hello world'}
+flexie.hello.call # =&gt; hello world</pre>
           <p>
             In many cases, Structs can offer a more meaningful, more concrete alternative to aspects of what Hashes are currently popular for in Ruby.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

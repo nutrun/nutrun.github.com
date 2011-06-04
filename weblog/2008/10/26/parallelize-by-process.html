@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Parallelize by process |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Parallelize by process | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Oct 26 2008</span>
           </div>
@@ -44,7 +41,23 @@
           <p>Performing computations in parallel is a popular technique for improving application performance and can be achieved in a number of ways, most commonly by employing threads or by splitting workload in a number of concurrent processes.</p>
           <p>Memory usage is often a headache with large dataset computations. While memory optimization is something to be sought after, tracking down memory leaks can become tedious and time consuming. We can decrease the chances of a heavy job running a system's memory dry by coming up with a strategy for fragmenting the job into a number of shorter running processes. By doing so, any memory used by a worker process will be released the moment the process completes. Additionally, we can run job fragments in parallel, allow ourselves to harness the operating system's multi-core capabilities and potentially distribute worker processes over a number of physical hosts and scale out when the need arises. Smaller processes also dictate more manageable chunks of code which are easier to maintain, optimize and test.</p>
           <p>Let's look at an example where a job involves fetching a large number of categorized products from various sources and processes them for use by our own application.</p>
-          <pre>&#x000A;class Job&#x000A;  def perform&#x000A;    ADDRESSES.each do |address|&#x000A;      category = load_category(address)&#x000A;      category.products.each { |product| process(product) }&#x000A;    end&#x000A;  end&#x000A;  &#x000A;  def process(product)&#x000A;    #some intensive computation&#x000A;  end&#x000A;  &#x000A;  def load_category(address)&#x000A;    #load an addressable category dataset&#x000A;  end&#x000A;end</pre>
+          <pre>
+class Job
+  def perform
+    ADDRESSES.each do |address|
+      category = load_category(address)
+      category.products.each { |product| process(product) }
+    end
+  end
+  
+  def process(product)
+    #some intensive computation
+  end
+  
+  def load_category(address)
+    #load an addressable category dataset
+  end
+end</pre>
           <p>
             Let's assume that the
             <code>ADDRESSES</code>
@@ -61,14 +74,48 @@
             <code>Worker</code>
             class meant to run as a standalone process.
           </p>
-          <pre>&#x000A;class Worker&#x000A;  def self.process_category(address)&#x000A;    category = load_category(address)&#x000A;    category.products.each { |product| process(product) }&#x000A;  end&#x000A;  &#x000A;  def self.process(product)&#x000A;    #some intensive computation&#x000A;  end&#x000A;  &#x000A;  def self.load_category(address)&#x000A;    #load an addressable category dataset&#x000A;  end&#x000A;end&#x000A;&#x000A;Worker.process_category(ARGV[0]) if ARGV.size == 1</pre>
+          <pre>
+class Worker
+  def self.process_category(address)
+    category = load_category(address)
+    category.products.each { |product| process(product) }
+  end
+  
+  def self.process(product)
+    #some intensive computation
+  end
+  
+  def self.load_category(address)
+    #load an addressable category dataset
+  end
+end
+
+Worker.process_category(ARGV[0]) if ARGV.size == 1</pre>
           <p>Each worker will operate on a significantly smaller dataset and will complete much faster than the initial long running job. Any memory used by each worker will be immediately released the moment the process finishes execution.</p>
           <p>
             After the latest change,
             <code>Job</code>
             can take on the role of instrumenting the worker processes. We start by only allowing an arbitrary maximum number of concurrent workers, three in this case.
           </p>
-          <pre>&#x000A;require "thread"&#x000A;&#x000A;class Job&#x000A;  def initialize&#x000A;    @worker_count, @mutex = 3, Mutex.new&#x000A;  end&#x000A;&#x000A;  def perform&#x000A;    ADRESSESES.each do |address|&#x000A;      sleep 0.1 until @worker_count &gt; 0&#x000A;      @worker_count -= 1&#x000A;      Thread.new do&#x000A;        system("ruby worker.rb #{address}")&#x000A;        @mutex.synchronize {@worker_count += 1}&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</pre>
+          <pre>
+require "thread"
+
+class Job
+  def initialize
+    @worker_count, @mutex = 3, Mutex.new
+  end
+
+  def perform
+    ADRESSESES.each do |address|
+      sleep 0.1 until @worker_count &gt; 0
+      @worker_count -= 1
+      Thread.new do
+        system("ruby worker.rb #{address}")
+        @mutex.synchronize {@worker_count += 1}
+      end
+    end
+  end
+end</pre>
           <p>
             At this point it is a good idea to run the job and monitor the time it takes for it to complete while also measuring system resource usage. This way we can determine the optimal number of concurrent worker processes based on the system's specs. Once available resources have been exhausted and both
             <code>Job</code>
@@ -77,31 +124,26 @@
             have been sufficiently optimized, we can start thinking about running workers on separate physical nodes.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

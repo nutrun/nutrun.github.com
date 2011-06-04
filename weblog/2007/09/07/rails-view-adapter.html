@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Rails view adapter |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Rails view adapter | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Sep 07 2007</span>
           </div>
@@ -49,17 +46,52 @@
           <p>
             The main ViewAdapter module looks something like this:
           </p>
-          <pre>&#x000A;require "ostruct"&#x000A;&#x000A;module ViewAdapter&#x000A;  module ClassMethods&#x000A;    def prepare(records)&#x000A;      records.map do |record|&#x000A;        view_data = OpenStruct.new&#x000A;        yield view_data, record&#x000A;        view_data&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;&#x000A;  extend ClassMethods&#x000A;&#x000A;  def self.included(receiver)&#x000A;    receiver.extend(ClassMethods)&#x000A;  end&#x000A;end</pre>
+          <pre>
+require "ostruct"
+
+module ViewAdapter
+  module ClassMethods
+    def prepare(records)
+      records.map do |record|
+        view_data = OpenStruct.new
+        yield view_data, record
+        view_data
+      end
+    end
+  end
+
+  extend ClassMethods
+
+  def self.included(receiver)
+    receiver.extend(ClassMethods)
+  end
+end</pre>
           <p>
             Each View Adapter includes the
             <code>ViewAdapter</code>
             module which allows for a clean, easily testable, declarative setup of the View Data that will be eventually rendered on the screen.
           </p>
-          <pre>&#x000A;class ConcertViewAdapter&#x000A;  include ViewAdapter&#x000A;&#x000A;   def concerts&#x000A;     prepare Concert.find(:all) do |view_data, concert|&#x000A;       view_data.artist = concert.artist&#x000A;       view_data.venue = concert.venue&#x000A;       view_data.price = concert.currency + concert.price&#x000A;     end&#x000A;   end&#x000A;end</pre>
+          <pre>
+class ConcertViewAdapter
+  include ViewAdapter
+
+   def concerts
+     prepare Concert.find(:all) do |view_data, concert|
+       view_data.artist = concert.artist
+       view_data.venue = concert.venue
+       view_data.price = concert.currency + concert.price
+     end
+   end
+end</pre>
           <p>
             As a general rule, we maintain a one-to-one relationship between the Controllers and the corresponding View Adapters.
           </p>
-          <pre>&#x000A;class ConcertsController &lt; ApplicationController&#x000A;  def index&#x000A;    @concerts = ConcertViewAdapter.concerts&#x000A;  end&#x000A;end</pre>
+          <pre>
+class ConcertsController &lt; ApplicationController
+  def index
+    @concerts = ConcertViewAdapter.concerts
+  end
+end</pre>
           <p>
             These Adapters are mainly used to consolidate and format data, as returned by a Controller's action, for display.
           </p>
@@ -79,31 +111,26 @@
             As a possible downside, this approach will break some of the standard Rails view helpers which depend on ActiveRecord objects being exposed in ERB templates. I personally do not consider this a big issue, because I don't find much benefit in most of these HTML helpers, especially considering the way they cross MVC boundaries by exposing Domain Objects to the View, or mask relatively straightforward mark up.
           </p>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>

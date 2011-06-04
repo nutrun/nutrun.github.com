@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml:">
-  <head>
-    <title>
-      Eventmachine mapreduce |
-      nutrun
-    </title>
-    <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
-    <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
-    <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="nutrun.com is George Malamidis's website and blog focused on software engineering." name="description" />
-    <meta content="nutrun, George, Malamidis, programming, distributed, web, software, engineering" name="keywords" />
-  </head>
-  <body>
-    <div id="site">
-      <div id="header">
-        <h1>
-          <a href="/" rel="home">nutrun</a>
-        </h1>
-      </div>
-      <div id="menu">
-        <ul>
-          <li>
-            <a class="home" href="/" rel="home">Home</a>
-          </li>
-          <li>
-            <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
-          </li>
-          <li>
-            <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
-          </li>
-          <li>
-            <a class="search" href="/search.html">Search</a>
-          </li>
-        </ul>
-      </div>
-      <div id="content">
-        <div class="article">
+<head>
+  <title>Eventmachine mapreduce | nutrun</title>
+  <link href="http://feeds.feedburner.com/nutrun/feed" rel="alternate" title="nutrun RSS feed" type="application/atom+xml" />
+  <link charset="utf-8" href="/css/reset.css" media="all" rel="stylesheet" type="text/css" />
+  <link charset="utf-8" href="/css/screen.css" media="all" rel="stylesheet" type="text/css" />
+  <meta name="description" content="nutrun.com is George Malamidis's website and blog focused on software engineering."/>
+  <meta name="keywords" content="nutrun, George, Malamidis, programming, distributed, web, software, engineering"/>
+</head>
+<body>
+  <div id="site">
+    <div id="header">
+      <h1>
+        <a href="/" rel="home">nutrun</a>
+      </h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a class="home" href="/" rel="home">Home</a>
+        </li>
+        <li>
+          <a class="twitter" href="http://twitter.com/nutrun">Twitter</a>
+        </li>
+        <li>
+          <a class="feed" href="http://feeds.feedburner.com/nutrun/feed">Feed</a>
+        </li>
+        <li>
+          <a class="search" href="/search.html">Search</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+      <div class="article">
           <div>
             <span class="date">Sep 09 2008</span>
           </div>
@@ -73,9 +70,70 @@
           </p>
           <p>Counting the number of word occurrences in a large number of documents is one of the examples most commonly used for describing MapReduce. A number of distributed jobs is spawned, splitting document contents into words. The results of these operations are passed to a reduce process whose job is to sum its input.</p>
           <p>Map processes can be EventMachine servers. We can have an arbitrary number of those running on a number of physical nodes.</p>
-          <pre>&#x000A;module Map&#x000A;  def receive_data(path)&#x000A;    document = File.read(path)&#x000A;    word_counts = document.split(' ').map { |word| [word, 1] }&#x000A;    send_data(Marshal.dump(word_counts))&#x000A;    close_connection_after_writing&#x000A;  end&#x000A;end&#x000A;&#x000A;EM.run {EM.start_server("localhost", 5555, Map)}</pre>
+          <pre>
+module Map
+  def receive_data(path)
+    document = File.read(path)
+    word_counts = document.split(' ').map { |word| [word, 1] }
+    send_data(Marshal.dump(word_counts))
+    close_connection_after_writing
+  end
+end
+
+EM.run {EM.start_server("localhost", 5555, Map)}</pre>
           <p>A reduce process can send job requests to those servers, receive and process the results.</p>
-          <pre>&#x000A;class Reduce &lt; EM::Connection&#x000A;  @@all = []&#x000A;  &#x000A;  def initialize(*args)&#x000A;    super&#x000A;    @doc, @data = args[0], ''&#x000A;  end&#x000A;  &#x000A;  def post_init&#x000A;    send_data(@doc)&#x000A;  end&#x000A;  &#x000A;  def receive_data(data)&#x000A;    @data &lt;&lt; data&#x000A;  end&#x000A;  &#x000A;  def unbind&#x000A;    Reduce.job_completed&#x000A;    @@all += Marshal.load(@data)&#x000A;    unless Reduce.pending_jobs?&#x000A;      groups = @@all.group_by {|word| word[0] }&#x000A;      groups.each { |g| p "#{g[0]} : #{g[1].size}" }&#x000A;      EM.stop&#x000A;    end&#x000A;  end&#x000A;  &#x000A;  def self.send_map_job(port, doc)&#x000A;    @job_count ||= 0&#x000A;    increment_job_count&#x000A;    EM.connect("localhost", port, Reduce, doc)&#x000A;  end&#x000A;  &#x000A;  def self.increment_job_count&#x000A;    @job_count += 1&#x000A;  end&#x000A;  &#x000A;  def self.pending_jobs?&#x000A;    @job_count != 0&#x000A;  end&#x000A;  &#x000A;  def self.job_completed&#x000A;    @job_count -= 1&#x000A;  end&#x000A;end&#x000A;&#x000A;EM.run do&#x000A;  {&#x000A;    5555 =&gt; 'docs/america.txt', &#x000A;    6666 =&gt; 'docs/da-vinci.txt'&#x000A;  }.each { |port, doc| Reduce.send_map_job(port, doc) }&#x000A;end</pre>
+          <pre>
+class Reduce &lt; EM::Connection
+  @@all = []
+  
+  def initialize(*args)
+    super
+    @doc, @data = args[0], ''
+  end
+  
+  def post_init
+    send_data(@doc)
+  end
+  
+  def receive_data(data)
+    @data &lt;&lt; data
+  end
+  
+  def unbind
+    Reduce.job_completed
+    @@all += Marshal.load(@data)
+    unless Reduce.pending_jobs?
+      groups = @@all.group_by {|word| word[0] }
+      groups.each { |g| p "#{g[0]} : #{g[1].size}" }
+      EM.stop
+    end
+  end
+  
+  def self.send_map_job(port, doc)
+    @job_count ||= 0
+    increment_job_count
+    EM.connect("localhost", port, Reduce, doc)
+  end
+  
+  def self.increment_job_count
+    @job_count += 1
+  end
+  
+  def self.pending_jobs?
+    @job_count != 0
+  end
+  
+  def self.job_completed
+    @job_count -= 1
+  end
+end
+
+EM.run do
+  {
+    5555 =&gt; 'docs/america.txt', 
+    6666 =&gt; 'docs/da-vinci.txt'
+  }.each { |port, doc| Reduce.send_map_job(port, doc) }
+end</pre>
           <p>The example lacks plumbing code which would make things flexible enough and, as you might have noticed, works on a single node (localhost), but hopefully illustrates a mechanism for distributing workload over a networked farm.</p>
           <div class="sponsored">
             <p class="heading">Message from Testkings</p>
@@ -90,31 +148,26 @@
             </p>
           </div>
         </div>
-      </div>
-      <div id="footer">
-        <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
-        <p>
-          Nut icon by Achilles Charmpilas @
-          <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a>
-        </p>
-        <p>
-          Fugue icons by
-          <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>
-        </p>
-      </div>
     </div>
-    <script type="text/javascript">
-      //<![CDATA[
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      //]]>
-    </script>
-    <script type="text/javascript">
-      //<![CDATA[
-        var pageTracker = _gat._getTracker("UA-402519-1");
-        pageTracker._initData();
-        pageTracker._trackPageview();
-      //]]>
-    </script>
-  </body>
+    <div id="footer">
+      <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>
+      <p>All content &copy; 2006-2011 George Malamidis, nutrun</p>
+      <p>Nut icon by Achilles Charmpilas, <a href="http://humbuckercode.co.uk">humbuckercode.co.uk</a></p>
+      <p>Fugue icons by<a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+  //<![CDATA[
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  //]]>
+  </script>
+  <script type="text/javascript">
+  //<![CDATA[
+  var pageTracker = _gat._getTracker("UA-402519-1");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  //]]>
+  </script>
+</body>
 </html>
