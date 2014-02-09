@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<title>TAB</title>
+		<script type="text/javascript" charset="utf-8">
+
+		var TABLEN = 32;
+		var STRING_COUNT = 6;
+		var TAB = [];
+		
+		for (var i = 0; i < STRING_COUNT; i++) {
+			TAB[i] = [];
+			for (var j = 0; j < TABLEN; j++) {
+				TAB[i][j] = '-';
+			}
+		}
+		
+		function drawtxt() {
+			var tabtxt = document.getElementById('out');
+			
+			var txt = '';
+			
+			for (var i = 0; i < STRING_COUNT; i++) {
+				for (var j = 0; j < TABLEN; j++) {
+					txt += TAB[i][j];
+				}
+				txt += "\n";
+			}
+			
+			tabtxt.value = txt;
+		}
+		
+		function regOnInput() {
+			
+		}
+		
+		function drawinput() {
+			var input = document.getElementById('in');
+			
+			for (var i = 0; i < STRING_COUNT; i++) {
+				var tr = document.createElement("tr");
+				for (var j = 0; j < TABLEN; j++) {
+					var td = document.createElement("td");
+					var inpt = document.createElement("input");
+					inpt.type = 'text';
+					inpt.size = 1;
+					inpt.maxLength = 1;
+					inpt.id = i + '_' + j;
+					inpt.innerHTML = '-';
+					td.appendChild(inpt);
+					tr.appendChild(td);
+				}
+				input.appendChild(tr);
+			}
+			
+			// Update tab every time something is entered in the input
+			var inputs = document.getElementsByTagName('input');
+			var inputsL = [];
+
+			for (var i = 0; i < inputs.length; i++) {
+				inputsL.push(inputs[i]);
+			}
+			
+			inputsL.forEach(function(inpt) {
+				var tokens = inpt.id.split('_');
+				inpt.oninput = function() {
+					TAB[tokens[0]][tokens[1]] = this.value == '' ? '-' : this.value;
+					drawtxt();
+				}
+			});
+		}
+		
+		function main() {
+			drawinput();
+			drawtxt();
+		}
+
+		window.onload = main;
+		
+		</script>
+	</head>
+	<body>
+		<table id="in"></table>
+		<textarea id="out" rows="8" cols="32"></textarea>
+	</body>
+</html>
