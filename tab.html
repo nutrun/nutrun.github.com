@@ -2,6 +2,18 @@
 <html>
 	<head>
 		<title>TAB</title>
+		
+		<style type="text/css" media="screen">
+		body {
+			background-color: #F1F1F1;
+		}
+		
+		textarea {
+			border:1px solid #999999;
+			font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+		}
+		</style>
+		
 		<script type="text/javascript" charset="utf-8">
 
 		var TABLEN = 32;
@@ -68,6 +80,10 @@
 				inpt.onfocus = function() {
 					CURRENT_INPUT = [parseInt(tokens[0]), parseInt(tokens[1])];
 				}
+				
+				var slct = function() { this.select(); }
+				inpt.onkeyup = slct;
+				inpt.onmouseup = slct;
 			});
 		}
 		
@@ -101,6 +117,7 @@
 			drawinput();
 			drawtxt();
 			document.onkeydown = navigate;
+			document.getElementById('out').onmouseup = function() { this.select() };
 		}
 
 		window.onload = main;
@@ -108,8 +125,15 @@
 		</script>
 	</head>
 	<body>
+		<p>
+			Use the arrow keys (&#8592;, &#8593;, &#8594;, &#8595;) or mouse/trackpad to navigate the tab inputs and enter string numbers: 
+		</p>
 		<table id="in"></table>
+		<br/>
+		<label for="out">Copy/paste the tab to share:</label>
+		<br/>
 		<textarea id="out" rows="8" cols="32"></textarea>
+		<br/>
 		<br/>
 		<a href="http://www.ultimate-guitar.com/lessons/for_beginners/guide_to_tab_notation.html">Guide to tab notation</a>
 	</body>
