@@ -7,6 +7,7 @@
 		var TABLEN = 32;
 		var STRING_COUNT = 6;
 		var TAB = [];
+		var CURRENT_INPUT = [0, 0];
 		
 		for (var i = 0; i < STRING_COUNT; i++) {
 			TAB[i] = [];
@@ -42,7 +43,6 @@
 					inpt.size = 1;
 					inpt.maxLength = 1;
 					inpt.id = i + '_' + j;
-					inpt.innerHTML = '-';
 					td.appendChild(inpt);
 					tr.appendChild(td);
 				}
@@ -59,16 +59,48 @@
 			
 			inputsL.forEach(function(inpt) {
 				var tokens = inpt.id.split('_');
+
 				inpt.oninput = function() {
 					TAB[tokens[0]][tokens[1]] = this.value == '' ? '-' : this.value;
 					drawtxt();
 				}
+				
+				inpt.onfocus = function() {
+					CURRENT_INPUT = [parseInt(tokens[0]), parseInt(tokens[1])];
+				}
 			});
+		}
+		
+		function navigate(e) {
+			e = e || window.event;
+			
+			if (e.keyCode == 37) { // left
+				var x = CURRENT_INPUT[0];
+				var y = CURRENT_INPUT[1] - 1;
+				y = y < 0 ? TABLEN - 1 : y;
+				document.getElementById(x + '_' + y).focus();
+			} else if (e.keyCode == 38) { // up
+				var x = CURRENT_INPUT[0] - 1;
+				var y = CURRENT_INPUT[1];
+				x = x < 0 ? STRING_COUNT - 1 : x;
+				document.getElementById(x + '_' + y).focus();
+			} else if (e.keyCode == 39) { // right
+				var x = CURRENT_INPUT[0];
+				var y = CURRENT_INPUT[1] + 1;
+				y = y == TABLEN ? 0 : y;
+				document.getElementById(x + '_' + y).focus();
+			} else if (e.keyCode == 40) { // down
+				var x = CURRENT_INPUT[0] + 1;
+				var y = CURRENT_INPUT[1];
+				x = x == STRING_COUNT ? 0 : x;
+				document.getElementById(x + '_' + y).focus();
+			}
 		}
 		
 		function main() {
 			drawinput();
 			drawtxt();
+			document.onkeydown = navigate;
 		}
 
 		window.onload = main;
