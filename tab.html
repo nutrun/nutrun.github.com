@@ -19,13 +19,13 @@
 			font-weight: bold;
 		}
 		
-		table, tr, td, input {
+		table, tr, td, .fret {
 			margin: 0;
 			padding: 0;
 			border: none;
 		}
 		
-		input {
+		.fret {
 			border: none;
 			width: 15px;
 		}
@@ -38,18 +38,23 @@
 		var STRING_COUNT = 6;
 		var TAB = [];
 		var CURRENT_INPUT = [0, 0];
+		var LOCAL_STORAGE_KEY = 'nutrun.com/tabs.html';
 		
 		window.onload = main;
 		
 		function main() {
-			initTab();
+			init();
 			document.onkeydown = navigate;
-			registerSaveTabToUrl();
+			registerCpLink();
+			registerSaveTab();
+			registerLoadTab();
+			registerDelTab();
+			populateSavedTabsSelect();
 			loadFromUrl();
 			drawinput();
 		}
 		
-		function initTab() {
+		function init() {
 			for (var i = 0; i < STRING_COUNT; i++) {
 				TAB[i] = [];
 				for (var j = 0; j < TABLEN; j++) {
@@ -58,7 +63,7 @@
 			}
 		}
 		
-		function registerSaveTabToUrl() {
+		function registerCpLink() {
 			document.getElementById('cplink').onclick = function() {
 				var tab = [];
 			
@@ -78,6 +83,62 @@
 				return false;
 			};
 		}
+		
+		function registerSaveTab() {
+			var saveTabButton = document.getElementById('saveTab');
+			saveTabButton.onclick = function() {
+				var tabName = document.getElementById('saveTabName');
+				var savedTabs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {};
+				savedTabs[tabName.value] = TAB;
+				localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedTabs));
+				populateSavedTabsSelect();
+			};
+		}
+		
+		function populateSavedTabsSelect() {
+			var slct = document.getElementById('saved');
+			
+			for (var i = slct.options.length - 1; i >= 0; i--) {
+				slct.remove(i);
+			}
+			
+			var savedTabs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {};
+			
+			for (var k in savedTabs) {
+				var opt = document.createElement('option');
+				opt.value = k;
+				opt.innerHTML = k;
+				slct.appendChild(opt);
+			}
+		}
+		
+		function registerLoadTab() {
+			var loadTabButton = document.getElementById('load');
+			loadTabButton.onclick = function() {
+				var slct = document.getElementById('saved');
+				var toLoad = slct.options[slct.selectedIndex].value;
+				var savedTabs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+				TAB = savedTabs[toLoad];
+				for (var i = 0; i < TAB.length; i++) {
+					for (var j = 0; j < TAB.length; j++) {
+						var inpt = document.getElementById(i + '_' + j);
+						inpt.value = TAB[i][j];
+					}
+				}
+			};
+		}
+		
+		function registerDelTab() {
+			var delTabButton = document.getElementById('del');
+			delTabButton.onclick = function() {
+				var slct = document.getElementById('saved');
+				var toDel = slct.options[slct.selectedIndex].value;
+				var savedTabs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
+				delete savedTabs[toDel];
+				localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedTabs));
+				populateSavedTabsSelect();
+			};
+		}
 				
 		function loadFromUrl() {
 			if (location.search.indexOf('t=') > 0) {
@@ -91,8 +152,8 @@
 					}
 				}
 			}
-		}		
-		
+		}
+
 		function drawinput() {
 			var input = document.getElementById('in');
 			
@@ -106,6 +167,7 @@
 					inpt.maxLength = 2;
 					inpt.value = TAB[i][j];
 					inpt.id = i + '_' + j;
+					inpt.className = inpt.className + ' fret';
 					td.appendChild(inpt);
 					tr.appendChild(td);
 				}
@@ -113,7 +175,7 @@
 			}
 			
 			// Update tab every time something is entered in the input
-			var inputs = document.getElementsByTagName('input');
+			var inputs = document.getElementsByClassName('fret');
 			var inputsL = [];
 
 			for (var i = 0; i < inputs.length; i++) {
@@ -181,6 +243,16 @@
 		<table id="in"></table>
 		<p>
 			<a href="#" id="cplink" title="share tab">Copy this URL</a> to share the tab or come back to it later.
+		</p>
+		<p>
+			<input type="text" id="saveTabName" value="tab 1"/>
+			<button id="saveTab">Save</button>
+		</p>
+		<p>
+			Saved tabs
+			<select id="saved"></select>
+			<button id="load">Load</button>
+			<button id="del">Delete</button>
 		</p>
 		<p>
 			<a href="http://www.ultimate-guitar.com/lessons/for_beginners/guide_to_tab_notation.html">Guide to tab notation</a>
