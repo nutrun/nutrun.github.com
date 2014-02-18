@@ -50,7 +50,6 @@
 		function main() {
 			init();
 			document.onkeydown = navigate;
-			registerCpLink();
 			registerCpTab();
 			registerSaveTab();
 			registerLoadTab();
@@ -69,25 +68,21 @@
 			}
 		}
 		
-		function registerCpLink() {
-			document.getElementById('cplink').onclick = function() {
-				var tab = [];
-			
-				for (var i = 0; i < STRING_COUNT; i++) {
-					var notes = []
-					for (var j = 0; j < TABLEN; j++) {
-						notes.push(TAB[i][j]);
-					}
-					tab.push(notes.join(','));
+		function currentTabURL() {
+			var tab = [];
+		
+			for (var i = 0; i < STRING_COUNT; i++) {
+				var notes = []
+				for (var j = 0; j < TABLEN; j++) {
+					notes.push(TAB[i][j]);
 				}
-				
-				var txt = tab.join('\n');
-				var compressedTab = LZString.compressToBase64(txt);
+				tab.push(notes.join(','));
+			}
 			
-				var link = window.location.href.split('?')[0] + '?t=' + compressedTab;
-				window.prompt("Copy to clipboard: Ctrl+C, Enter", link);
-				return false;
-			};
+			var txt = tab.join('\n');
+			var compressedTab = LZString.compressToBase64(txt);
+		
+			return window.location.href.split('?')[0] + '?t=' + compressedTab;
 		}
 		
 		function registerCpTab() {
@@ -207,6 +202,14 @@
 					val = val == ' ' ? '-' : val;
 					TAB[tokens[0]][tokens[1]] = val;
 					this.value = val;
+					window.history.pushState('Object', 'Title', currentTabURL());
+				}
+				
+				inpt.onkeyup = function() {
+					var val = this.value == '' ? '-' : this.value;
+					val = val == ' ' ? '-' : val;
+					TAB[tokens[0]][tokens[1]] = val;
+					window.history.pushState('Object', 'Title', currentTabURL());					
 				}
 				
 				inpt.onfocus = function() {
@@ -255,15 +258,9 @@
 	
 	<body>
 		<p>
-			Use the arrow keys (&#8592;, &#8593;, &#8594;, &#8595;) or mouse/trackpad to navigate the tab inputs and enter string numbers.
+			Use the arrow keys (&#8592;, &#8593;, &#8594;, &#8595;) or mouse/trackpad to navigate the tab inputs and enter fret numbers. Share the tab with others by sending them the URL in the address bar, or <a href="#" id="cptab" title="copy tab">copy the tab</a> and email it.
 		</p>
 		<table id="in"></table>
-		<p>
-			<a href="#" id="cplink" title="share tab">Copy this URL</a> to share the tab with others.
-		</p>
-		<p>
-			<a href="#" id="cptab" title="copy tab">Copy tab to clipboard</a>
-		</p>
 		<p>
 			<input type="text" id="saveTabName" value="tab 1"/>
 			<button id="saveTab">Save</button>
