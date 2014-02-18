@@ -29,6 +29,11 @@
 			border: none;
 			width: 15px;
 		}
+		
+		#footer {
+			margin-top: 3em;
+			font-size: .7em;
+		}
 		</style>
 		
 		
@@ -46,6 +51,7 @@
 			init();
 			document.onkeydown = navigate;
 			registerCpLink();
+			registerCpTab();
 			registerSaveTab();
 			registerLoadTab();
 			registerDelTab();
@@ -82,6 +88,17 @@
 				window.prompt("Copy to clipboard: Ctrl+C, Enter", link);
 				return false;
 			};
+		}
+		
+		function registerCpTab() {
+			document.getElementById('cptab').onclick = function() {
+				var txt = [];
+				for (var i = 0; i < TAB.length; i++) {
+					txt.push(TAB[i].join(''));
+				}
+				window.prompt("Copy to clipboard: Ctrl+C, Enter", txt.join('\n'));
+				return false;
+			}
 		}
 		
 		function registerSaveTab() {
@@ -242,7 +259,10 @@
 		</p>
 		<table id="in"></table>
 		<p>
-			<a href="#" id="cplink" title="share tab">Copy this URL</a> to share the tab or come back to it later.
+			<a href="#" id="cplink" title="share tab">Copy this URL</a> to share the tab with others.
+		</p>
+		<p>
+			<a href="#" id="cptab" title="copy tab">Copy tab to clipboard</a>
 		</p>
 		<p>
 			<input type="text" id="saveTabName" value="tab 1"/>
@@ -256,6 +276,10 @@
 		</p>
 		<p>
 			<a href="http://www.ultimate-guitar.com/lessons/for_beginners/guide_to_tab_notation.html">Guide to tab notation</a>
+		</p>
+		
+		<p id="footer">
+			Created by <a href="https://twitter.com/nutrun">@nutrun</a> and <a href="https://twitter.com/achilles_ch">@achilles_ch</a>
 		</p>
 	</body>
 	
