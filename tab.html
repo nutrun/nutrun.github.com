@@ -101,7 +101,7 @@
 			saveTabButton.onclick = function() {
 				var tabName = document.getElementById('saveTabName');
 				var savedTabs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {};
-				savedTabs[tabName.value] = TAB;
+				savedTabs[tabName.value] = currentTabURL();
 				localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedTabs));
 				populateSavedTabsSelect();
 			};
@@ -130,13 +130,8 @@
 				var slct = document.getElementById('saved');
 				var toLoad = slct.options[slct.selectedIndex].value;
 				var savedTabs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-				TAB = savedTabs[toLoad];
-				for (var i = 0; i < TAB.length; i++) {
-					for (var j = 0; j < TAB.length; j++) {
-						var inpt = document.getElementById(i + '_' + j);
-						inpt.value = TAB[i][j];
-					}
-				}
+				var url = savedTabs[toLoad];
+				window.location = url;
 			};
 		}
 		
