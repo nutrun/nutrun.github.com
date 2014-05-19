@@ -18,6 +18,10 @@
 		#cplink {
 			font-weight: bold;
 		}
+
+		#copypasta {
+			display: none;
+		}
 		
 		table, tr, td, .fret {
 			margin: 0;
@@ -91,7 +95,16 @@
 				for (var i = 0; i < TAB.length; i++) {
 					txt.push(TAB[i].join(''));
 				}
-				window.prompt("Copy to clipboard: Ctrl+C, Enter", txt.join('\n'));
+				document.getElementById('in').style.display = 'none';
+				var copypasta = document.getElementById('copypasta');
+				copypasta.getElementsByTagName('button')[0].onclick = function() {
+					document.getElementById('copypasta').style.display = 'none';
+					document.getElementById('in').style.display = 'block';
+				};
+				var textarea = copypasta.getElementsByTagName('textarea')[0]
+				textarea.value = txt.join('\n');
+				copypasta.style.display = 'block';
+				textarea.select();
 				return false;
 			}
 		}
@@ -256,6 +269,10 @@
 			Use the arrow keys (&#8592;, &#8593;, &#8594;, &#8595;) or mouse/trackpad to navigate the tab inputs and enter fret numbers. Share the tab with others by sending them the URL in the address bar, or <a href="#" id="cptab" title="copy tab">copy the tab</a> and email it.
 		</p>
 		<table id="in"></table>
+		<div id="copypasta">
+			<textarea rows="6" cols="64"></textarea>
+			<button>Close</button>
+		</div>
 		<p>
 			<input type="text" id="saveTabName" value="tab 1"/>
 			<button id="saveTab">Save</button>
