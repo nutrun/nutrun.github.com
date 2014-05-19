@@ -93,7 +93,7 @@
 			document.getElementById('cptab').onclick = function() {
 				var txt = [];
 				for (var i = 0; i < TAB.length; i++) {
-					txt.push(TAB[i].join(''));
+					txt.push(TAB[i].join(' '));
 				}
 				document.getElementById('in').style.display = 'none';
 				var copypasta = document.getElementById('copypasta');
@@ -270,7 +270,7 @@
 		</p>
 		<table id="in"></table>
 		<div id="copypasta">
-			<textarea rows="6" cols="64"></textarea>
+			<textarea rows="6" cols="96"></textarea>
 			<button>Close</button>
 		</div>
 		<p>
