@@ -23,6 +23,10 @@
 			display: none;
 		}
 		
+		#inputs {
+			height: 10em;
+		}
+		
 		table, tr, td, .fret {
 			margin: 0;
 			padding: 0;
@@ -91,20 +95,27 @@
 		
 		function registerCpTab() {
 			document.getElementById('cptab').onclick = function() {
-				var txt = [];
-				for (var i = 0; i < TAB.length; i++) {
-					txt.push(TAB[i].join(' '));
-				}
-				document.getElementById('in').style.display = 'none';
+				var tabIn = document.getElementById('in');
 				var copypasta = document.getElementById('copypasta');
-				copypasta.getElementsByTagName('button')[0].onclick = function() {
-					document.getElementById('copypasta').style.display = 'none';
-					document.getElementById('in').style.display = 'block';
-				};
-				var textarea = copypasta.getElementsByTagName('textarea')[0]
-				textarea.value = txt.join('\n');
-				copypasta.style.display = 'block';
-				textarea.select();
+				
+				if (tabIn.style.display == 'none') {
+					copypasta.style.display = 'none';
+					tabIn.style.display = 'table';
+				} else {
+					var txt = [];
+					for (var i = 0; i < TAB.length; i++) {
+						txt.push(TAB[i].join(' '));
+					}
+					tabIn.style.display = 'none';
+					copypasta.getElementsByTagName('button')[0].onclick = function() {
+						document.getElementById('copypasta').style.display = 'none';
+						document.getElementById('in').style.display = 'table';
+					};
+					var textarea = copypasta.getElementsByTagName('textarea')[0]
+					textarea.value = txt.join('\n');
+					copypasta.style.display = 'block';
+					textarea.select();
+				}				
 				return false;
 			}
 		}
@@ -268,10 +279,12 @@
 		<p>
 			Use the arrow keys (&#8592;, &#8593;, &#8594;, &#8595;) or mouse/trackpad to navigate the tab inputs and enter fret numbers. Share the tab with others by sending them the URL in the address bar, or <a href="#" id="cptab" title="copy tab">copy the tab</a> and email it.
 		</p>
-		<table id="in"></table>
-		<div id="copypasta">
-			<textarea rows="6" cols="96"></textarea>
-			<button>Close</button>
+		<div id="inputs">
+			<table id="in"></table>
+			<div id="copypasta">
+				<textarea rows="6" cols="96"></textarea>
+				<button>Close</button>
+			</div>
 		</div>
 		<p>
 			<input type="text" id="saveTabName" value="tab 1"/>
