@@ -85,20 +85,20 @@ EM.run {EM.start_server("localhost", 5555, Map)}</pre>
           <pre>
 class Reduce &lt; EM::Connection
   @@all = []
-  
+
   def initialize(*args)
     super
     @doc, @data = args[0], ''
   end
-  
+
   def post_init
     send_data(@doc)
   end
-  
+
   def receive_data(data)
     @data &lt;&lt; data
   end
-  
+
   def unbind
     Reduce.job_completed
     @@all += Marshal.load(@data)
@@ -108,21 +108,21 @@ class Reduce &lt; EM::Connection
       EM.stop
     end
   end
-  
+
   def self.send_map_job(port, doc)
     @job_count ||= 0
     increment_job_count
     EM.connect("localhost", port, Reduce, doc)
   end
-  
+
   def self.increment_job_count
     @job_count += 1
   end
-  
+
   def self.pending_jobs?
     @job_count != 0
   end
-  
+
   def self.job_completed
     @job_count -= 1
   end
@@ -130,24 +130,12 @@ end
 
 EM.run do
   {
-    5555 =&gt; 'docs/america.txt', 
+    5555 =&gt; 'docs/america.txt',
     6666 =&gt; 'docs/da-vinci.txt'
   }.each { |port, doc| Reduce.send_map_job(port, doc) }
 end</pre>
           <p>The example lacks plumbing code which would make things flexible enough and, as you might have noticed, works on a single node (localhost), but hopefully illustrates a mechanism for distributing workload over a networked farm.</p>
-          <div class="sponsored">
-            <p class="heading">Message from Testkings</p>
-            <p>
-              The
-              <a href="http://www.testkings.com/exam/350-030.htm">testking 350-030</a>
-              online preparation course is guaranteed way to pass real exam on time. Sign up for
-              <a href="http://www.testkings.com/exam/642-642.htm">testking 642-642</a>
-              training and pass real exam on first try using
-              <a href="http://www.testkings.com/exam/PMI-001.htm">testking PMI-001</a>
-              study pack.
-            </p>
-          </div>
-        </div>
+      </div>
     </div>
     <div id="footer">
       <p class="contact">Contact, comments: <a href="http://twitter.com/nutrun">@nutrun</a></p>

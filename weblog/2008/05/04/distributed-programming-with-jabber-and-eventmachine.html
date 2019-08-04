@@ -112,7 +112,7 @@ EM.run do
     jabber.received_messages do |message|
       case message.body
       when "exit" : EM.stop
-      when "lift" : 
+      when "lift" :
         EM.spawn do
           worker = Worker.new
           worker.callback {jabber.deliver(message.from, "Done lifting")}
@@ -152,18 +152,6 @@ end</pre>
             <em>lightweight</em>
             are two keywords to be found on the highest ranks of your list.
           </p>
-          <div class="sponsored">
-            <p class="heading">Message from Testkings</p>
-            <p>
-              Guaranteed pass you real exam with
-              <a href="http://www.testkings.com/exam/VCP-410.htm">testking VCP-410</a>
-              course. Sign up for
-              <a href="http://www.testkings.com/exam/350-001.htm">testking 350-001</a>
-              online training program and get guaranteed success using self study
-              <a href="http://www.testkings.com/exam/640-802.htm">testking 640-802</a>
-              preparation material.
-            </p>
-          </div>
         </div>
     </div>
     <div id="footer">
