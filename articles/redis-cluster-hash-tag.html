@@ -2,13 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Redis Cluster mutli-key command optimisation with hash tags</title>
+    <title>Redis Cluster multi-key command optimisation with hash tags</title>
     <meta name="description" content="Optimise Redis Cluster mutli-key commands with hash tags"/>
     <meta name="keywords" content="Redis, Cluster, Optimization, Optimisation, MGET, MSET"/>
 
   </head>
   <body>
-    <h1>Redis Cluster mutli-key command optimisation with hash tags</h1>
+    <h1>Redis Cluster multi-key command optimisation with hash tags</h1>
 
     <p>
       <a href="https://redis.io/topics/cluster-spec">Redis Cluster</a> allows a <a href="https://redis.io/">Redis</a> installation to automatically partition its dataset across multiple nodes. Keys are partitioned using the concept of <b>hash slots</b>, of which there are 16384 in total, distributed across the cluster's nodes. For example, if the cluster consists of three nodes, the first node contains hash slots 0 to 5500, the second contains hash slots 5501 to 11000 and the third node contains hash slots 11001 to 16383. To determine a key's hash slot, we take the <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">CRC16</a> of the key's modulo 16384.
