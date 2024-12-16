@@ -21,11 +21,11 @@ $2
 <p>
 <a href="https://validator.w3.org" id="w3c-validator"><img src="/valid-xhtml10.png" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
 </p>
-</body>
-<script>
+<script type="text/javascript">
 var here = encodeURIComponent(window.location.href);
 var w3cAnchor = document.getElementById("w3c-validator");
 w3cAnchor.setAttribute("href", "https://validator.w3.org/check?uri=" + here);
 </script>
+</body>
 </html>')dnl
 define(`CREATE_PAGE', `PAGE_TEMPLATE(`$1', `$2')')dnl
