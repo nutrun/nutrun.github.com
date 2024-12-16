@@ -1,20 +1,5 @@
-
-
-<?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Redis Cluster multi-key command optimisation with hash tags - nutrun</title>
-<meta name="description" content="George Malamidis&apos;s website"/>
-<meta name="keywords" content="George Malamidis, music, programming, distributed systems"/>
-<meta name="author" content="George Malamidis"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<style type="text/css">
-@media only screen { li { margin: 16px 0; } }
-</style>
-</head>
-<body>
-<h1>Redis Cluster multi-key command optimisation with hash tags</h1>
+include(macros.m4)
+CREATE_PAGE(`Redis Cluster multi-key command optimisation with hash tags', `<h1>Redis Cluster multi-key command optimisation with hash tags</h1>
 <p>
 <a href="https://redis.io/topics/cluster-spec">Redis Cluster</a> allows a <a href="https://redis.io/">Redis</a> installation to automatically partition its dataset across multiple nodes. Keys are partitioned using the concept of <b>hash slots</b>, of which there are 16384 in total, distributed across the cluster&apos;s nodes. For example, if the cluster consists of three nodes, the first node contains hash slots 0 to 5500, the second contains hash slots 5501 to 11000 and the third node contains hash slots 11001 to 16383. To determine a key&apos;s hash slot, we take the <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">CRC16</a> of the key&apos;s modulo 16384.
 </p>
@@ -144,11 +129,4 @@ This article was inspired by work we&apos;ve done with my colleagues from the Su
 <li><a href="https://redis.io/topics/cluster-tutorial">Redis cluster tutorial</a></li>
 <li><a href="https://simplemaps.com/data/world-cities">World Cities Database </a></li>
 <li><a href="https://redis-py-cluster.readthedocs.io/en/master/">redis-py-cluster</a></li>
-</ul>
-<h2>Contact</h2>
-<ul>
-<li>email <a href="mailto:thr4sh@gmail.com">thr4sh@gmail.com</a></li>
-<li><a href="https://twitter.com/nutrun">@nutrun</a> on twitter</li>
-</ul>
-</body>
-</html>
+</ul>')

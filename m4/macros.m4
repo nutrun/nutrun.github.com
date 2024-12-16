@@ -1,10 +1,9 @@
-
-
-<?xml version="1.0" encoding="utf-8" ?>
+divert(-1)
+define(`PAGE_TEMPLATE', `<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Demonic Downshift - nutrun</title>
+<title>$1 - nutrun</title>
 <meta name="description" content="George Malamidis&apos;s website"/>
 <meta name="keywords" content="George Malamidis, music, programming, distributed systems"/>
 <meta name="author" content="George Malamidis"/>
@@ -14,16 +13,15 @@
 </style>
 </head>
 <body>
-<h1>Demonic Downshift</h1>
-<ul>
-<li><a href="https://demonicdownshift.bandcamp.com/">Bandcamp</a></li>
-<li><a href="https://soundcloud.com/demonic-downshift">SoundCloud</a></li>
-<li><a href="https://open.spotify.com/artist/5DpSj0HWh8w1QFm3Eg065G?si=sVnGX3LnT5iTfOGSwW5Kmw">Spotify</a></li>
-</ul>
+$2
 <h2>Contact</h2>
 <ul>
 <li>email <a href="mailto:thr4sh@gmail.com">thr4sh@gmail.com</a></li>
 <li><a href="https://twitter.com/nutrun">@nutrun</a> on twitter</li>
 </ul>
 </body>
-</html>
+</html>')
+
+define(`CREATE_PAGE', `PAGE_TEMPLATE(`$1', `$2')')
+
+divert
