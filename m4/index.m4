@@ -1,4 +1,4 @@
-include(macros.m4)
+include(macros.m4)dnl
 CREATE_PAGE(`Home', `<h2>Music</h2>
 <ul>
 <li><a href="http://2bybukowski.com">2 by bukowski</a></li>

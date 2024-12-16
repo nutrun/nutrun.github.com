@@ -1,4 +1,4 @@
-include(macros.m4)
+include(macros.m4)dnl
 CREATE_PAGE(`Demonic Downshift', `<h1>Demonic Downshift</h1>
 <ul>
 <li><a href="https://demonicdownshift.bandcamp.com/">Bandcamp</a></li>
