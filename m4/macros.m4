@@ -19,7 +19,7 @@ $2
 <li><a href="https://twitter.com/nutrun">@nutrun</a> on twitter</li>
 </ul>
 <p>
-<a href="https://validator.w3.org" id="w3c-validator"><img src="/img/valid-xhtml10-L.png" srcset="/img/valid-xhtml10-S.png 66w, /img/valid-xhtml10-L.png 88w" sizes="(max-width: 600px) 66px, 88px" alt="Valid XHTML 1.0 Strict"/></a>
+<a href="https://validator.w3.org" id="w3c-validator"><img src="/img/valid-xhtml10.png" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
 </p>
 <script type="text/javascript">
 var here = encodeURIComponent(window.location.href);
