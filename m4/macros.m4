@@ -2,7 +2,7 @@ define(`PAGE_TEMPLATE', `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="description" content="nutrun.com is George Malamidis&apos;s website."/>
+<meta name="description" content="nutrun.com is George Malamidis&apos;s website.">
 <meta name="keywords" content="George Malamidis, music, programming, distributed systems, software engineering">
 <meta name="author" content="George Malamidis">
 <meta name="viewport" content="width=device-width, initial-scale=1">
