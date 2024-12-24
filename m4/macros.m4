@@ -18,8 +18,8 @@ define(`PAGE_TEMPLATE', `<!DOCTYPE html>
 </header>
 $2
 <footer>
-<p>
 <hr>
+<p>
 Email: <a href="mailto:thr5sh@gmail.com">thr4sh@gmail.com</a>
 </p>
 <p>
