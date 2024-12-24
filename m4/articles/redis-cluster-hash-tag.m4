@@ -1,6 +1,5 @@
 include(macros.m4)dnl
-CREATE_PAGE(`Redis Cluster multi-key command optimisation with hash tags', `<h1>Redis Cluster multi-key command optimisation with hash tags</h1>
-<p>
+CREATE_PAGE(`Redis Cluster multi-key command optimisation with hash tags', `<p>
 <a href="https://redis.io/topics/cluster-spec">Redis Cluster</a> allows a <a href="https://redis.io/">Redis</a> installation to automatically partition its dataset across multiple nodes. Keys are partitioned using the concept of <b>hash slots</b>, of which there are 16384 in total, distributed across the cluster&apos;s nodes. For example, if the cluster consists of three nodes, the first node contains hash slots 0 to 5500, the second contains hash slots 5501 to 11000 and the third node contains hash slots 11001 to 16383. To determine a key&apos;s hash slot, we take the <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">CRC16</a> of the key&apos;s modulo 16384.
 </p>
 <p>

@@ -13,15 +13,19 @@ define(`PAGE_TEMPLATE', `<!DOCTYPE html>
 </style>
 </head>
 <body>
+<header>
+<h1>$1 - <a href="/">nutrun</a></h1>
+</header>
 $2
-<h2>Contact</h2>
-<ul>
-<li>email <a href="mailto:thr4sh@gmail.com">thr4sh@gmail.com</a></li>
-<li><a href="https://twitter.com/nutrun">@nutrun</a> on twitter</li>
-</ul>
+<footer>
+<p>
+<hr>
+Email: <a href="mailto:thr5sh@gmail.com">thr4sh@gmail.com</a>
+</p>
 <p>
 <a href="https://validator.w3.org" id="w3c-validator">Valid HTML</a>
 </p>
+</footer>
 <script>
 var here = encodeURIComponent(window.location.href);
 var w3cAnchor = document.getElementById("w3c-validator");

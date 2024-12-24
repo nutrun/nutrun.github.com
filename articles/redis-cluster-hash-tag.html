@@ -13,7 +13,9 @@
 </style>
 </head>
 <body>
-<h1>Redis Cluster multi-key command optimisation with hash tags</h1>
+<header>
+<h1>Redis Cluster multi-key command optimisation with hash tags - <a href="/">nutrun</a></h1>
+</header>
 <p>
 <a href="https://redis.io/topics/cluster-spec">Redis Cluster</a> allows a <a href="https://redis.io/">Redis</a> installation to automatically partition its dataset across multiple nodes. Keys are partitioned using the concept of <b>hash slots</b>, of which there are 16384 in total, distributed across the cluster&apos;s nodes. For example, if the cluster consists of three nodes, the first node contains hash slots 0 to 5500, the second contains hash slots 5501 to 11000 and the third node contains hash slots 11001 to 16383. To determine a key&apos;s hash slot, we take the <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">CRC16</a> of the key&apos;s modulo 16384.
 </p>
@@ -144,14 +146,15 @@ This article was inspired by work we&apos;ve done with my colleagues from the Su
 <li><a href="https://simplemaps.com/data/world-cities">World Cities Database </a></li>
 <li><a href="https://redis-py-cluster.readthedocs.io/en/master/">redis-py-cluster</a></li>
 </ul>
-<h2>Contact</h2>
-<ul>
-<li>email <a href="mailto:thr4sh@gmail.com">thr4sh@gmail.com</a></li>
-<li><a href="https://twitter.com/nutrun">@nutrun</a> on twitter</li>
-</ul>
+<footer>
+<p>
+<hr>
+Email: <a href="mailto:thr5sh@gmail.com">thr4sh@gmail.com</a>
+</p>
 <p>
 <a href="https://validator.w3.org" id="w3c-validator">Valid HTML</a>
 </p>
+</footer>
 <script>
 var here = encodeURIComponent(window.location.href);
 var w3cAnchor = document.getElementById("w3c-validator");

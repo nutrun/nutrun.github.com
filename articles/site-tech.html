@@ -13,7 +13,9 @@
 </style>
 </head>
 <body>
-<h1>The tech behind my website</h1>
+<header>
+<h1>The tech behind my website - <a href="/">nutrun</a></h1>
+</header>
 <p>
 The current version of <a href="/">nutrun.com</a> is broadly static HTML, which I edit in <a href="https://www.vim.org">Vim</a>. You might think that there is no CSS, but there is <a href="https://github.com/nutrun/nutrun.github.com/blob/8f403e45a92c1e18a8b0151be5f0e6efaf90704a/index.html#L11-L13">enough CSS to make the pages responsive</a>.
 </p>
@@ -24,7 +26,7 @@ I template the markup in <a href="https://www.gnu.org/software/m4/">M4</a> and g
 The site is hosted on <a href="https://pages.github.com">GitHb Pages</a>, which are stable, developer friendly and free.
 </p>
 <p>
-I check that every page is valid HTML by using the <a href="https://validator.w3.org">W3C Markup Validation Service</a>. There&apos;s a link in the footer to make that quicker. Generating that link is the only JavaScript currently on the site and, hence, its only dynamic aspect.
+I check that every page is valid HTML by using the <a href="https://validator.w3.org">W3C Markup Validation Service</a>. There&apos;s a link in the footer for quick access. Generating that link is the only JavaScript currently on the site and, hence, its only dynamic aspect.
 </p>
 <p>
 I target <a href="https://pagespeed.web.dev">PageSpeed Insights</a> 100/100 scores for performance, accessibility, best practices and SEO, on mobile and desktop.
@@ -32,14 +34,15 @@ I target <a href="https://pagespeed.web.dev">PageSpeed Insights</a> 100/100 scor
 <p>
 <i>George Malamidis, 2024-12-24</i>
 </p>
-<h2>Contact</h2>
-<ul>
-<li>email <a href="mailto:thr4sh@gmail.com">thr4sh@gmail.com</a></li>
-<li><a href="https://twitter.com/nutrun">@nutrun</a> on twitter</li>
-</ul>
+<footer>
+<p>
+<hr>
+Email: <a href="mailto:thr5sh@gmail.com">thr4sh@gmail.com</a>
+</p>
 <p>
 <a href="https://validator.w3.org" id="w3c-validator">Valid HTML</a>
 </p>
+</footer>
 <script>
 var here = encodeURIComponent(window.location.href);
 var w3cAnchor = document.getElementById("w3c-validator");
