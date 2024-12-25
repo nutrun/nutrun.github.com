@@ -9,7 +9,7 @@ define(`PAGE_TEMPLATE', `<!DOCTYPE html>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <title>$1 - nutrun</title>
 <style>
-@media only screen and (max-width: 900px) { li { margin: 16px 0; } }
+li { margin: 16px 0; }
 </style>
 </head>
 <body>

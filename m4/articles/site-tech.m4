@@ -1,6 +1,6 @@
 include(macros.m4)dnl
 CREATE_PAGE(`The tech behind my website', `<p>
-The current version of <a href="/">nutrun.com</a> is broadly static HTML, which I edit in <a href="https://www.vim.org">Vim</a>. You might think that there is no CSS, but there is <a href="https://github.com/nutrun/nutrun.github.com/blob/8f403e45a92c1e18a8b0151be5f0e6efaf90704a/index.html#L11-L13">enough CSS to make the pages responsive</a>.
+The current version of <a href="/">nutrun.com</a> is broadly static HTML, which I edit in <a href="https://www.vim.org">Vim</a>. You might think that there is no CSS, but there is enough CSS to make the pages accessible.
 </p>
 <p>
 I template the markup in <a href="https://www.gnu.org/software/m4/">M4</a> and generate it with <a href="https://www.gnu.org/software/make/">Make</a>. <a href="https://github.com/nutrun/nutrun.github.com/tree/8f403e45a92c1e18a8b0151be5f0e6efaf90704a/m4">This is how</a>. I run <code>python -m http.server</code> to check the generated content locally.
