@@ -6,7 +6,7 @@ The current version of <a href="/">nutrun.com</a> is broadly static HTML, which 
 I template the markup in <a href="https://www.gnu.org/software/m4/">M4</a> and generate it with <a href="https://www.gnu.org/software/make/">Make</a>. <a href="https://github.com/nutrun/nutrun.github.com/tree/8f403e45a92c1e18a8b0151be5f0e6efaf90704a/m4">This is how</a>. I run <code>python -m http.server</code> to check the generated content locally.
 </p>
 <p>
-The site is hosted on <a href="https://pages.github.com">GitHb Pages</a>, which are stable, developer friendly and free.
+The site is hosted on <a href="https://pages.github.com">GitHub Pages</a>, which are stable, developer friendly and free.
 </p>
 <p>
 I check that every page is valid HTML by using the <a href="https://validator.w3.org">W3C Markup Validation Service</a>. There&apos;s a link in the footer for quick access. Generating that link is the only JavaScript currently on the site and, hence, its only dynamic aspect.
