@@ -16,7 +16,9 @@ li { margin: 16px 0; }
 <header>
 <h1>$1 - <a href="/">nutrun</a></h1>
 </header>
+<main>
 $2
+</main>
 <footer>
 <hr>
 <p>
